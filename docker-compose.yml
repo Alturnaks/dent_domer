@@ -1,0 +1,118 @@
+name: dental
+
+x-api-env: &api-env
+  ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+  Database__ConnectionString: Host=postgres;Port=5432;Database=dental;Username=dental_app;Password=${DB_APP_PASSWORD:-dental_app};Maximum Pool Size=50
+  Database__OwnerConnectionString: Host=postgres;Port=5432;Database=dental;Username=dental_owner;Password=${DB_OWNER_PASSWORD:-dental_owner}
+  Redis__ConnectionString: redis:6379,abortConnect=false
+  Jwt__SigningKey: ${JWT_SIGNING_KEY:-change-me-please-very-long-random-secret-0123456789}
+  Smtp__Host: mailpit
+  Smtp__Port: "1025"
+  Storage__ServiceUrl: http://minio:9000
+  Storage__PublicUrl: http://localhost:59000
+  Storage__AccessKey: ${MINIO_ROOT_USER:-minioadmin}
+  Storage__SecretKey: ${MINIO_ROOT_PASSWORD:-minioadmin}
+  Storage__Region: ${STORAGE_REGION:-kz-almaty-1}
+  App__FrontendUrl: http://localhost:3100
+  Seq__ServerUrl: http://seq:5341
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports: ["55432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d dental"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    image: redis:7-alpine
+    ports: ["56379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports: ["58025:8025", "51025:1025"]
+
+  # Необязательные сервисы: docker compose --profile extras up -d
+  minio:
+    image: quay.io/minio/minio:latest
+    profiles: ["extras"]
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports: ["59000:9000", "59001:9001"]
+    volumes: [miniodata:/data]
+
+  seq:
+    image: datalust/seq:latest
+    profiles: ["extras"]
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_NOAUTHENTICATION: "true"
+    ports: ["55341:80"]
+
+  # Одноразовый шаг: миграции + демо-данные (идемпотентно)
+  migrate:
+    build: ./backend
+    image: dental-api:local
+    command: ["migrate"]
+    environment: *api-env
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  seed:
+    image: dental-api:local
+    pull_policy: never
+    command: ["seed"]
+    environment: *api-env
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    restart: "no"
+
+  api:
+    image: dental-api:local
+    pull_policy: never
+    environment: *api-env
+    ports: ["5100:8080"]
+    depends_on:
+      seed: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    restart: unless-stopped
+
+  worker:
+    image: dental-api:local
+    pull_policy: never
+    command: ["worker"]
+    environment: *api-env
+    ports: ["5101:8080"]
+    depends_on:
+      seed: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        API_URL: http://api:8080
+    ports: ["3100:3000"]
+    depends_on:
+      api: { condition: service_healthy }
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  miniodata:

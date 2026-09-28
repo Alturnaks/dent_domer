@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(0.985 0.002 247);
+  --foreground: oklch(0.21 0.02 257);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.02 257);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.02 257);
+  --primary: oklch(0.52 0.14 230);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.96 0.006 247);
+  --secondary-foreground: oklch(0.28 0.03 257);
+  --muted: oklch(0.96 0.006 247);
+  --muted-foreground: oklch(0.52 0.02 257);
+  --accent: oklch(0.95 0.02 230);
+  --accent-foreground: oklch(0.28 0.06 240);
+  --destructive: oklch(0.58 0.22 27);
+  --destructive-foreground: oklch(0.98 0 0);
+  --success: oklch(0.6 0.15 150);
+  --warning: oklch(0.76 0.15 75);
+  --border: oklch(0.91 0.008 247);
+  --input: oklch(0.91 0.008 247);
+  --ring: oklch(0.52 0.14 230);
+  --radius: 0.6rem;
+  --sidebar: oklch(0.99 0.002 247);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* FullCalendar в стиле приложения */
+.fc {
+  --fc-border-color: var(--border);
+  --fc-today-bg-color: oklch(0.97 0.02 230);
+  --fc-now-indicator-color: var(--destructive);
+  font-size: 0.8rem;
+}
+.fc .fc-timegrid-slot {
+  height: 1.6rem;
+}
+.fc .fc-event {
+  border-radius: 6px;
+  padding: 1px 3px;
+  cursor: pointer;
+}

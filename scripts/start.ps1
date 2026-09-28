@@ -1,17 +1,17 @@
-﻿# Запуск Dental Admin для разработки на Windows.
-# Инфраструктура (postgres, redis, mailpit, minio, seq) - в Docker,
-# API и фронтенд - локально в отдельных окнах.
+﻿# Запуск Dental Admin.
+#   start.bat            — всё в Docker (нужен только Docker Desktop): БД, API, воркер, сайт
+#   start.bat -Local     — режим разработчика: инфраструктура в Docker, API и сайт локально (нужны .NET 10 SDK и Node 22)
 # Совместим с Windows PowerShell 5.1 и PowerShell 7+.
 param(
-    [switch]$NoSeed,      # не запускать seed
-    [switch]$Worker,      # запустить воркер Hangfire (появится на этапе 3)
-    [switch]$NoCheck,     # не запускать проверку ролей после старта
-    [switch]$NoBrowser,   # не открывать браузер
-    [int]$ApiPort = 5000,
-    [int]$WebPort = 3000
+    [switch]$Local,
+    [switch]$NoCheck,
+    [switch]$NoBrowser,
+    [switch]$Rebuild,
+    [int]$ApiPort = 5100,
+    [int]$WebPort = 3100
 )
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"  # нативные команды пишут прогресс в stderr; ошибки проверяем по $LASTEXITCODE
 try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch { }
 
 $root = Split-Path $PSScriptRoot -Parent
@@ -23,7 +23,7 @@ $apiUrl = "http://localhost:$ApiPort"
 $webUrl = "http://localhost:$WebPort"
 
 function Step([string]$t) { Write-Host ""; Write-Host "==> $t" -ForegroundColor Cyan }
-function Fail([string]$t) { Write-Host ""; Write-Host "ОШИБКА: $t" -ForegroundColor Red; exit 1 }
+function Fail([string]$t) { Write-Host ""; Write-Host "ОШИБКА: $t" -ForegroundColor Red; Write-Host "Лог: .run\start.log"; try { Stop-Transcript | Out-Null } catch { }; exit 1 }
 function Has([string]$cmd) { return [bool](Get-Command $cmd -ErrorAction SilentlyContinue) }
 
 function Wait-Http([string]$Url, [int]$Seconds, [string]$Name) {
@@ -31,7 +31,7 @@ function Wait-Http([string]$Url, [int]$Seconds, [string]$Name) {
     Write-Host -NoNewline "   жду $Name ($Url)"
     while ((Get-Date) -lt $deadline) {
         try {
-            $r = Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 5
+            $r = Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
             if ([int]$r.StatusCode -lt 500) { Write-Host " - готово" -ForegroundColor Green; return $true }
         } catch {
             if ($_.Exception.Response -and [int]$_.Exception.Response.StatusCode -lt 500) { Write-Host " - готово" -ForegroundColor Green; return $true }
@@ -51,32 +51,20 @@ function Start-Window([string]$Title, [string]$WorkDir, [string]$Command) {
 }
 
 Set-Location $root
+if (-not (Test-Path $runDir)) { New-Item -ItemType Directory -Path $runDir | Out-Null }
+$logFile = Join-Path $runDir "start.log"
+try { Start-Transcript -Path $logFile -Force | Out-Null } catch { }
 Write-Host "=== Dental Admin: запуск ===" -ForegroundColor Cyan
 
-# ---------- 1. Проверка окружения ----------
+# ---------- Проверка окружения ----------
 Step "Проверяю окружение"
-if (-not (Test-Path (Join-Path $root "docker-compose.yml"))) {
-    Fail "Нет docker-compose.yml. Проект ещё не собран - сначала выполните Этап 1 через Claude Code (см. README.md)."
-}
-if (-not (Test-Path $apiProject)) { Fail "Нет backend\src\Dental.Api. Этап 1 ещё не выполнен." }
-if (-not (Has "docker")) { Fail "Docker не найден. Установите Docker Desktop." }
+if (-not (Test-Path (Join-Path $root "docker-compose.yml"))) { Fail "Нет docker-compose.yml в $root." }
+if (-not (Has "docker")) { Fail "Docker не найден. Установите Docker Desktop: https://www.docker.com/products/docker-desktop/" }
 docker info *> $null
-if ($LASTEXITCODE -ne 0) { Fail "Docker Desktop не запущен. Запустите его и повторите." }
-if (-not (Has "dotnet")) { Fail ".NET SDK не найден. Установите .NET 10 SDK." }
-$sdks = (dotnet --list-sdks) -join "`n"
-if ($sdks -notmatch "(?m)^10\.") { Fail ".NET 10 SDK не найден. Установлены: `n$sdks" }
-$hasWeb = Test-Path (Join-Path $frontend "package.json")
-if ($hasWeb -and -not (Has "npm")) { Fail "Node.js/npm не найден. Установите Node.js 22+." }
-Write-Host "   docker, dotnet 10, node - ок" -ForegroundColor Green
+if ($LASTEXITCODE -ne 0) { Fail "Docker Desktop не запущен. Запустите его, дождитесь зелёного статуса и повторите." }
+Write-Host "   Docker - ок" -ForegroundColor Green
 
-# Уже запущено? Остановим прошлые окна.
-if (Test-Path $pidFile) {
-    Write-Host "   найдены процессы прошлого запуска - останавливаю" -ForegroundColor Yellow
-    & (Join-Path $PSScriptRoot "stop.ps1") -KeepInfra
-}
 if (-not (Test-Path $runDir)) { New-Item -ItemType Directory -Path $runDir | Out-Null }
-
-# .env
 $envFile = Join-Path $root ".env"
 $envExample = Join-Path $root ".env.example"
 if (-not (Test-Path $envFile) -and (Test-Path $envExample)) {
@@ -84,80 +72,80 @@ if (-not (Test-Path $envFile) -and (Test-Path $envExample)) {
     Write-Host "   создан .env из .env.example" -ForegroundColor Yellow
 }
 
-# ---------- 2. Инфраструктура ----------
-Step "Поднимаю инфраструктуру в Docker"
-docker compose up -d postgres redis mailpit minio seq
-if ($LASTEXITCODE -ne 0) { Fail "docker compose up завершился с ошибкой." }
+if (-not $Local) {
+    # ---------- Всё в Docker ----------
+    Step "Собираю и запускаю контейнеры (первый запуск занимает 5-15 минут)"
+    $composeArgs = @("compose", "up", "-d", "--build")
+    if ($Rebuild) { $composeArgs += "--force-recreate" }
+    & docker @composeArgs 2>&1 | ForEach-Object { "$_" } | Tee-Object -FilePath (Join-Path $runDir "compose.log")
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host ""
+        Write-Host "Последние строки логов:" -ForegroundColor Yellow
+        docker compose logs --tail 40 migrate seed api 2>$null
+        Fail "docker compose up завершился с ошибкой. Полный лог: docker compose logs"
+    }
+} else {
+    # ---------- Режим разработчика ----------
+    if (-not (Has "dotnet")) { Fail ".NET SDK не найден. Установите .NET 10 SDK или запускайте без -Local." }
+    $sdks = (dotnet --list-sdks) -join "`n"
+    if ($sdks -notmatch "(?m)^10\.") { Fail ".NET 10 SDK не найден. Установлены: `n$sdks" }
+    if (-not (Has "npm")) { Fail "Node.js/npm не найден. Установите Node.js 22+." }
+    if (Test-Path $pidFile) { & (Join-Path $PSScriptRoot "stop.ps1") -KeepInfra }
 
-Write-Host -NoNewline "   жду PostgreSQL"
-$ok = $false
-for ($i = 0; $i -lt 40; $i++) {
-    docker compose exec -T postgres pg_isready *> $null
-    if ($LASTEXITCODE -eq 0) { $ok = $true; break }
-    Write-Host -NoNewline "."
-    Start-Sleep -Seconds 2
-}
-if (-not $ok) { Fail "PostgreSQL не поднялся за 80 секунд. Смотрите: docker compose logs postgres" }
-Write-Host " - готово" -ForegroundColor Green
+    Step "Поднимаю инфраструктуру в Docker"
+    docker compose up -d postgres redis mailpit
+    if ($LASTEXITCODE -ne 0) { Fail "docker compose up завершился с ошибкой." }
+    Write-Host -NoNewline "   жду PostgreSQL"
+    $ok = $false
+    for ($i = 0; $i -lt 40; $i++) {
+        docker compose exec -T postgres pg_isready -U postgres -d dental *> $null
+        if ($LASTEXITCODE -eq 0) { $ok = $true; break }
+        Write-Host -NoNewline "."
+        Start-Sleep -Seconds 2
+    }
+    if (-not $ok) { Fail "PostgreSQL не поднялся за 80 секунд. Смотрите: docker compose logs postgres" }
+    Write-Host " - готово" -ForegroundColor Green
 
-# ---------- 3. Сборка, миграции, seed ----------
-Step "Собираю backend"
-dotnet build (Join-Path $root "backend\Dental.sln") -c Debug --nologo -v q
-if ($LASTEXITCODE -ne 0) { Fail "dotnet build упал. Исправьте ошибки сборки." }
-
-Step "Применяю миграции"
-dotnet run --no-build --project $apiProject -- migrate
-if ($LASTEXITCODE -ne 0) { Fail "Миграции не применились." }
-
-if (-not $NoSeed) {
-    Step "Заполняю демо-данные (seed)"
+    Step "Собираю backend"
+    dotnet build (Join-Path $root "backend\Dental.sln") -c Debug --nologo -v q
+    if ($LASTEXITCODE -ne 0) { Fail "dotnet build упал." }
+    Step "Миграции и демо-данные"
+    dotnet run --no-build --project $apiProject -- migrate
+    if ($LASTEXITCODE -ne 0) { Fail "Миграции не применились." }
     dotnet run --no-build --project $apiProject -- seed
     if ($LASTEXITCODE -ne 0) { Fail "Seed завершился с ошибкой." }
-}
 
-# ---------- 4. API, воркер, фронтенд ----------
-$pids = @{}
-Step "Запускаю API на $apiUrl"
-$env:ASPNETCORE_ENVIRONMENT = "Development"
-$pids.api = Start-Window "Dental API" $root "`$env:ASPNETCORE_ENVIRONMENT='Development'; dotnet run --no-build --project '$apiProject' --urls $apiUrl"
-
-if ($Worker) {
-    Step "Запускаю воркер Hangfire"
-    $pids.worker = Start-Window "Dental Worker" $root "`$env:ASPNETCORE_ENVIRONMENT='Development'; dotnet run --no-build --project '$apiProject' -- worker"
-}
-
-if ($hasWeb) {
-    Step "Запускаю фронтенд на $webUrl"
+    $pids = @{}
+    $pids.api = Start-Window "Dental API" $root "`$env:ASPNETCORE_ENVIRONMENT='Development'; dotnet run --no-build --project '$apiProject' --urls $apiUrl"
+    $pids.worker = Start-Window "Dental Worker" $root "`$env:ASPNETCORE_ENVIRONMENT='Development'; dotnet run --no-build --project '$apiProject' --urls http://localhost:5101 -- worker"
     if (-not (Test-Path (Join-Path $frontend "node_modules"))) {
-        Write-Host "   первый запуск - устанавливаю npm-зависимости"
         Push-Location $frontend
-        if (Test-Path "package-lock.json") { npm ci } else { npm install }
+        npm ci
         $code = $LASTEXITCODE
         Pop-Location
-        if ($code -ne 0) { Fail "npm install завершился с ошибкой." }
+        if ($code -ne 0) { Fail "npm ci завершился с ошибкой." }
     }
-    $pids.web = Start-Window "Dental Web" $frontend "`$env:NEXT_PUBLIC_API_URL='$apiUrl'; npm run dev -- -p $WebPort"
-} else {
-    Write-Host "   frontend\package.json не найден - фронтенд пропущен" -ForegroundColor Yellow
+    $pids.web = Start-Window "Dental Web" $frontend "`$env:API_URL='$apiUrl'; npm run dev -- -p $WebPort"
+    $pids | ConvertTo-Json | Set-Content -Path $pidFile -Encoding UTF8
 }
 
-$pids | ConvertTo-Json | Set-Content -Path $pidFile -Encoding UTF8
-
-# ---------- 5. Ожидание готовности ----------
+# ---------- Ожидание готовности ----------
 Step "Жду готовности сервисов"
-$apiOk = Wait-Http "$apiUrl/health" 180 "API"
-$webOk = $true
-if ($hasWeb) { $webOk = Wait-Http "$webUrl/login" 240 "фронтенд" }
+$apiOk = Wait-Http "$apiUrl/health" 300 "API"
+$webOk = Wait-Http "$webUrl/login" 300 "сайт"
+if (-not $apiOk -and -not $Local) {
+    docker compose ps
+    docker compose logs --tail 60 api
+}
 
 Write-Host ""
 Write-Host "Сайт:      $webUrl" -ForegroundColor Green
-Write-Host "API:       $apiUrl   (Scalar: $apiUrl/scalar)"
-Write-Host "Mailpit:   http://localhost:8025"
-Write-Host "Seq:       http://localhost:5341"
+Write-Host "API:       $apiUrl   (документация: $apiUrl/scalar)"
+Write-Host "Почта:     http://localhost:58025   Логи: http://localhost:55341   Задачи: http://localhost:5101/jobs"
 Write-Host "Логины:    owner@demo.kz, senior1@demo.kz, admin1@demo.kz, storekeeper@demo.kz, cashier@demo.kz, doctor1@demo.kz  / пароль demo12345"
 Write-Host "Остановка: stop.bat"
 
-if ($hasWeb -and $webOk -and -not $NoBrowser) { Start-Process "$webUrl/login" }
+if ($webOk -and -not $NoBrowser) { Start-Process "$webUrl/login" }
 
 if (-not $NoCheck -and $apiOk) {
     Step "Проверяю сайт и входы под каждой ролью"

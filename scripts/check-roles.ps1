@@ -2,8 +2,8 @@
 # Совместим с Windows PowerShell 5.1 и PowerShell 7+.
 # Запуск: check-roles.bat  (или powershell -ExecutionPolicy Bypass -File scripts\check-roles.ps1)
 param(
-    [string]$ApiUrl = "http://localhost:5000",
-    [string]$WebUrl = "http://localhost:3000",
+    [string]$ApiUrl = "http://localhost:5100",
+    [string]$WebUrl = "http://localhost:3100",
     [string]$Matrix = (Join-Path $PSScriptRoot "roles-matrix.json"),
     [switch]$SkipInfra
 )
@@ -90,8 +90,8 @@ elseif ($w.Status -eq 0) { Add-Result $g "Frontend /login" "FAIL" "фронт н
 else { Add-Result $g "Frontend /login" "FAIL" "HTTP $($w.Status)" }
 
 if (-not $SkipInfra) {
-    $m = Invoke-Http GET "http://localhost:8025"
-    if ($m.Status -eq 200) { Add-Result $g "Mailpit :8025" "PASS" "" } else { Add-Result $g "Mailpit :8025" "WARN" "не отвечает (нужен для писем)" }
+    $m = Invoke-Http GET "http://localhost:58025"
+    if ($m.Status -eq 200) { Add-Result $g "Mailpit :58025" "PASS" "" } else { Add-Result $g "Mailpit :58025" "WARN" "не отвечает (нужен для писем)" }
 }
 
 # ---------- 2. Негативные проверки auth ----------
