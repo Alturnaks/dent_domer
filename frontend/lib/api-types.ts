@@ -1348,6 +1348,390 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/appointments/{id}/arrive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ArriveAppointment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/visits/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetVisit"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["UpdateVisit"];
+        trace?: never;
+    };
+    "/api/v1/visits/{id}/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AddVisitItem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/visits/{id}/items/{itemId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["RemoveVisitItem"];
+        options?: never;
+        head?: never;
+        patch: operations["UpdateVisitItem"];
+        trace?: never;
+    };
+    "/api/v1/visits/{id}/materials": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetVisitMaterials"];
+        put: operations["SetVisitMaterials"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/visits/{id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CloseVisit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/visits/{id}/corrections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CorrectVisit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/visits/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CancelVisit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cash-shifts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListCashShifts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cash-shifts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetCashShift"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cash-shifts/open": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["OpenCashShift"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cash-shifts/{id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CloseCashShift"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cash-shifts/{id}/operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListCashOperations"];
+        put?: never;
+        post: operations["CreateCashOperation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListPayments"];
+        put?: never;
+        post: operations["CreatePayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments/{id}/refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RefundPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/expenses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListExpenses"];
+        put?: never;
+        post: operations["CreateExpense"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/balances": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["StockBalances"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/movements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["StockMovements"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/items/{id}/card": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["StockItemCard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock-documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListStockDocuments"];
+        put?: never;
+        post: operations["CreateStockDocument"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock-documents/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetStockDocument"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["UpdateStockDocument"];
+        trace?: never;
+    };
+    "/api/v1/stock-documents/{id}/post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PostStockDocument"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock-documents/{id}/receive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ReceiveStockTransfer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock-documents/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CancelStockDocument"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/audit": {
         parameters: {
             query?: never;
@@ -1592,6 +1976,29 @@ export interface components {
             /** Format: uuid */
             chairId: null | string;
         };
+        CancelVisitRequest: {
+            reason: string;
+        };
+        CashOperationDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            cashShiftId: string;
+            type: components["schemas"]["CashOperationType"];
+            /** Format: int64 */
+            amount: number;
+            comment: null | string;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        CashOperationRequest: {
+            type: components["schemas"]["CashOperationType"];
+            /** Format: int64 */
+            amount: number;
+            comment: null | string;
+        };
+        /** @enum {unknown} */
+        CashOperationType: "Collection" | "Deposit";
         CashRegisterDto: {
             /** Format: uuid */
             id: string;
@@ -1604,6 +2011,54 @@ export interface components {
             branchId: string;
             name: string;
         };
+        CashShiftDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            cashRegisterId: string;
+            cashRegisterName: string;
+            /** Format: uuid */
+            branchId: string;
+            /** Format: uuid */
+            openedBy: string;
+            openedByName: string;
+            /** Format: date-time */
+            openedAt: string;
+            /** Format: int64 */
+            openingBalance: number;
+            /** Format: uuid */
+            closedBy: null | string;
+            closedByName: null | string;
+            /** Format: date-time */
+            closedAt: null | string;
+            /** Format: int64 */
+            closingBalanceExpected: null | number;
+            /** Format: int64 */
+            closingBalanceActual: null | number;
+            /** Format: int64 */
+            difference: null | number;
+            status: components["schemas"]["CashShiftStatus"];
+            /** Format: int64 */
+            cashIn: number;
+            /** Format: int64 */
+            cardIn: number;
+            /** Format: int64 */
+            otherIn: number;
+            /** Format: int64 */
+            refunds: number;
+            /** Format: int64 */
+            expenses: number;
+            /** Format: int64 */
+            collections: number;
+            /** Format: int64 */
+            deposits: number;
+            /** Format: int64 */
+            expectedNow: number;
+            /** Format: int32 */
+            version: number;
+        };
+        /** @enum {unknown} */
+        CashShiftStatus: "Open" | "Closed";
         ChairDto: {
             /** Format: uuid */
             id: string;
@@ -1619,6 +2074,23 @@ export interface components {
             /** Format: uuid */
             roomId: null | string;
             isActive: null | boolean;
+        };
+        CloseShiftRequest: {
+            /** Format: int64 */
+            closingBalanceActual: number;
+            comment: null | string;
+            /** Format: int32 */
+            version: null | number;
+        };
+        CloseVisitRequest: {
+            /** Format: int32 */
+            version: null | number;
+        };
+        CountLineInput: {
+            /** Format: uuid */
+            lineId: string;
+            /** Format: double */
+            actualQty: number;
         };
         CreateAppointmentRequest: {
             /** Format: uuid */
@@ -1642,6 +2114,26 @@ export interface components {
             patient: null | components["schemas"]["PatientDto"];
             duplicates: components["schemas"]["DuplicateCandidate"][];
         };
+        CreatePaymentRequest: {
+            /** Format: uuid */
+            patientId: string;
+            /** Format: uuid */
+            visitId: null | string;
+            /** Format: uuid */
+            branchId: string;
+            method: null | components["schemas"]["PaymentMethod"];
+            /** Format: int64 */
+            amount: null | number;
+            splits: null | components["schemas"]["PaymentSplit"][];
+            comment: null | string;
+        };
+        CreatePaymentResult: {
+            payments: components["schemas"]["PaymentDto"][];
+            /** Format: int64 */
+            patientBalance: number;
+            /** Format: int64 */
+            visitDebt: null | number;
+        };
         CreateStaffRequest: {
             fullName: string;
             email: null | string;
@@ -1655,12 +2147,34 @@ export interface components {
             allBranches: boolean;
             branchIds: null | string[];
         };
+        CreateStockDocumentRequest: {
+            type: components["schemas"]["StockDocumentType"];
+            /** Format: uuid */
+            warehouseFromId: null | string;
+            /** Format: uuid */
+            warehouseToId: null | string;
+            /** Format: uuid */
+            supplierId: null | string;
+            /** Format: uuid */
+            purchaseOrderId: null | string;
+            invoiceNumber: null | string;
+            /** Format: date */
+            invoiceDate: null | string;
+            /** Format: uuid */
+            reasonId: null | string;
+            comment: null | string;
+            lines: null | components["schemas"]["StockLineInput"][];
+        };
         CursorPageOfAuditEntryDto: {
             items: components["schemas"]["AuditEntryDto"][];
             nextCursor: null | string;
         };
         CursorPageOfPatientListItem: {
             items: components["schemas"]["PatientListItem"][];
+            nextCursor: null | string;
+        };
+        CursorPageOfStockMovementRow: {
+            items: components["schemas"]["StockMovementRow"][];
             nextCursor: null | string;
         };
         DoctorScheduleDto: {
@@ -1743,6 +2257,38 @@ export interface components {
         ErrorResponse: {
             error: components["schemas"]["ErrorBody"];
         };
+        ExpenseDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            branchId: string;
+            /** Format: uuid */
+            categoryId: string;
+            categoryName: string;
+            /** Format: int64 */
+            amount: number;
+            /** Format: date-time */
+            paidAt: string;
+            /** Format: uuid */
+            cashShiftId: null | string;
+            counterparty: null | string;
+            comment: null | string;
+            documentUrl: null | string;
+        };
+        ExpenseRequest: {
+            /** Format: uuid */
+            branchId: string;
+            /** Format: uuid */
+            categoryId: string;
+            /** Format: int64 */
+            amount: number;
+            /** Format: date-time */
+            paidAt: null | string;
+            fromCash: boolean;
+            counterparty: null | string;
+            comment: null | string;
+            documentUrl: null | string;
+        };
         ForgotPasswordRequest: {
             login: string;
         };
@@ -1754,6 +2300,30 @@ export interface components {
             cache: string;
             /** Format: date-time */
             time: string;
+        };
+        ItemCardBatch: {
+            /** Format: uuid */
+            batchId: null | string;
+            batchNumber: null | string;
+            serialNumber: null | string;
+            /** Format: date */
+            expiresAt: null | string;
+            /** Format: uuid */
+            warehouseId: string;
+            warehouseName: string;
+            /** Format: double */
+            qty: number;
+            /** Format: double */
+            unitCost: number;
+        };
+        ItemCardDto: {
+            item: components["schemas"]["ItemDto"];
+            /** Format: double */
+            totalQty: number;
+            /** Format: int64 */
+            totalAmount: number;
+            balances: components["schemas"]["ItemCardBatch"][];
+            movements: components["schemas"]["StockMovementRow"][];
         };
         ItemCategoryDto: {
             /** Format: uuid */
@@ -1933,6 +2503,12 @@ export interface components {
             /** Format: int32 */
             unread: number;
         };
+        OpenShiftRequest: {
+            /** Format: uuid */
+            cashRegisterId: string;
+            /** Format: int64 */
+            openingBalance: number;
+        };
         OrganizationSettings: {
             /** Format: int32 */
             slotMinutes?: number;
@@ -1967,6 +2543,15 @@ export interface components {
         };
         PagedResultOfItemDto: {
             items: components["schemas"]["ItemDto"][];
+            /** Format: int32 */
+            total: number;
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            pageSize: number;
+        };
+        PagedResultOfStockDocumentListItem: {
+            items: components["schemas"]["StockDocumentListItem"][];
             /** Format: int32 */
             total: number;
             /** Format: int32 */
@@ -2121,8 +2706,37 @@ export interface components {
             /** Format: int64 */
             paidTotal: number;
         };
+        PaymentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            branchId: string;
+            /** Format: uuid */
+            patientId: string;
+            patientName: string;
+            /** Format: uuid */
+            visitId: null | string;
+            /** Format: uuid */
+            cashShiftId: string;
+            method: components["schemas"]["PaymentMethod"];
+            /** Format: int64 */
+            amount: number;
+            type: components["schemas"]["PaymentType"];
+            /** Format: uuid */
+            refundedPaymentId: null | string;
+            comment: null | string;
+            pendingApproval: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            createdByName: null | string;
+        };
         /** @enum {unknown} */
         PaymentMethod: "Cash" | "Card" | "KaspiQr" | "Transfer" | "Insurance" | "Balance";
+        PaymentSplit: {
+            method: components["schemas"]["PaymentMethod"];
+            /** Format: int64 */
+            amount: number;
+        };
         /** @enum {unknown} */
         PaymentType: "Payment" | "Refund" | "Advance";
         PermissionGroupDto: {
@@ -2174,6 +2788,24 @@ export interface components {
             status?: null | number;
             detail?: null | string;
             instance?: null | string;
+        };
+        ReceiveTransferLine: {
+            /** Format: uuid */
+            lineId: string;
+            /** Format: double */
+            actualQty: number;
+        };
+        ReceiveTransferRequest: {
+            lines: null | components["schemas"]["ReceiveTransferLine"][];
+            comment: null | string;
+            /** Format: int32 */
+            version: null | number;
+        };
+        RefundRequest: {
+            /** Format: int64 */
+            amount: number;
+            method: null | components["schemas"]["PaymentMethod"];
+            reason: string;
         };
         ResetPasswordRequest: {
             token: string;
@@ -2311,6 +2943,139 @@ export interface components {
         };
         /** @enum {unknown} */
         StaffPosition: "Owner" | "Admin" | "SeniorAdmin" | "Doctor" | "Assistant" | "Storekeeper" | "Cashier" | "Other";
+        StockActionRequest: {
+            comment: null | string;
+            /** Format: int32 */
+            version: null | number;
+            counts: null | components["schemas"]["CountLineInput"][];
+        };
+        StockBalanceRow: {
+            /** Format: uuid */
+            warehouseId: string;
+            warehouseName: string;
+            /** Format: uuid */
+            itemId: string;
+            itemName: string;
+            itemSku: string;
+            /** Format: uuid */
+            categoryId: null | string;
+            baseUnit: string;
+            /** Format: double */
+            qty: number;
+            /** Format: double */
+            avgCost: number;
+            /** Format: int64 */
+            amount: number;
+            /** Format: double */
+            minQty: null | number;
+            /** Format: double */
+            optimalQty: null | number;
+            /** Format: date */
+            nearestExpiry: null | string;
+            belowMin: boolean;
+            expiring: boolean;
+            expired: boolean;
+        };
+        StockDocumentDto: {
+            /** Format: uuid */
+            id: string;
+            type: components["schemas"]["StockDocumentType"];
+            number: string;
+            status: components["schemas"]["StockDocumentStatus"];
+            /** Format: uuid */
+            branchId: null | string;
+            /** Format: uuid */
+            warehouseFromId: null | string;
+            warehouseFromName: null | string;
+            /** Format: uuid */
+            warehouseToId: null | string;
+            warehouseToName: null | string;
+            /** Format: uuid */
+            supplierId: null | string;
+            supplierName: null | string;
+            /** Format: uuid */
+            purchaseOrderId: null | string;
+            /** Format: uuid */
+            visitId: null | string;
+            /** Format: uuid */
+            sourceDocumentId: null | string;
+            invoiceNumber: null | string;
+            /** Format: date */
+            invoiceDate: null | string;
+            /** Format: uuid */
+            reasonId: null | string;
+            reasonName: null | string;
+            comment: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            createdBy: null | string;
+            createdByName: null | string;
+            /** Format: date-time */
+            postedAt: null | string;
+            postedByName: null | string;
+            /** Format: date-time */
+            receivedAt: null | string;
+            /** Format: int64 */
+            totalCost: number;
+            /** Format: int32 */
+            version: number;
+            lines: components["schemas"]["StockDocumentLineDto"][];
+        };
+        StockDocumentLineDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            itemId: string;
+            itemName: string;
+            itemSku: string;
+            baseUnit: string;
+            /** Format: uuid */
+            batchId: null | string;
+            batchNumber: null | string;
+            serialNumber: null | string;
+            /** Format: date */
+            expiresAt: null | string;
+            /** Format: double */
+            qty: number;
+            /** Format: double */
+            qtyInput: number;
+            /** Format: uuid */
+            unitId: null | string;
+            unitName: null | string;
+            /** Format: double */
+            unitCost: number;
+            /** Format: int64 */
+            totalCost: number;
+            /** Format: double */
+            expectedQty: null | number;
+            /** Format: double */
+            actualQty: null | number;
+        };
+        StockDocumentListItem: {
+            /** Format: uuid */
+            id: string;
+            type: components["schemas"]["StockDocumentType"];
+            number: string;
+            status: components["schemas"]["StockDocumentStatus"];
+            warehouseFromName: null | string;
+            warehouseToName: null | string;
+            supplierName: null | string;
+            reasonName: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            postedAt: null | string;
+            /** Format: int64 */
+            totalCost: number;
+            /** Format: int32 */
+            linesCount: number;
+            comment: null | string;
+        };
+        /** @enum {unknown} */
+        StockDocumentStatus: "Draft" | "PendingApproval" | "Posted" | "InTransit" | "Received" | "Cancelled";
+        /** @enum {unknown} */
+        StockDocumentType: "Receipt" | "Transfer" | "Writeoff" | "Inventory" | "ReturnToSupplier" | "VisitConsumption";
         StockLevelDto: {
             /** Format: uuid */
             warehouseId: string;
@@ -2327,6 +3092,47 @@ export interface components {
             minQty: number;
             /** Format: double */
             optimalQty: number;
+        };
+        StockLineInput: {
+            /** Format: uuid */
+            itemId: string;
+            /** Format: double */
+            qty: number;
+            /** Format: uuid */
+            unitId: null | string;
+            /** Format: uuid */
+            batchId: null | string;
+            /** Format: int64 */
+            unitCost: null | number;
+            batchNumber: null | string;
+            serialNumber: null | string;
+            /** Format: date */
+            expiresAt: null | string;
+            /** Format: double */
+            actualQty: null | number;
+        };
+        StockMovementRow: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            movedAt: string;
+            /** Format: uuid */
+            warehouseId: string;
+            warehouseName: string;
+            /** Format: uuid */
+            itemId: string;
+            itemName: string;
+            /** Format: uuid */
+            batchId: null | string;
+            batchNumber: null | string;
+            /** Format: double */
+            qty: number;
+            /** Format: double */
+            unitCost: number;
+            documentType: components["schemas"]["StockDocumentType"];
+            /** Format: uuid */
+            documentId: string;
+            documentNumber: string;
         };
         SupplierDto: {
             /** Format: uuid */
@@ -2457,6 +3263,170 @@ export interface components {
             color: null | string;
             allBranches: null | boolean;
             branchIds: null | string[];
+        };
+        UpdateStockDocumentRequest: {
+            /** Format: uuid */
+            warehouseFromId: null | string;
+            /** Format: uuid */
+            warehouseToId: null | string;
+            /** Format: uuid */
+            supplierId: null | string;
+            invoiceNumber: null | string;
+            /** Format: date */
+            invoiceDate: null | string;
+            /** Format: uuid */
+            reasonId: null | string;
+            comment: null | string;
+            lines: null | components["schemas"]["StockLineInput"][];
+            /** Format: int32 */
+            version: null | number;
+        };
+        UpdateVisitRequest: {
+            /** Format: uuid */
+            assistantId: null | string;
+            /** Format: double */
+            discountPct: null | number;
+            /** Format: int32 */
+            version: null | number;
+        };
+        /** @enum {unknown} */
+        VisitApprovalState: "None" | "PendingDiscount" | "PendingCorrection";
+        VisitCorrectionItem: {
+            /** Format: uuid */
+            serviceId: string;
+            /** Format: int32 */
+            qty: number;
+            /** Format: int64 */
+            unitPrice: number;
+            /** Format: double */
+            discountPct: number;
+            /** Format: uuid */
+            doctorId: null | string;
+            toothNumbers: null | number[];
+        };
+        VisitCorrectionRequest: {
+            items: components["schemas"]["VisitCorrectionItem"][];
+            materials: null | components["schemas"]["VisitMaterialInput"][];
+            reason: string;
+            /** Format: int32 */
+            version: null | number;
+        };
+        VisitDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            appointmentId: null | string;
+            /** Format: uuid */
+            branchId: string;
+            /** Format: uuid */
+            patientId: string;
+            patientName: string;
+            patientPhone: null | string;
+            /** Format: int64 */
+            patientBalance: number;
+            /** Format: uuid */
+            doctorId: string;
+            doctorName: string;
+            /** Format: uuid */
+            assistantId: null | string;
+            status: components["schemas"]["VisitStatus"];
+            approvalState: components["schemas"]["VisitApprovalState"];
+            /** Format: date-time */
+            openedAt: string;
+            /** Format: date-time */
+            closedAt: null | string;
+            /** Format: uuid */
+            cashShiftId: null | string;
+            shiftClosed: boolean;
+            /** Format: int64 */
+            subtotal: number;
+            /** Format: int64 */
+            discountTotal: number;
+            /** Format: int64 */
+            total: number;
+            /** Format: int64 */
+            paidTotal: number;
+            /** Format: int64 */
+            debt: number;
+            /** Format: int32 */
+            version: number;
+            items: components["schemas"]["VisitItemDto"][];
+            materials: components["schemas"]["VisitMaterialDto"][];
+            payments: components["schemas"]["VisitPaymentDto"][];
+            canEdit: boolean;
+            canCorrect: boolean;
+        };
+        VisitItemDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            serviceId: string;
+            serviceName: string;
+            serviceCode: string;
+            /** Format: uuid */
+            doctorId: string;
+            /** Format: int32 */
+            qty: number;
+            /** Format: int64 */
+            unitPrice: number;
+            /** Format: double */
+            discountPct: number;
+            /** Format: int64 */
+            discountAmount: number;
+            /** Format: int64 */
+            total: number;
+            toothNumbers: number[];
+            discountPendingApproval: boolean;
+        };
+        VisitItemRequest: {
+            /** Format: uuid */
+            serviceId: string;
+            /** Format: int32 */
+            qty: null | number;
+            /** Format: double */
+            discountPct: null | number;
+            /** Format: uuid */
+            doctorId: null | string;
+            toothNumbers: null | number[];
+            /** Format: int64 */
+            unitPrice: null | number;
+        };
+        VisitMaterialDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            visitItemId: null | string;
+            /** Format: uuid */
+            itemId: string;
+            itemName: string;
+            baseUnit: string;
+            /** Format: double */
+            quantity: number;
+            /** Format: double */
+            normQuantity: number;
+            /** Format: uuid */
+            batchId: null | string;
+            /** Format: int64 */
+            cost: number;
+        };
+        VisitMaterialInput: {
+            /** Format: uuid */
+            visitItemId: null | string;
+            /** Format: uuid */
+            itemId: string;
+            /** Format: double */
+            quantity: number;
+        };
+        VisitPaymentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            type: components["schemas"]["PaymentType"];
+            method: components["schemas"]["PaymentMethod"];
+            /** Format: int64 */
+            amount: number;
+            comment: null | string;
         };
         /** @enum {unknown} */
         VisitStatus: "Open" | "Closed" | "Cancelled";
@@ -5846,6 +6816,872 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    ArriveAppointment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitDto"];
+                };
+            };
+        };
+    };
+    GetVisit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitDto"];
+                };
+            };
+        };
+    };
+    UpdateVisit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateVisitRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitDto"];
+                };
+            };
+        };
+    };
+    AddVisitItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitItemRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    RemoveVisitItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                itemId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitDto"];
+                };
+            };
+        };
+    };
+    UpdateVisitItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                itemId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitItemRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitDto"];
+                };
+            };
+        };
+    };
+    GetVisitMaterials: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitMaterialDto"][];
+                };
+            };
+        };
+    };
+    SetVisitMaterials: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitMaterialInput"][];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitDto"];
+                };
+            };
+        };
+    };
+    CloseVisit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CloseVisitRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitDto"];
+                };
+            };
+        };
+    };
+    CorrectVisit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitCorrectionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    CancelVisit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CancelVisitRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    ListCashShifts: {
+        parameters: {
+            query?: {
+                branch_id?: string;
+                status?: components["schemas"]["CashShiftStatus"];
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CashShiftDto"][];
+                };
+            };
+        };
+    };
+    GetCashShift: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CashShiftDto"];
+                };
+            };
+        };
+    };
+    OpenCashShift: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpenShiftRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CashShiftDto"];
+                };
+            };
+        };
+    };
+    CloseCashShift: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CloseShiftRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CashShiftDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    ListCashOperations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CashOperationDto"][];
+                };
+            };
+        };
+    };
+    CreateCashOperation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CashOperationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CashOperationDto"];
+                };
+            };
+        };
+    };
+    ListPayments: {
+        parameters: {
+            query?: {
+                branch_id?: string;
+                shift_id?: string;
+                patient_id?: string;
+                from?: string;
+                to?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentDto"][];
+                };
+            };
+        };
+    };
+    CreatePayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePaymentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreatePaymentResult"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    RefundPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefundRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    ListExpenses: {
+        parameters: {
+            query?: {
+                branch_id?: string;
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseDto"][];
+                };
+            };
+        };
+    };
+    CreateExpense: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExpenseRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    StockBalances: {
+        parameters: {
+            query?: {
+                warehouse_id?: string;
+                category_id?: string;
+                below_min?: boolean;
+                expiring_days?: number;
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockBalanceRow"][];
+                };
+            };
+        };
+    };
+    StockMovements: {
+        parameters: {
+            query?: {
+                item_id?: string;
+                warehouse_id?: string;
+                from?: string;
+                to?: string;
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CursorPageOfStockMovementRow"];
+                };
+            };
+        };
+    };
+    StockItemCard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ItemCardDto"];
+                };
+            };
+        };
+    };
+    ListStockDocuments: {
+        parameters: {
+            query?: {
+                type?: components["schemas"]["StockDocumentType"];
+                status?: components["schemas"]["StockDocumentStatus"];
+                warehouse_id?: string;
+                from?: string;
+                to?: string;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PagedResultOfStockDocumentListItem"];
+                };
+            };
+        };
+    };
+    CreateStockDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateStockDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockDocumentDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetStockDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockDocumentDto"];
+                };
+            };
+        };
+    };
+    UpdateStockDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateStockDocumentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockDocumentDto"];
+                };
+            };
+        };
+    };
+    PostStockDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StockActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockDocumentDto"];
+                };
+            };
+        };
+    };
+    ReceiveStockTransfer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiveTransferRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockDocumentDto"];
+                };
+            };
+        };
+    };
+    CancelStockDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StockActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockDocumentDto"];
+                };
             };
         };
     };

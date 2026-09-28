@@ -1,4 +1,12 @@
-import ru from "@/messages/ru.json";
+import ruBase from "@/messages/ru.json";
+import ruSchedule from "@/messages/ru/schedule.json";
+import ruVisits from "@/messages/ru/visits.json";
+import ruCash from "@/messages/ru/cash.json";
+import ruInventory from "@/messages/ru/inventory.json";
+import ruAdmin from "@/messages/ru/admin.json";
+
+// Модульные файлы переводов (messages/ru/<модуль>.json) сливаются с базовым по ключам верхнего уровня.
+const ru = { ...ruBase, ...ruSchedule, ...ruVisits, ...ruCash, ...ruInventory, ...ruAdmin } as Record<string, unknown>;
 
 // i18n: ru по умолчанию; kk и en добавляются новыми файлами messages/<lang>.json с теми же ключами.
 type Messages = Record<string, unknown>;
