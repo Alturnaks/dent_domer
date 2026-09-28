@@ -1,0 +1,89 @@
+{
+  "password": "demo12345",
+  "roles": [
+    {
+      "code": "owner",
+      "title": "Владелец",
+      "logins": ["owner@demo.kz"],
+      "mustHave": ["org.settings.manage", "roles.manage", "prices.manage", "techcards.manage", "visits.edit_closed", "inventory.transfer.create", "inventory.count.approve", "reports.network", "reports.finance", "reports.payroll", "payroll.manage", "audit.view"],
+      "mustNotHave": [],
+      "limits": { "maxDiscountPct": 100, "maxWriteoffAmount": null },
+      "endpoints": [
+        { "method": "GET", "path": "/api/v1/audit", "expect": 200 },
+        { "method": "GET", "path": "/api/v1/roles", "expect": 200 },
+        { "method": "GET", "path": "/api/v1/reports/pnl?from={monthStart}&to={today}", "expect": 200 },
+        { "method": "GET", "path": "/api/v1/payroll-periods", "expect": 200 }
+      ]
+    },
+    {
+      "code": "senior_admin",
+      "title": "Старший администратор",
+      "logins": ["senior1@demo.kz", "senior2@demo.kz"],
+      "mustHave": ["schedule.manage", "visits.edit_closed", "discounts.apply", "inventory.receive", "inventory.writeoff", "inventory.count.approve", "reports.branch", "reports.finance", "audit.view"],
+      "mustNotHave": ["prices.manage", "techcards.manage", "roles.manage", "inventory.transfer.create", "reports.network", "reports.payroll", "payroll.view_all"],
+      "limits": { "maxDiscountPct": 15, "maxWriteoffAmount": 10000000 },
+      "endpoints": [
+        { "method": "GET", "path": "/api/v1/audit", "expect": 200 },
+        { "method": "GET", "path": "/api/v1/roles", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/reports/pnl?from={monthStart}&to={today}", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/payroll-periods", "expect": 403 }
+      ]
+    },
+    {
+      "code": "admin",
+      "title": "Администратор",
+      "logins": ["admin1@demo.kz", "admin2@demo.kz", "admin3@demo.kz"],
+      "mustHave": ["schedule.manage", "discounts.apply", "inventory.receive", "inventory.writeoff", "reports.branch"],
+      "mustNotHave": ["visits.edit_closed", "inventory.transfer.create", "inventory.count.approve", "prices.manage", "reports.finance", "reports.network", "reports.payroll", "audit.view", "roles.manage"],
+      "limits": { "maxDiscountPct": 5, "maxWriteoffAmount": 2000000 },
+      "endpoints": [
+        { "method": "GET", "path": "/api/v1/audit", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/roles", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/reports/pnl?from={monthStart}&to={today}", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/payroll-periods", "expect": 403 }
+      ]
+    },
+    {
+      "code": "storekeeper",
+      "title": "Кладовщик",
+      "logins": ["storekeeper@demo.kz"],
+      "mustHave": ["inventory.view", "inventory.receive", "inventory.writeoff", "inventory.transfer.create", "inventory.transfer.receive"],
+      "mustNotHave": ["schedule.manage", "visits.edit_closed", "cash.payment.create", "prices.manage", "reports.finance", "reports.network", "audit.view"],
+      "limits": { "maxWriteoffAmount": 5000000 },
+      "endpoints": [
+        { "method": "GET", "path": "/api/v1/audit", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/roles", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/reports/pnl?from={monthStart}&to={today}", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/stock/balances", "expect": 200 }
+      ]
+    },
+    {
+      "code": "cashier",
+      "title": "Кассир",
+      "logins": ["cashier@demo.kz"],
+      "mustHave": ["cash.shift.open_close", "cash.payment.create", "discounts.apply"],
+      "mustNotHave": ["schedule.manage", "inventory.receive", "inventory.writeoff", "visits.edit_closed", "prices.manage", "reports.network", "audit.view"],
+      "limits": { "maxDiscountPct": 5 },
+      "endpoints": [
+        { "method": "GET", "path": "/api/v1/audit", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/roles", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/reports/pnl?from={monthStart}&to={today}", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/cash-shifts", "expect": 200 }
+      ]
+    },
+    {
+      "code": "doctor",
+      "title": "Врач",
+      "logins": ["doctor1@demo.kz", "doctor2@demo.kz", "doctor3@demo.kz", "doctor4@demo.kz", "doctor5@demo.kz", "doctor6@demo.kz"],
+      "mustHave": ["schedule.view_own", "visits.complete", "payroll.view_own"],
+      "mustNotHave": ["schedule.view_all", "schedule.manage", "visits.edit_closed", "discounts.apply", "cash.payment.create", "inventory.receive", "prices.manage", "reports.finance", "reports.network", "audit.view", "payroll.view_all"],
+      "limits": { "maxDiscountPct": 0 },
+      "endpoints": [
+        { "method": "GET", "path": "/api/v1/audit", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/roles", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/reports/pnl?from={monthStart}&to={today}", "expect": 403 },
+        { "method": "GET", "path": "/api/v1/payroll/me", "expect": 200 }
+      ]
+    }
+  ]
+}
