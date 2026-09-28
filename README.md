@@ -31,7 +31,7 @@ claude
 | `check-roles.bat` | проверяет сайт (health, OpenAPI, /login) и входит под всеми 12 демо-пользователями: код роли, права, лимиты, 403 на запрещённом. Отчёт — `.run\check-report.txt` |
 | `stop.bat` | закрывает окна API/фронта и останавливает контейнеры; `stop.bat -Purge` — ещё и удаляет базу |
 
-Демо-логины (пароль `demo12345`): `owner@demo.kz`, `senior1@demo.kz`, `senior2@demo.kz`, `admin1@demo.kz`…`admin3@demo.kz`, `storekeeper@demo.kz`, `cashier@demo.kz`, `doctor1@demo.kz`…`doctor6@demo.kz`.
+Демо-логины (пароль `demo12345`): `owner@demo.kz`, `senior1@demo.kz`, `senior2@demo.kz`, `admin1@demo.kz`…`admin3@demo.kz`, `doctor1@demo.kz`…`doctor6@demo.kz`.
 
 ## Файлы
 | Файл | Назначение |

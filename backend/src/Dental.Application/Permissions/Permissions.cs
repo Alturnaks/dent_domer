@@ -119,8 +119,6 @@ public static class RolePresets
     public const string Owner = "owner";
     public const string SeniorAdmin = "senior_admin";
     public const string Admin = "admin";
-    public const string Storekeeper = "storekeeper";
-    public const string Cashier = "cashier";
     public const string Doctor = "doctor";
 
     private const long Tenge = 100;
@@ -137,42 +135,28 @@ public static class RolePresets
         Perm.Visits.Complete, Perm.Visits.EditOpen, Perm.Visits.EditClosed, Perm.Visits.Cancel,
         Perm.Catalog.DiscountsApply,
         Perm.Cash.ShiftOpenClose, Perm.Cash.PaymentCreate, Perm.Cash.PaymentRefund, Perm.Cash.ExpenseCreate,
-        Perm.Inventory.View, Perm.Inventory.Receive, Perm.Inventory.TransferReceive, Perm.Inventory.Writeoff,
-        Perm.Inventory.Count, Perm.Inventory.CountApprove,
+        Perm.Inventory.View, Perm.Inventory.Receive, Perm.Inventory.TransferCreate, Perm.Inventory.TransferReceive, Perm.Inventory.Writeoff,
+        Perm.Inventory.Count, Perm.Inventory.CountApprove, Perm.Inventory.ItemsManage,
         Perm.Purchase.RequestCreate,
         Perm.Reports.Branch, Perm.Reports.Finance,
         Perm.Audit.View,
     ],
         new RoleLimits { MaxDiscountPct = 15, MaxWriteoffAmount = 100_000 * Tenge, MaxRefundAmount = 100_000 * Tenge, CanEditClosedShiftVisits = true });
 
+    // Кладовщик и кассир упразднены (решение заказчика 2026-09-28): их права переданы администратору.
     public static readonly RolePreset AdminPreset = new(Admin, "Администратор", StaffPosition.Admin,
     [
         Perm.Patients.View, Perm.Patients.Edit,
         Perm.Schedule.ViewAll, Perm.Schedule.Manage,
         Perm.Visits.Complete, Perm.Visits.EditOpen,
         Perm.Catalog.DiscountsApply,
-        Perm.Cash.PaymentCreate,
-        Perm.Inventory.View, Perm.Inventory.Receive, Perm.Inventory.Writeoff,
-        Perm.Purchase.RequestCreate,
-        Perm.Reports.Branch,
-    ],
-        new RoleLimits { MaxDiscountPct = 5, MaxWriteoffAmount = 20_000 * Tenge, MaxRefundAmount = 0, CanEditClosedShiftVisits = false });
-
-    public static readonly RolePreset StorekeeperPreset = new(Storekeeper, "Кладовщик", StaffPosition.Storekeeper,
-    [
+        Perm.Cash.ShiftOpenClose, Perm.Cash.PaymentCreate, Perm.Cash.PaymentRefund, Perm.Cash.ExpenseCreate,
         Perm.Inventory.View, Perm.Inventory.Receive, Perm.Inventory.TransferCreate, Perm.Inventory.TransferReceive,
         Perm.Inventory.Writeoff, Perm.Inventory.Count, Perm.Inventory.ItemsManage,
         Perm.Purchase.RequestCreate,
+        Perm.Reports.Branch,
     ],
-        new RoleLimits { MaxDiscountPct = 0, MaxWriteoffAmount = 50_000 * Tenge, MaxRefundAmount = 0 });
-
-    public static readonly RolePreset CashierPreset = new(Cashier, "Кассир", StaffPosition.Cashier,
-    [
-        Perm.Patients.View,
-        Perm.Catalog.DiscountsApply,
-        Perm.Cash.ShiftOpenClose, Perm.Cash.PaymentCreate, Perm.Cash.PaymentRefund, Perm.Cash.ExpenseCreate,
-    ],
-        new RoleLimits { MaxDiscountPct = 5, MaxWriteoffAmount = 0, MaxRefundAmount = 20_000 * Tenge });
+        new RoleLimits { MaxDiscountPct = 5, MaxWriteoffAmount = 50_000 * Tenge, MaxRefundAmount = 20_000 * Tenge, CanEditClosedShiftVisits = false });
 
     public static readonly RolePreset DoctorPreset = new(Doctor, "Врач", StaffPosition.Doctor,
     [
@@ -184,5 +168,5 @@ public static class RolePresets
         new RoleLimits { MaxDiscountPct = 0, MaxWriteoffAmount = 0, MaxRefundAmount = 0 });
 
     public static readonly IReadOnlyList<RolePreset> All =
-        [OwnerPreset, SeniorAdminPreset, AdminPreset, StorekeeperPreset, CashierPreset, DoctorPreset];
+        [OwnerPreset, SeniorAdminPreset, AdminPreset, DoctorPreset];
 }

@@ -41,7 +41,15 @@ public static class DemoSeeder
         await using (var check = new NpgsqlConnection(dbOptions.OwnerConnectionString))
         {
             var exists = await check.ExecuteScalarAsync<bool>(new CommandDefinition("SELECT EXISTS (SELECT 1 FROM organizations WHERE slug = @Slug)", new { Slug }, cancellationToken: ct));
-            if (exists)
+            // Демо-данные старой структуры ролей (кладовщик/кассир) пересоздаются автоматически.
+            var obsolete = exists && await check.ExecuteScalarAsync<bool>(new CommandDefinition(
+                "SELECT EXISTS (SELECT 1 FROM roles WHERE code IN ('storekeeper','cashier'))", cancellationToken: ct));
+            if (obsolete)
+            {
+                await ResetAsync(dbOptions.OwnerConnectionString, ct);
+                logger.LogWarning("Obsolete demo roles found — demo data recreated");
+            }
+            else if (exists)
             {
                 logger.LogInformation("Demo organization '{Slug}' already exists — seed skipped (use --reset to recreate)", Slug);
                 return;
@@ -52,7 +60,7 @@ public static class DemoSeeder
         var sp = scope.ServiceProvider;
         var ctx = new SeedContext(sp, logger, ct);
         await ctx.RunAsync();
-        logger.LogInformation("Demo data created. Logins: owner@demo.kz, senior1-2@demo.kz, admin1-3@demo.kz, storekeeper@demo.kz, cashier@demo.kz, doctor1-6@demo.kz / {Password}", Password);
+        logger.LogInformation("Demo data created. Logins: owner@demo.kz, senior1-2@demo.kz, admin1-3@demo.kz, doctor1-6@demo.kz / {Password}", Password);
     }
 
     private static async Task ResetAsync(string ownerCs, CancellationToken ct)
@@ -170,8 +178,6 @@ internal sealed partial class SeedContext(IServiceProvider sp, ILogger logger, C
             ("admin1@demo.kz", "Смагулова Айгерим Маратовна", "77010000004", RolePresets.Admin, StaffPosition.Admin, false, [b[0].Id], null, null),
             ("admin2@demo.kz", "Петрова Ольга Сергеевна", "77010000005", RolePresets.Admin, StaffPosition.Admin, false, [b[1].Id], null, null),
             ("admin3@demo.kz", "Нурланова Асель Ерлановна", "77010000006", RolePresets.Admin, StaffPosition.Admin, false, [b[2].Id], null, null),
-            ("storekeeper@demo.kz", "Байжанов Ерлан Кайратович", "77010000007", RolePresets.Storekeeper, StaffPosition.Storekeeper, true, [], null, null),
-            ("cashier@demo.kz", "Оспанова Гульнара Амановна", "77010000008", RolePresets.Cashier, StaffPosition.Cashier, false, [b[0].Id, b[1].Id], null, null),
             ("doctor1@demo.kz", "Иманбаев Тимур Русланович", "77010000011", RolePresets.Doctor, StaffPosition.Doctor, false, [b[0].Id], "Терапевт", "#2563eb"),
             ("doctor2@demo.kz", "Сейткали Мадина Нурлановна", "77010000012", RolePresets.Doctor, StaffPosition.Doctor, false, [b[0].Id], "Хирург-имплантолог", "#dc2626"),
             ("doctor3@demo.kz", "Волков Андрей Петрович", "77010000013", RolePresets.Doctor, StaffPosition.Doctor, false, [b[1].Id], "Ортопед", "#16a34a"),
@@ -235,7 +241,7 @@ internal sealed partial class SeedContext(IServiceProvider sp, ILogger logger, C
         }.Select(r => new ExpenseCategory { OrganizationId = orgId, Name = r.Item1, Type = r.Item2 }));
         _db.ExpenseCategories.AddRange(ExpenseCategories);
 
-        var storekeeper = Staff.First(s => s.Membership.Position == StaffPosition.Storekeeper).Membership.Id;
+        var storekeeper = Staff.First(s => s.Membership.Position == StaffPosition.SeniorAdmin).Membership.Id;
         Warehouses.Add(new Warehouse { OrganizationId = orgId, Type = WarehouseType.Central, Name = "Центральный склад", ResponsibleId = storekeeper });
         foreach (var b in Branches)
         {

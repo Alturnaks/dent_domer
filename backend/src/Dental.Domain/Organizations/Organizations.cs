@@ -160,7 +160,7 @@ public class Membership : TenantEntity
 public class Role : TenantEntity, ISoftDeletable
 {
     public string Name { get; set; } = "";
-    /// <summary>Код пресета (owner, senior_admin, admin, storekeeper, cashier, doctor) или custom.</summary>
+    /// <summary>Код пресета (owner, senior_admin, admin, doctor) или custom.</summary>
     public string Code { get; set; } = "custom";
     public bool IsPreset { get; set; }
     public List<string> Permissions { get; set; } = [];

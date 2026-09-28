@@ -142,7 +142,7 @@ Write-Host ""
 Write-Host "Сайт:      $webUrl" -ForegroundColor Green
 Write-Host "API:       $apiUrl   (документация: $apiUrl/scalar)"
 Write-Host "Почта:     http://localhost:58025   Логи: http://localhost:55341   Задачи: http://localhost:5101/jobs"
-Write-Host "Логины:    owner@demo.kz, senior1@demo.kz, admin1@demo.kz, storekeeper@demo.kz, cashier@demo.kz, doctor1@demo.kz  / пароль demo12345"
+Write-Host "Логины:    owner@demo.kz, senior1@demo.kz, admin1@demo.kz, doctor1@demo.kz  / пароль demo12345"
 Write-Host "Остановка: stop.bat"
 
 if ($webOk -and -not $NoBrowser) { Start-Process "$webUrl/login" }
