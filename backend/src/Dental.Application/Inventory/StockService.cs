@@ -228,6 +228,8 @@ public sealed class StockService(
             case StockDocumentStatus.Posted when doc.Type is StockDocumentType.Receipt or StockDocumentType.Writeoff or StockDocumentType.ReturnToSupplier:
                 if (string.IsNullOrWhiteSpace(r.Comment)) throw AppException.BadRequest(ErrorCodes.CommentRequired, "Укажите причину отмены проведённого документа");
                 await ReverseMovementsAsync(doc, ct);
+                if (doc.Type == StockDocumentType.Receipt && doc.PurchaseOrderId is { } poId) await RevertOrderReceiptAsync(doc, poId, ct);
+                if (doc.Type == StockDocumentType.Receipt) await StornoReceiptInvoicesAsync(doc, ct);
                 audit.Log(nameof(StockDocument), doc.Id, "storno", new { doc.Number, doc.TotalCost }, r.Comment, suspicious: true, branchId: doc.BranchId);
                 break;
             default:
@@ -307,17 +309,47 @@ public sealed class StockService(
             }
         }
 
-        // Счёт поставщика по накладной.
-        if (!string.IsNullOrWhiteSpace(doc.InvoiceNumber))
+        // Счёт поставщика по накладной; приход по заказу поставщику создаёт счёт всегда (номер — номер накладной или прихода).
+        if (!string.IsNullOrWhiteSpace(doc.InvoiceNumber) || doc.PurchaseOrderId is not null)
         {
             var supplier = await db.Suppliers.AsNoTracking().FirstAsync(s => s.Id == doc.SupplierId, ct);
             var date = doc.InvoiceDate ?? DateOnly.FromDateTime(clock.GetUtcNow().UtcDateTime);
             db.SupplierInvoices.Add(new SupplierInvoice
             {
-                SupplierId = supplier.Id, PurchaseOrderId = doc.PurchaseOrderId, StockDocumentId = doc.Id, Number = doc.InvoiceNumber!, Date = date,
+                SupplierId = supplier.Id, PurchaseOrderId = doc.PurchaseOrderId, StockDocumentId = doc.Id, Number = doc.InvoiceNumber.NullIfEmpty() ?? doc.Number, Date = date,
                 Amount = doc.TotalCost, DueDate = supplier.PaymentTermsDays > 0 ? date.AddDays(supplier.PaymentTermsDays) : null,
             });
         }
+    }
+
+    /// <summary>Сторно прихода: неоплаченный остаток счёта поставщика по этой накладной списывается (долг перед поставщиком снимается).</summary>
+    private async Task StornoReceiptInvoicesAsync(StockDocument doc, CancellationToken ct)
+    {
+        var invoices = await db.SupplierInvoices.Where(i => i.StockDocumentId == doc.Id).ToListAsync(ct);
+        foreach (var invoice in invoices)
+        {
+            invoice.ReturnedAmount = Math.Max(invoice.ReturnedAmount, invoice.Amount - invoice.PaidAmount);
+            invoice.RecalculateStatus();
+        }
+    }
+
+    /// <summary>Сторно прихода по заказу: полученное количество по заказу уменьшается, статус пересчитывается.</summary>
+    private async Task RevertOrderReceiptAsync(StockDocument doc, Guid poId, CancellationToken ct)
+    {
+        var po = await db.PurchaseOrders.Include(p => p.Lines).FirstOrDefaultAsync(p => p.Id == poId, ct);
+        if (po is null) return;
+        foreach (var g in doc.Lines.GroupBy(l => l.ItemId))
+        {
+            var qty = g.Sum(l => l.Qty);
+            foreach (var pl in po.Lines.Where(x => x.ItemId == g.Key).Reverse())
+            {
+                var take = Math.Min(qty, pl.ReceivedQty);
+                pl.ReceivedQty -= take;
+                qty -= take;
+                if (qty <= 0) break;
+            }
+        }
+        po.RecalculateStatus();
     }
 
     private async Task PostWriteoffAsync(StockDocument doc, CancellationToken ct)

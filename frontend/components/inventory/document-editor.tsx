@@ -305,6 +305,8 @@ export function DocumentEditor({ id, newType }: { id?: string; newType?: DocType
     qc.invalidateQueries({ queryKey: ["stock-documents"] });
     qc.invalidateQueries({ queryKey: ["stock"] });
     qc.invalidateQueries({ queryKey: ["warehouses"] });
+    qc.invalidateQueries({ queryKey: ["purchase-order"] });
+    qc.invalidateQueries({ queryKey: ["purchase-orders"] });
   };
 
   const applyDoc = (d: Doc) => {
@@ -547,6 +549,11 @@ export function DocumentEditor({ id, newType }: { id?: string; newType?: DocType
               </span>
             ) : null}
             {doc.visitId ? <span>{t("inventory.doc.createdByVisit")}</span> : null}
+            {doc.purchaseOrderId ? (
+              <Link className="text-primary hover:underline" href={href(`purchasing/orders/${doc.purchaseOrderId}`)}>
+                {t("purchasing.orders.openOrder")}
+              </Link>
+            ) : null}
             {doc.sourceDocumentId ? (
               <Link className="text-primary hover:underline" href={href(`inventory/documents/${doc.sourceDocumentId}`)}>
                 {t("inventory.doc.source")}

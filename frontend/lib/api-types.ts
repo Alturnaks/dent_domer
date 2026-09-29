@@ -1748,6 +1748,294 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/purchase-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListPurchaseRequests"];
+        put?: never;
+        post: operations["CreatePurchaseRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-requests/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["GeneratePurchaseRequests"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-requests/network-demand": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetNetworkDemand"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-requests/process": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ProcessPurchaseDemand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-requests/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetPurchaseRequest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["UpdatePurchaseRequest"];
+        trace?: never;
+    };
+    "/api/v1/purchase-requests/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SubmitPurchaseRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-requests/{id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RejectPurchaseRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-requests/{id}/mark-processed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["MarkPurchaseRequestProcessed"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListPurchaseOrders"];
+        put?: never;
+        post: operations["CreatePurchaseOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-orders/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetPurchaseOrder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["UpdatePurchaseOrder"];
+        trace?: never;
+    };
+    "/api/v1/purchase-orders/{id}/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SendPurchaseOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-orders/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CancelPurchaseOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-orders/{id}/receive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ReceivePurchaseOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/purchase-orders/{id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ExportPurchaseOrder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/supplier-invoices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListSupplierInvoices"];
+        put?: never;
+        post: operations["CreateSupplierInvoice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/supplier-invoices/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetSupplierInvoice"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["UpdateSupplierInvoice"];
+        trace?: never;
+    };
+    "/api/v1/supplier-invoices/{id}/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PaySupplierInvoice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/suppliers/debts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SupplierDebts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/audit": {
         parameters: {
             query?: never;
@@ -2154,6 +2442,24 @@ export interface components {
             /** Format: int64 */
             visitDebt: null | number;
         };
+        CreatePurchaseOrderRequest: {
+            /** Format: uuid */
+            supplierId: string;
+            /** Format: uuid */
+            warehouseId: string;
+            /** Format: date */
+            expectedAt: null | string;
+            comment: null | string;
+            lines: components["schemas"]["PurchaseOrderLineInput"][];
+        };
+        CreatePurchaseRequestRequest: {
+            /** Format: uuid */
+            warehouseId: string;
+            comment: null | string;
+            lines: components["schemas"]["PurchaseRequestLineInput"][];
+            /** @default false */
+            submit: boolean;
+        };
         CreateStaffRequest: {
             fullName: string;
             email: null | string;
@@ -2185,6 +2491,19 @@ export interface components {
             comment: null | string;
             lines: null | components["schemas"]["StockLineInput"][];
         };
+        CreateSupplierInvoiceRequest: {
+            /** Format: uuid */
+            supplierId: string;
+            /** Format: uuid */
+            purchaseOrderId: null | string;
+            number: string;
+            /** Format: date */
+            date: string;
+            /** Format: int64 */
+            amount: number;
+            /** Format: date */
+            dueDate: null | string;
+        };
         CursorPageOfAuditEntryDto: {
             items: components["schemas"]["AuditEntryDto"][];
             nextCursor: null | string;
@@ -2196,6 +2515,62 @@ export interface components {
         CursorPageOfStockMovementRow: {
             items: components["schemas"]["StockMovementRow"][];
             nextCursor: null | string;
+        };
+        /** @enum {unknown} */
+        DemandAction: "Transfer" | "Order" | "Reject";
+        DemandItem: {
+            /** Format: uuid */
+            itemId: string;
+            itemName: string;
+            itemSku: string;
+            baseUnit: string;
+            /** Format: double */
+            totalQty: number;
+            /** Format: double */
+            centralQty: number;
+            prices: components["schemas"]["SupplierPriceDto"][];
+            /** Format: uuid */
+            bestSupplierId: null | string;
+        };
+        DemandRow: {
+            /** Format: uuid */
+            itemId: string;
+            itemName: string;
+            itemSku: string;
+            baseUnit: string;
+            /** Format: uuid */
+            warehouseId: string;
+            warehouseName: string;
+            /** Format: uuid */
+            branchId: null | string;
+            branchName: null | string;
+            /** Format: double */
+            qty: number;
+            /** Format: double */
+            currentQty: number;
+            /** Format: double */
+            minQty: number;
+            /** Format: double */
+            optimalQty: number;
+            requestIds: string[];
+            lineIds: string[];
+        };
+        DemandSelection: {
+            /** Format: uuid */
+            itemId: string;
+            /** Format: uuid */
+            warehouseId: string;
+            /** Format: double */
+            qty: null | number;
+            /** Format: uuid */
+            supplierId: null | string;
+            /** Format: int64 */
+            unitPrice: null | number;
+        };
+        DemandWarehouseRef: {
+            /** Format: uuid */
+            id: string;
+            name: string;
         };
         DoctorScheduleDto: {
             /** Format: uuid */
@@ -2316,6 +2691,17 @@ export interface components {
         };
         /** @enum {unknown} */
         Gender: "Unknown" | "Male" | "Female";
+        GenerateRequestsResult: {
+            /** Format: int32 */
+            created: number;
+            /** Format: int32 */
+            updated: number;
+            /** Format: int32 */
+            closed: number;
+            /** Format: int32 */
+            lines: number;
+            requestIds: string[];
+        };
         HealthResponse: {
             status: string;
             database: string;
@@ -2506,6 +2892,17 @@ export interface components {
             name: string;
             type: null | string;
         };
+        NetworkDemandDto: {
+            rows: components["schemas"]["DemandRow"][];
+            items: components["schemas"]["DemandItem"][];
+            centralWarehouses: components["schemas"]["DemandWarehouseRef"][];
+            /** Format: uuid */
+            centralWarehouseId: null | string;
+            /** Format: int32 */
+            requestsCount: number;
+            /** Format: int64 */
+            estimatedTotal: number;
+        };
         NotificationDto: {
             /** Format: uuid */
             id: string;
@@ -2572,6 +2969,24 @@ export interface components {
             /** Format: int32 */
             pageSize: number;
         };
+        PagedResultOfPurchaseOrderListItem: {
+            items: components["schemas"]["PurchaseOrderListItem"][];
+            /** Format: int32 */
+            total: number;
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            pageSize: number;
+        };
+        PagedResultOfPurchaseRequestListItem: {
+            items: components["schemas"]["PurchaseRequestListItem"][];
+            /** Format: int32 */
+            total: number;
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            pageSize: number;
+        };
         PagedResultOfStockDocumentListItem: {
             items: components["schemas"]["StockDocumentListItem"][];
             /** Format: int32 */
@@ -2583,6 +2998,15 @@ export interface components {
         };
         PagedResultOfSupplierDto: {
             items: components["schemas"]["SupplierDto"][];
+            /** Format: int32 */
+            total: number;
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            pageSize: number;
+        };
+        PagedResultOfSupplierInvoiceDto: {
+            items: components["schemas"]["SupplierInvoiceDto"][];
             /** Format: int32 */
             total: number;
             /** Format: int32 */
@@ -2811,6 +3235,217 @@ export interface components {
             detail?: null | string;
             instance?: null | string;
         };
+        ProcessDemandRequest: {
+            action: components["schemas"]["DemandAction"];
+            rows: null | components["schemas"]["DemandSelection"][];
+            requestIds: null | string[];
+            /** Format: uuid */
+            supplierId: null | string;
+            /** Format: uuid */
+            fromWarehouseId: null | string;
+            /** Format: uuid */
+            deliverToWarehouseId: null | string;
+            comment: null | string;
+        };
+        ProcessDemandResult: {
+            action: components["schemas"]["DemandAction"];
+            transferIds: string[];
+            orderIds: string[];
+            /** Format: int32 */
+            processedLines: number;
+            numbers: string[];
+        };
+        PurchaseOrderActionRequest: {
+            comment: null | string;
+            /** Format: int32 */
+            version: null | number;
+        };
+        PurchaseOrderDocRef: {
+            /** Format: uuid */
+            id: string;
+            number: string;
+            status: components["schemas"]["StockDocumentStatus"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            postedAt: null | string;
+            /** Format: int64 */
+            totalCost: number;
+        };
+        PurchaseOrderDto: {
+            /** Format: uuid */
+            id: string;
+            number: string;
+            status: components["schemas"]["PurchaseOrderStatus"];
+            /** Format: uuid */
+            supplierId: string;
+            supplierName: string;
+            supplierPhone: null | string;
+            supplierWhatsapp: null | string;
+            supplierEmail: null | string;
+            /** Format: uuid */
+            warehouseId: string;
+            warehouseName: string;
+            /** Format: uuid */
+            branchId: null | string;
+            /** Format: date */
+            expectedAt: null | string;
+            /** Format: int64 */
+            total: number;
+            sentVia: null | string;
+            /** Format: date-time */
+            sentAt: null | string;
+            comment: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            createdByName: null | string;
+            /** Format: int32 */
+            version: number;
+            needsApproval: boolean;
+            /** Format: int64 */
+            approvalThreshold: number;
+            lines: components["schemas"]["PurchaseOrderLineDto"][];
+            receipts: components["schemas"]["PurchaseOrderDocRef"][];
+            invoices: components["schemas"]["PurchaseOrderInvoiceRef"][];
+        };
+        PurchaseOrderInvoiceRef: {
+            /** Format: uuid */
+            id: string;
+            number: string;
+            /** Format: date */
+            date: string;
+            /** Format: int64 */
+            amount: number;
+            /** Format: int64 */
+            paidAmount: number;
+            status: components["schemas"]["SupplierInvoiceStatus"];
+        };
+        PurchaseOrderLineDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            itemId: string;
+            itemName: string;
+            itemSku: string;
+            baseUnit: string;
+            supplierSku: null | string;
+            /** Format: double */
+            qty: number;
+            /** Format: int64 */
+            unitPrice: number;
+            /** Format: int64 */
+            total: number;
+            /** Format: double */
+            receivedQty: number;
+            /** Format: double */
+            remainingQty: number;
+        };
+        PurchaseOrderLineInput: {
+            /** Format: uuid */
+            itemId: string;
+            /** Format: double */
+            qty: number;
+            /** Format: int64 */
+            unitPrice: null | number;
+        };
+        PurchaseOrderListItem: {
+            /** Format: uuid */
+            id: string;
+            number: string;
+            status: components["schemas"]["PurchaseOrderStatus"];
+            /** Format: uuid */
+            supplierId: string;
+            supplierName: string;
+            /** Format: uuid */
+            warehouseId: string;
+            warehouseName: string;
+            /** Format: date */
+            expectedAt: null | string;
+            /** Format: int64 */
+            total: number;
+            sentVia: null | string;
+            /** Format: date-time */
+            sentAt: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: int32 */
+            linesCount: number;
+            /** Format: double */
+            receivedPct: number;
+        };
+        /** @enum {unknown} */
+        PurchaseOrderStatus: "Draft" | "PendingApproval" | "Sent" | "PartiallyReceived" | "Received" | "Cancelled";
+        PurchaseRequestCommentRequest: {
+            comment: null | string;
+        };
+        PurchaseRequestDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            branchId: null | string;
+            branchName: null | string;
+            /** Format: uuid */
+            warehouseId: string;
+            warehouseName: string;
+            status: components["schemas"]["PurchaseRequestStatus"];
+            source: components["schemas"]["PurchaseRequestSource"];
+            comment: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            createdByName: null | string;
+            /** Format: date-time */
+            updatedAt: string;
+            lines: components["schemas"]["PurchaseRequestLineDto"][];
+        };
+        PurchaseRequestLineDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            itemId: string;
+            itemName: string;
+            itemSku: string;
+            baseUnit: string;
+            /** Format: double */
+            qty: number;
+            /** Format: double */
+            currentQty: number;
+            /** Format: double */
+            minQty: number;
+            /** Format: double */
+            optimalQty: number;
+        };
+        PurchaseRequestLineInput: {
+            /** Format: uuid */
+            itemId: string;
+            /** Format: double */
+            qty: number;
+        };
+        PurchaseRequestListItem: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            branchId: null | string;
+            branchName: null | string;
+            /** Format: uuid */
+            warehouseId: string;
+            warehouseName: string;
+            status: components["schemas"]["PurchaseRequestStatus"];
+            source: components["schemas"]["PurchaseRequestSource"];
+            comment: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            createdByName: null | string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: int32 */
+            linesCount: number;
+            /** Format: double */
+            totalQty: number;
+        };
+        /** @enum {unknown} */
+        PurchaseRequestSource: "Auto" | "Manual";
+        /** @enum {unknown} */
+        PurchaseRequestStatus: "Draft" | "Submitted" | "Processed" | "Rejected";
         ReceiveTransferLine: {
             /** Format: uuid */
             lineId: string;
@@ -2905,6 +3540,11 @@ export interface components {
         };
         /** @enum {unknown} */
         ScheduleExceptionType: "Vacation" | "Sick" | "DayOff" | "ExtraShift";
+        SendPurchaseOrderRequest: {
+            sentVia: string;
+            /** Format: int32 */
+            version: null | number;
+        };
         ServiceCategoryDto: {
             /** Format: uuid */
             id: string;
@@ -3157,6 +3797,32 @@ export interface components {
             documentId: string;
             documentNumber: string;
         };
+        SupplierDebtRow: {
+            /** Format: uuid */
+            supplierId: string;
+            supplierName: string;
+            /** Format: int32 */
+            invoicesCount: number;
+            /** Format: int64 */
+            amount: number;
+            /** Format: int64 */
+            paid: number;
+            /** Format: int64 */
+            returned: number;
+            /** Format: int64 */
+            debt: number;
+            /** Format: int64 */
+            overdueDebt: number;
+            /** Format: date */
+            nextDueDate: null | string;
+        };
+        SupplierDebtsDto: {
+            rows: components["schemas"]["SupplierDebtRow"][];
+            /** Format: int64 */
+            totalDebt: number;
+            /** Format: int64 */
+            totalOverdue: number;
+        };
         SupplierDto: {
             /** Format: uuid */
             id: string;
@@ -3170,6 +3836,38 @@ export interface components {
             paymentTermsDays: number;
             notes: null | string;
         };
+        SupplierInvoiceDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            supplierId: string;
+            supplierName: string;
+            /** Format: uuid */
+            purchaseOrderId: null | string;
+            purchaseOrderNumber: null | string;
+            /** Format: uuid */
+            stockDocumentId: null | string;
+            stockDocumentNumber: null | string;
+            number: string;
+            /** Format: date */
+            date: string;
+            /** Format: int64 */
+            amount: number;
+            /** Format: date */
+            dueDate: null | string;
+            /** Format: int64 */
+            paidAmount: number;
+            /** Format: int64 */
+            returnedAmount: number;
+            /** Format: int64 */
+            remaining: number;
+            status: components["schemas"]["SupplierInvoiceStatus"];
+            overdue: boolean;
+            /** Format: int32 */
+            daysOverdue: null | number;
+        };
+        /** @enum {unknown} */
+        SupplierInvoiceStatus: "Unpaid" | "PartiallyPaid" | "Paid";
         SupplierItemDto: {
             /** Format: uuid */
             itemId: string;
@@ -3187,6 +3885,22 @@ export interface components {
             supplierSku: null | string;
             /** Format: int64 */
             lastPrice: number;
+        };
+        SupplierPaymentRequest: {
+            /** Format: int64 */
+            amount: number;
+            /** Format: date */
+            date: null | string;
+            comment: null | string;
+        };
+        SupplierPriceDto: {
+            /** Format: uuid */
+            supplierId: string;
+            supplierName: string;
+            /** Format: int64 */
+            lastPrice: number;
+            /** Format: date-time */
+            lastPriceAt: null | string;
         };
         SupplierRequest: {
             name: string;
@@ -3275,6 +3989,22 @@ export interface components {
             logoUrl: null | string;
             settings: null | components["schemas"]["OrganizationSettings"];
         };
+        UpdatePurchaseOrderRequest: {
+            /** Format: uuid */
+            supplierId: null | string;
+            /** Format: uuid */
+            warehouseId: null | string;
+            /** Format: date */
+            expectedAt: null | string;
+            comment: null | string;
+            lines: null | components["schemas"]["PurchaseOrderLineInput"][];
+            /** Format: int32 */
+            version: null | number;
+        };
+        UpdatePurchaseRequestRequest: {
+            comment: null | string;
+            lines: null | components["schemas"]["PurchaseRequestLineInput"][];
+        };
         UpdateStaffRequest: {
             fullName: null | string;
             email: null | string;
@@ -3305,6 +4035,15 @@ export interface components {
             lines: null | components["schemas"]["StockLineInput"][];
             /** Format: int32 */
             version: null | number;
+        };
+        UpdateSupplierInvoiceRequest: {
+            number: null | string;
+            /** Format: date */
+            date: null | string;
+            /** Format: int64 */
+            amount: null | number;
+            /** Format: date */
+            dueDate: null | string;
         };
         UpdateVisitRequest: {
             /** Format: uuid */
@@ -7732,6 +8471,632 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StockDocumentDto"];
+                };
+            };
+        };
+    };
+    ListPurchaseRequests: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["PurchaseRequestStatus"];
+                branch_id?: string;
+                warehouse_id?: string;
+                source?: components["schemas"]["PurchaseRequestSource"];
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PagedResultOfPurchaseRequestListItem"];
+                };
+            };
+        };
+    };
+    CreatePurchaseRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePurchaseRequestRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurchaseRequestDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GeneratePurchaseRequests: {
+        parameters: {
+            query?: {
+                warehouse_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenerateRequestsResult"];
+                };
+            };
+        };
+    };
+    GetNetworkDemand: {
+        parameters: {
+            query?: {
+                central_warehouse_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NetworkDemandDto"];
+                };
+            };
+        };
+    };
+    ProcessPurchaseDemand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProcessDemandRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProcessDemandResult"];
+                };
+            };
+        };
+    };
+    GetPurchaseRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurchaseRequestDto"];
+                };
+            };
+        };
+    };
+    UpdatePurchaseRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePurchaseRequestRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurchaseRequestDto"];
+                };
+            };
+        };
+    };
+    SubmitPurchaseRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurchaseRequestDto"];
+                };
+            };
+        };
+    };
+    RejectPurchaseRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PurchaseRequestCommentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurchaseRequestDto"];
+                };
+            };
+        };
+    };
+    MarkPurchaseRequestProcessed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PurchaseRequestCommentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurchaseRequestDto"];
+                };
+            };
+        };
+    };
+    ListPurchaseOrders: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["PurchaseOrderStatus"];
+                supplier_id?: string;
+                warehouse_id?: string;
+                q?: string;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PagedResultOfPurchaseOrderListItem"];
+                };
+            };
+        };
+    };
+    CreatePurchaseOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePurchaseOrderRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurchaseOrderDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetPurchaseOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurchaseOrderDto"];
+                };
+            };
+        };
+    };
+    UpdatePurchaseOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePurchaseOrderRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurchaseOrderDto"];
+                };
+            };
+        };
+    };
+    SendPurchaseOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SendPurchaseOrderRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurchaseOrderDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    CancelPurchaseOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PurchaseOrderActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurchaseOrderDto"];
+                };
+            };
+        };
+    };
+    ReceivePurchaseOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockDocumentDto"];
+                };
+            };
+        };
+    };
+    ExportPurchaseOrder: {
+        parameters: {
+            query?: {
+                format?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ListSupplierInvoices: {
+        parameters: {
+            query?: {
+                supplier_id?: string;
+                status?: components["schemas"]["SupplierInvoiceStatus"];
+                overdue?: boolean;
+                purchase_order_id?: string;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PagedResultOfSupplierInvoiceDto"];
+                };
+            };
+        };
+    };
+    CreateSupplierInvoice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSupplierInvoiceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierInvoiceDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetSupplierInvoice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierInvoiceDto"];
+                };
+            };
+        };
+    };
+    UpdateSupplierInvoice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSupplierInvoiceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierInvoiceDto"];
+                };
+            };
+        };
+    };
+    PaySupplierInvoice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupplierPaymentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierInvoiceDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    SupplierDebts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierDebtsDto"];
                 };
             };
         };

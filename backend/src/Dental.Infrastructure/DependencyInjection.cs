@@ -78,6 +78,11 @@ public static class DependencyInjection
         services.AddScoped<Jobs.MarkNoShowsJob>();
         services.AddSingleton<Jobs.IRecurringJobDefinition>(new Jobs.RecurringJob<Jobs.SendRemindersJob>("send_reminders", "*/5 * * * *"));
         services.AddSingleton<Jobs.IRecurringJobDefinition>(new Jobs.RecurringJob<Jobs.MarkNoShowsJob>("mark_no_shows", "*/15 * * * *"));
+        services.AddScoped<Jobs.GenerateReplenishmentRequestsJob>();
+        // Ежедневно в 03:00 по часовому поясу организации: задача запускается ежечасно и обрабатывает организации, где сейчас 03:xx.
+        services.AddSingleton<Jobs.IRecurringJobDefinition>(new Jobs.RecurringJob<Jobs.GenerateReplenishmentRequestsJob>("generate_replenishment_requests", "5 * * * *"));
+
+        services.AddSingleton<Application.Common.ITableDocumentRenderer, Export.TableDocumentRenderer>();
 
         return services;
     }

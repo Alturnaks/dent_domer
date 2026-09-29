@@ -72,6 +72,7 @@ public class PurchaseOrder : TenantEntity, IVersioned
         if (Status is PurchaseOrderStatus.Cancelled or PurchaseOrderStatus.Draft or PurchaseOrderStatus.PendingApproval) return;
         if (Lines.Count > 0 && Lines.All(l => l.ReceivedQty >= l.Qty)) Status = PurchaseOrderStatus.Received;
         else if (Lines.Any(l => l.ReceivedQty > 0)) Status = PurchaseOrderStatus.PartiallyReceived;
+        else Status = PurchaseOrderStatus.Sent;
     }
 }
 
