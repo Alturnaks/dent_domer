@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Ban, MessageSquare, Star } from "lucide-react";
+import { AlertTriangle, Ban, MessageSquare, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { t } from "@/lib/i18n";
 import { STATUS_COLORS } from "@/lib/status";
@@ -21,6 +21,25 @@ export type GridColumn = {
 };
 
 export const PX_PER_MIN = 1.6;
+
+/**
+ * Запись больше не помещается в график врача (выходной, отпуск, изменённый график, блокировка),
+ * но осталась активной — её нужно перенести. Проверяются только будущие запланированные/подтверждённые записи.
+ */
+export function needsReschedule(a: Appointment, data: CalendarResponse, nowMs = Date.now()): boolean {
+  if (a.status !== "Scheduled" && a.status !== "Confirmed") return false;
+  const s = new Date(a.startsAt).getTime();
+  const e = new Date(a.endsAt).getTime();
+  if (e <= nowMs) return false;
+  const inWorking = data.working.some((w) => w.doctorId === a.doctorId && new Date(w.start).getTime() <= s && new Date(w.end).getTime() >= e);
+  if (!inWorking) return true;
+  return data.blocks.some(
+    (b) =>
+      (b.doctorId === a.doctorId || (b.doctorId === null && (b.chairId === null || b.chairId === a.chairId))) &&
+      new Date(b.startsAt).getTime() < e &&
+      new Date(b.endsAt).getTime() > s,
+  );
+}
 const SNAP = 15;
 
 type Positioned<T> = { item: T; top: number; height: number; lane: number; lanes: number };
@@ -257,6 +276,7 @@ export function CalendarGrid({
                 const dim = a.status === "Cancelled" || a.status === "NoShow";
                 const draggable = canMove && !!onDrop && (a.status === "Scheduled" || a.status === "Confirmed");
                 const compact = h < 34;
+                const misplaced = needsReschedule(a, data);
                 return (
                   <button
                     key={a.id}
@@ -283,6 +303,7 @@ export function CalendarGrid({
                       compact ? "py-0" : "py-0.5",
                       dim && "opacity-60",
                       draggable && "cursor-grab active:cursor-grabbing",
+                      misplaced && "outline-2 outline-dashed outline-destructive",
                     )}
                     style={{
                       top: top + 1,
@@ -293,9 +314,10 @@ export function CalendarGrid({
                       borderColor: c.border,
                       color: c.text,
                     }}
-                    title={`${hhmm(zoned(a.startsAt, tz).minutes)}–${hhmm(zoned(a.endsAt, tz).minutes)} ${a.patientName}\n${a.services.map((s) => s.name).join(", ")}${a.comment ? `\n${a.comment}` : ""}`}
+                    title={`${misplaced ? `${t("schedule.needsReschedule")}\n` : ""}${hhmm(zoned(a.startsAt, tz).minutes)}–${hhmm(zoned(a.endsAt, tz).minutes)} ${a.patientName}\n${a.services.map((s) => s.name).join(", ")}${a.comment ? `\n${a.comment}` : ""}`}
                   >
                     <div className={cn("flex items-center gap-1 text-[11px] leading-tight", compact && "leading-none")}>
+                      {misplaced ? <AlertTriangle className="h-3 w-3 shrink-0 text-destructive" /> : null}
                       <span className="shrink-0 tabular-nums opacity-80">{hhmm(zoned(a.startsAt, tz).minutes)}</span>
                       {a.patientIsVip ? <Star className="h-3 w-3 shrink-0 fill-current" /> : null}
                       <span className={cn("truncate font-semibold", dim && "line-through")}>{a.patientName}</span>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Ban, CalendarClock, ChevronLeft, ChevronRight, Plus, RefreshCw } from "lucide-react";
+import { AlertTriangle, Ban, CalendarClock, ChevronLeft, ChevronRight, Plus, RefreshCw } from "lucide-react";
 import { PageHeader, EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { Input, NativeSelect } from "@/components/ui/input";
@@ -13,12 +13,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useConfirm } from "@/components/ui/confirm";
-import { CalendarGrid, type GridColumn } from "@/components/schedule/calendar-grid";
+import { CalendarGrid, needsReschedule, type GridColumn } from "@/components/schedule/calendar-grid";
 import { AppointmentCreateDialog, type CreateInitial } from "@/components/schedule/appointment-create-dialog";
 import { AppointmentPanel } from "@/components/schedule/appointment-panel";
 import { TimeBlockDialog } from "@/components/schedule/time-block-dialog";
 import { WaitlistPanel, toWaitlistRequest } from "@/components/schedule/waitlist-panel";
 import { addDays, formatDayShort, formatDayTitle, hhmm, startOfWeek, todayIn, toIso, zoned } from "@/components/schedule/tz";
+import { formatDateTime } from "@/lib/format";
 import { api, ApiError } from "@/lib/api-client";
 import { useAuth, useBranch, useOrgHref } from "@/lib/auth";
 import { useBranches } from "@/lib/queries";
@@ -93,6 +94,10 @@ function ScheduleInner() {
   });
   const cal = view === "day" ? dayCal : weekCal;
   const data = cal.data;
+  const misplaced = React.useMemo(
+    () => (data ? data.appointments.filter((a) => needsReschedule(a, data)).sort((x, y) => x.startsAt.localeCompare(y.startsAt)) : []),
+    [data],
+  );
   const doctorsList = React.useMemo(() => resources.map((r) => ({ id: r.id, title: r.title })), [resources]);
 
   // Предзаполнение из карточки пациента: /schedule?patient=<id>
@@ -365,6 +370,28 @@ function ScheduleInner() {
                 ))}
             </div>
           </div>
+
+          {misplaced.length > 0 ? (
+            <div className="mb-3 rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm" data-testid="needs-reschedule">
+              <div className="mb-1 flex items-center gap-2 font-medium text-destructive">
+                <AlertTriangle className="h-4 w-4" />
+                {t("schedule.needsRescheduleTitle", { count: misplaced.length })}
+              </div>
+              <p className="mb-2 text-xs text-muted-foreground">{t("schedule.needsRescheduleHint")}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {misplaced.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    className="rounded-md border bg-card px-2 py-1 text-xs hover:bg-accent"
+                    onClick={() => setSelected(a)}
+                  >
+                    {formatDateTime(a.startsAt, tz)} · {a.patientName} · {a.doctorName}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
 
           {cal.isLoading || (view === "week" && resourcesQuery.isLoading) ? (
             <Skeleton className="h-[60vh] w-full" />
