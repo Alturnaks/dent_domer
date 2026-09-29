@@ -9,11 +9,25 @@ public sealed record AuditEntryDto(
     Guid Id, DateTimeOffset CreatedAt, Guid? UserId, string? UserName, Guid? BranchId, string EntityType, Guid? EntityId, string Action,
     JsonElement? Diff, string? Reason, string? Ip, bool IsSuspicious);
 
-public sealed record AuditQuery(string? EntityType, Guid? EntityId, Guid? UserId, bool? Suspicious, DateTimeOffset? From, DateTimeOffset? To, string? Cursor, int Limit = 50);
+public sealed record SuspiciousActionCount(string Action, int Count, DateTimeOffset LastAt);
+public sealed record SuspiciousSummaryDto(DateTimeOffset From, int Total, IReadOnlyList<SuspiciousActionCount> ByAction);
+
+public sealed record AuditQuery(string? EntityType, Guid? EntityId, Guid? UserId, bool? Suspicious, DateTimeOffset? From, DateTimeOffset? To, string? Cursor, int Limit = 50, string? Action = null);
 
 /// <summary>Журнал действий. Старший админ видит только свои филиалы; владелец — всё.</summary>
-public sealed class AuditQueryService(IAppDbContext db, ICurrentUser user)
+public sealed class AuditQueryService(IAppDbContext db, ICurrentUser user, TimeProvider clock)
 {
+    /// <summary>Сводка подозрительных событий за N дней по типам (для шапки экрана «Подозрительные»).</summary>
+    public async Task<SuspiciousSummaryDto> SuspiciousSummaryAsync(int days, CancellationToken ct)
+    {
+        var from = clock.GetUtcNow().AddDays(-Math.Clamp(days, 1, 365));
+        var query = db.AuditLogs.AsNoTracking().Where(a => a.IsSuspicious && a.CreatedAt >= from);
+        if (!user.AllBranches && user.RoleCode != RolePresets.Owner)
+            query = query.Where(a => a.BranchId == null || user.BranchIds.Contains(a.BranchId.Value));
+        var rows = await query.GroupBy(a => a.Action).Select(g => new SuspiciousActionCount(g.Key, g.Count(), g.Max(a => a.CreatedAt))).ToListAsync(ct);
+        return new SuspiciousSummaryDto(from, rows.Sum(r => r.Count), rows.OrderByDescending(r => r.Count).ThenBy(r => r.Action, StringComparer.Ordinal).ToList());
+    }
+
     public async Task<CursorPage<AuditEntryDto>> ListAsync(AuditQuery q, CancellationToken ct)
     {
         var limit = Math.Clamp(q.Limit, 1, 200);
@@ -21,6 +35,7 @@ public sealed class AuditQueryService(IAppDbContext db, ICurrentUser user)
         if (!string.IsNullOrWhiteSpace(q.EntityType)) query = query.Where(a => a.EntityType == q.EntityType);
         if (q.EntityId is { } eid) query = query.Where(a => a.EntityId == eid);
         if (q.UserId is { } uid) query = query.Where(a => a.UserId == uid);
+        if (!string.IsNullOrWhiteSpace(q.Action)) query = query.Where(a => a.Action == q.Action);
         if (q.Suspicious == true) query = query.Where(a => a.IsSuspicious);
         if (q.From is { } from) query = query.Where(a => a.CreatedAt >= from);
         if (q.To is { } to) query = query.Where(a => a.CreatedAt < to);

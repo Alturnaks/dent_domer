@@ -12,9 +12,12 @@ public static class AuditEndpoints
         var g = app.MapGroup("/api/v1").WithTags("Audit").RequireAuthorization();
         g.MapGet("/audit", async ([FromQuery(Name = "entity_type")] string? entityType, [FromQuery(Name = "entity_id")] Guid? entityId,
                 [FromQuery(Name = "user_id")] Guid? userId, bool? suspicious, DateTimeOffset? from, DateTimeOffset? to, string? cursor, int? limit,
-                AuditQueryService s, CancellationToken ct) =>
-                TypedResults.Ok(await s.ListAsync(new AuditQuery(entityType, entityId, userId, suspicious, from, to, cursor, limit ?? 50), ct)))
+                string? action, AuditQueryService s, CancellationToken ct) =>
+                TypedResults.Ok(await s.ListAsync(new AuditQuery(entityType, entityId, userId, suspicious, from, to, cursor, limit ?? 50, action), ct)))
             .RequirePermission(Perm.Audit.View).WithName("ListAudit");
+        g.MapGet("/audit/suspicious-summary", async (int? days, AuditQueryService s, CancellationToken ct) =>
+                TypedResults.Ok(await s.SuspiciousSummaryAsync(days ?? 7, ct)))
+            .RequirePermission(Perm.Audit.View).WithName("SuspiciousSummary");
 
         // История изменений карточки пациента — для всех, кто видит пациентов (без права на весь журнал).
         g.MapGet("/patients/{id:guid}/history", async (Guid id, string? cursor, AuditQueryService s, CancellationToken ct) =>

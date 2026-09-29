@@ -17,6 +17,7 @@ public sealed class AuthService(
     ITenantContext tenant,
     IMembershipCache membershipCache,
     IEmailSender email,
+    IAuditService audit,
     TimeProvider clock,
     ILogger<AuthService> logger)
 {
@@ -65,8 +66,42 @@ public sealed class AuthService(
         user.LastLoginAt = now;
         user.LastOrganizationId = org.OrganizationId;
 
+        tenant.Set(org.OrganizationId);
+        await TrackDeviceAsync(user, org, ip, userAgent, now, ct);
         return await IssueAsync(user, org, ip, userAgent, ct);
     }
+
+    /// <summary>
+    /// Известные устройства (отпечаток — хэш User-Agent). Вход с нового устройства вне рабочего времени филиалов сотрудника —
+    /// подозрительное событие (SPEC §8.8). Самое первое устройство пользователя считается точкой отсчёта и не помечается.
+    /// </summary>
+    private async Task TrackDeviceAsync(User user, UserOrganization org, string? ip, string? userAgent, DateTimeOffset now, CancellationToken ct)
+    {
+        var fingerprint = tokens.Hash("device:" + (string.IsNullOrWhiteSpace(userAgent) ? "unknown" : userAgent.Trim()));
+        var device = await db.UserDevices.FirstOrDefaultAsync(d => d.UserId == user.Id && d.Fingerprint == fingerprint, ct);
+        if (device is not null)
+        {
+            device.LastSeenAt = now;
+            return;
+        }
+        var hasKnown = await db.UserDevices.AnyAsync(d => d.UserId == user.Id, ct);
+        db.UserDevices.Add(new UserDevice { UserId = user.Id, Fingerprint = fingerprint, FirstSeenAt = now, LastSeenAt = now });
+        if (!hasKnown) return;
+
+        var orgEntity = await db.Organizations.AsNoTracking().FirstAsync(o => o.Id == org.OrganizationId, ct);
+        var tz = Schedule.ScheduleService.FindTz(orgEntity.Timezone);
+        var local = TimeZoneInfo.ConvertTime(now, tz);
+        var membership = await db.Memberships.AsNoTracking().FirstOrDefaultAsync(m => m.Id == org.MembershipId, ct);
+        var branches = await db.Branches.AsNoTracking().Where(b => b.DeletedAt == null && b.IsActive).ToListAsync(ct);
+        if (membership is { AllBranches: false }) branches = branches.Where(b => membership.BranchIds.Contains(b.Id)).ToList();
+        if (!Branch.IsOutsideWorkingHours(branches, orgEntity.Settings, local)) return;
+
+        audit.Log(nameof(User), user.Id, "login_new_device_off_hours",
+            new { userId = user.Id, user.FullName, ip, userAgent, localTime = local.ToString("dd.MM.yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture) },
+            $"{user.FullName}: вход с нового устройства в {local:HH:mm} (вне рабочего времени)", suspicious: true,
+            branchId: branches.Count == 1 ? branches[0].Id : null);
+    }
+
 
     public async Task<AuthTokens> RefreshAsync(string? refreshToken, string? ip, string? userAgent, CancellationToken ct)
     {

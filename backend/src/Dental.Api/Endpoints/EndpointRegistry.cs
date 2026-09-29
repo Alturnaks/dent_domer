@@ -17,6 +17,7 @@ public static class EndpointRegistry
         app.MapInventoryEndpoints();
         app.MapPurchasingEndpoints();
         app.MapAuditEndpoints();
+        app.MapPayrollEndpoints();
         return app;
     }
 }

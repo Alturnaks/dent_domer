@@ -50,6 +50,22 @@ public class Branch : TenantEntity, ISoftDeletable
     public WorkingHours WorkingHours { get; set; } = WorkingHours.Default();
     public bool IsActive { get; set; } = true;
     public DateTimeOffset? DeletedAt { get; set; }
+
+    /// <summary>
+    /// Момент (локальное время организации) вне рабочих часов всех указанных филиалов.
+    /// Без филиалов — часы организации по умолчанию. Используется для события «вход с нового устройства вне рабочего времени».
+    /// </summary>
+    public static bool IsOutsideWorkingHours(IReadOnlyCollection<Branch> branches, OrganizationSettings settings, DateTimeOffset local)
+    {
+        var time = TimeOnly.FromDateTime(local.DateTime);
+        if (branches.Count == 0) return time < settings.DefaultOpen || time >= settings.DefaultClose;
+        foreach (var b in branches)
+        {
+            var day = b.WorkingHours.For(local.DayOfWeek);
+            if (day is { IsWorking: true } && time >= day.Open && time < day.Close) return false;
+        }
+        return true;
+    }
 }
 
 /// <summary>Часы работы по дням недели (0 = воскресенье … 6 = суббота, как DayOfWeek).</summary>
