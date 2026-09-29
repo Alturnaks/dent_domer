@@ -7,6 +7,7 @@ using Dental.Domain.Cash;
 using Dental.Domain.Inventory;
 using Dental.Domain.Organizations;
 using Dental.Domain.Patients;
+using Dental.Domain.Payroll;
 using Dental.Domain.Scheduling;
 using Dental.Infrastructure;
 using Dental.Infrastructure.Persistence;
@@ -205,6 +206,26 @@ internal sealed partial class SeedContext(IServiceProvider sp, ILogger logger, C
             _db.Memberships.Add(m);
             Staff.Add((user, m));
             if (s.Pos == StaffPosition.Doctor) Doctors.Add((user, m));
+        }
+        // Схемы оплаты врачей — все 4 типа (SPEC §6.8), действуют с начала года.
+        var validFrom = new DateOnly(DateTime.UtcNow.Year, 1, 1);
+        var schemes = new (PayrollSchemeType Type, decimal Percent, long Fixed, long Shift)[]
+        {
+            (PayrollSchemeType.PercentRevenue, 30, 0, 0),
+            (PayrollSchemeType.PercentRevenueMinusMaterials, 40, 0, 0),
+            (PayrollSchemeType.FixedPlusPercent, 10, 150_000_00, 0),
+            (PayrollSchemeType.PerShift, 0, 0, 25_000_00),
+            (PayrollSchemeType.PercentRevenue, 25, 0, 0),
+            (PayrollSchemeType.PercentRevenueMinusMaterials, 35, 0, 0),
+        };
+        for (var i = 0; i < Doctors.Count && i < schemes.Length; i++)
+        {
+            var sc = schemes[i];
+            _db.PayrollSchemes.Add(new PayrollScheme
+            {
+                OrganizationId = Org.Id, MembershipId = Doctors[i].Membership.Id, Type = sc.Type, Percent = sc.Percent,
+                FixedAmount = sc.Fixed, ShiftRate = sc.Shift, ValidFrom = validFrom,
+            });
         }
         await _db.SaveChangesAsync(ct);
         logger.LogInformation("Seed: {Count} staff members", Staff.Count);

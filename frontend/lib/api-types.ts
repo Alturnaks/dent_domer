@@ -1764,6 +1764,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/audit/suspicious-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SuspiciousSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/patients/{id}/history": {
         parameters: {
             query?: never;
@@ -1772,6 +1788,134 @@ export interface paths {
             cookie?: never;
         };
         get: operations["PatientHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payroll-schemes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListPayrollSchemes"];
+        put?: never;
+        post: operations["SavePayrollScheme"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payroll-periods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListPayrollPeriods"];
+        put?: never;
+        post: operations["CreatePayrollPeriod"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payroll-periods/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetPayrollPeriod"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payroll-periods/{id}/calculate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CalculatePayrollPeriod"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payroll-periods/{id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ApprovePayrollPeriod"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payroll-periods/{id}/pay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["MarkPayrollPeriodPaid"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payroll-entries/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetPayrollEntry"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["UpdatePayrollEntry"];
+        trace?: never;
+    };
+    "/api/v1/payroll/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MyPayroll"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2154,6 +2298,14 @@ export interface components {
             /** Format: int64 */
             visitDebt: null | number;
         };
+        CreatePayrollPeriodRequest: {
+            /** Format: uuid */
+            branchId: string;
+            /** Format: date */
+            periodStart: string;
+            /** Format: date */
+            periodEnd: string;
+        };
         CreateStaffRequest: {
             fullName: string;
             email: null | string;
@@ -2496,6 +2648,45 @@ export interface components {
             /** Format: int32 */
             version: null | number;
         };
+        MyPayrollDto: {
+            /** Format: uuid */
+            membershipId: string;
+            doctorName: string;
+            onlyPaidVisits: boolean;
+            currentMonth: components["schemas"]["PayrollAccrualDto"];
+            periods: components["schemas"]["MyPayrollEntryDto"][];
+        };
+        MyPayrollEntryDto: {
+            /** Format: uuid */
+            entryId: string;
+            /** Format: uuid */
+            periodId: string;
+            branchName: string;
+            /** Format: date */
+            periodStart: string;
+            /** Format: date */
+            periodEnd: string;
+            status: components["schemas"]["PayrollPeriodStatus"];
+            scheme: null | components["schemas"]["PayrollSchemeSnapshot"];
+            /** Format: int32 */
+            visitsCount: number;
+            /** Format: int32 */
+            shifts: number;
+            /** Format: int64 */
+            baseRevenue: number;
+            /** Format: int64 */
+            materialsCost: number;
+            /** Format: int64 */
+            accrued: number;
+            /** Format: int64 */
+            bonus: number;
+            /** Format: int64 */
+            penalty: number;
+            /** Format: int64 */
+            total: number;
+            comment: null | string;
+            visits: components["schemas"]["PayrollVisitLine"][];
+        };
         NamedRefDto: {
             /** Format: uuid */
             id: string;
@@ -2761,6 +2952,156 @@ export interface components {
         };
         /** @enum {unknown} */
         PaymentType: "Payment" | "Refund" | "Advance";
+        PayrollAccrualDto: {
+            /** Format: date */
+            periodStart: string;
+            /** Format: date */
+            periodEnd: string;
+            scheme: null | components["schemas"]["PayrollSchemeSnapshot"];
+            /** Format: int32 */
+            visitsCount: number;
+            /** Format: int32 */
+            shifts: number;
+            /** Format: int64 */
+            baseRevenue: number;
+            /** Format: int64 */
+            materialsCost: number;
+            /** Format: int64 */
+            accrued: number;
+            visits: components["schemas"]["PayrollVisitLine"][];
+        };
+        PayrollEntryDetailDto: {
+            entry: components["schemas"]["PayrollEntryDto"];
+            workedDays: string[];
+            visits: components["schemas"]["PayrollVisitLine"][];
+        };
+        PayrollEntryDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            periodId: string;
+            /** Format: uuid */
+            membershipId: string;
+            doctorName: string;
+            scheme: null | components["schemas"]["PayrollSchemeSnapshot"];
+            /** Format: int32 */
+            visitsCount: number;
+            /** Format: int32 */
+            shifts: number;
+            /** Format: int64 */
+            baseRevenue: number;
+            /** Format: int64 */
+            materialsCost: number;
+            /** Format: int64 */
+            labCost: number;
+            /** Format: int64 */
+            accrued: number;
+            /** Format: int64 */
+            bonus: number;
+            /** Format: int64 */
+            penalty: number;
+            /** Format: int64 */
+            total: number;
+            comment: null | string;
+        };
+        PayrollPeriodDetailDto: {
+            period: components["schemas"]["PayrollPeriodDto"];
+            entries: components["schemas"]["PayrollEntryDto"][];
+            onlyPaidVisits: boolean;
+        };
+        PayrollPeriodDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            branchId: string;
+            branchName: string;
+            /** Format: date */
+            periodStart: string;
+            /** Format: date */
+            periodEnd: string;
+            status: components["schemas"]["PayrollPeriodStatus"];
+            /** Format: date-time */
+            approvedAt: null | string;
+            approvedByName: null | string;
+            /** Format: int32 */
+            entriesCount: number;
+            /** Format: int64 */
+            accruedTotal: number;
+            /** Format: int64 */
+            bonusTotal: number;
+            /** Format: int64 */
+            penaltyTotal: number;
+            /** Format: int64 */
+            total: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        /** @enum {unknown} */
+        PayrollPeriodStatus: "Draft" | "Approved" | "Paid";
+        PayrollSchemeDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            membershipId: string;
+            doctorName: string;
+            type: components["schemas"]["PayrollSchemeType"];
+            /** Format: double */
+            percent: number;
+            /** Format: int64 */
+            fixedAmount: number;
+            /** Format: int64 */
+            shiftRate: number;
+            /** Format: date */
+            validFrom: string;
+            isCurrent: boolean;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        PayrollSchemeRequest: {
+            /** Format: uuid */
+            membershipId: string;
+            type: components["schemas"]["PayrollSchemeType"];
+            /** Format: double */
+            percent: null | number;
+            /** Format: int64 */
+            fixedAmount: null | number;
+            /** Format: int64 */
+            shiftRate: null | number;
+            /** Format: date */
+            validFrom: string;
+        };
+        PayrollSchemeSnapshot: {
+            type: components["schemas"]["PayrollSchemeType"];
+            /** Format: double */
+            percent: number;
+            /** Format: int64 */
+            fixedAmount: number;
+            /** Format: int64 */
+            shiftRate: number;
+            /** Format: date */
+            validFrom: string;
+        };
+        /** @enum {unknown} */
+        PayrollSchemeType: "PercentRevenue" | "PercentRevenueMinusMaterials" | "FixedPlusPercent" | "PerShift";
+        PayrollVisitLine: {
+            /** Format: uuid */
+            visitId: string;
+            /** Format: date-time */
+            closedAt: string;
+            /** Format: date */
+            date: string;
+            /** Format: uuid */
+            patientId: string;
+            patientName: string;
+            services: string;
+            /** Format: int64 */
+            revenue: number;
+            /** Format: int64 */
+            materialsCost: number;
+            paid: boolean;
+        };
         PermissionGroupDto: {
             group: string;
             codes: string[];
@@ -3199,6 +3540,20 @@ export interface components {
             paymentTermsDays: null | number;
             notes: null | string;
         };
+        SuspiciousActionCount: {
+            action: string;
+            /** Format: int32 */
+            count: number;
+            /** Format: date-time */
+            lastAt: string;
+        };
+        SuspiciousSummaryDto: {
+            /** Format: date-time */
+            from: string;
+            /** Format: int32 */
+            total: number;
+            byAction: components["schemas"]["SuspiciousActionCount"][];
+        };
         SwitchOrgRequest: {
             /** Format: uuid */
             organizationId: string;
@@ -3274,6 +3629,13 @@ export interface components {
             timezone: null | string;
             logoUrl: null | string;
             settings: null | components["schemas"]["OrganizationSettings"];
+        };
+        UpdatePayrollEntryRequest: {
+            /** Format: int64 */
+            bonus: null | number;
+            /** Format: int64 */
+            penalty: null | number;
+            comment: null | string;
         };
         UpdateStaffRequest: {
             fullName: null | string;
@@ -7747,6 +8109,7 @@ export interface operations {
                 to?: string;
                 cursor?: string;
                 limit?: number;
+                action?: string;
             };
             header?: never;
             path?: never;
@@ -7761,6 +8124,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CursorPageOfAuditEntryDto"];
+                };
+            };
+        };
+    };
+    SuspiciousSummary: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SuspiciousSummaryDto"];
                 };
             };
         };
@@ -7785,6 +8170,282 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CursorPageOfAuditEntryDto"];
+                };
+            };
+        };
+    };
+    ListPayrollSchemes: {
+        parameters: {
+            query?: {
+                membership_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayrollSchemeDto"][];
+                };
+            };
+        };
+    };
+    SavePayrollScheme: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PayrollSchemeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayrollSchemeDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    ListPayrollPeriods: {
+        parameters: {
+            query?: {
+                branch_id?: string;
+                status?: components["schemas"]["PayrollPeriodStatus"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayrollPeriodDto"][];
+                };
+            };
+        };
+    };
+    CreatePayrollPeriod: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePayrollPeriodRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayrollPeriodDetailDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetPayrollPeriod: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayrollPeriodDetailDto"];
+                };
+            };
+        };
+    };
+    CalculatePayrollPeriod: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayrollPeriodDetailDto"];
+                };
+            };
+        };
+    };
+    ApprovePayrollPeriod: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayrollPeriodDetailDto"];
+                };
+            };
+        };
+    };
+    MarkPayrollPeriodPaid: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayrollPeriodDetailDto"];
+                };
+            };
+        };
+    };
+    GetPayrollEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayrollEntryDetailDto"];
+                };
+            };
+        };
+    };
+    UpdatePayrollEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePayrollEntryRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayrollEntryDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    MyPayroll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyPayrollDto"];
                 };
             };
         };

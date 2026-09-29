@@ -11,17 +11,18 @@ import { Input, NativeSelect } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableSkeleton } from "@/components/ui/skeleton";
 import { DiffView } from "@/components/audit/audit-list";
+import { auditActionName, auditEntityName, SuspiciousSummary } from "@/components/audit/suspicious-summary";
 import { api } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth";
 import { formatDateTime } from "@/lib/format";
-import { hasKey, t } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
 import { P } from "@/lib/permissions";
 import type { AuditEntry, CursorPage, Staff } from "@/lib/types";
 
-const ENTITY_TYPES = ["Visit", "Appointment", "Patient", "Payment", "CashShift", "Expense", "StockDocument", "Item", "Service", "PriceList", "Role", "Membership", "ApprovalRequest", "Organization", "Branch"];
+const ENTITY_TYPES = ["Visit", "Appointment", "Patient", "Payment", "CashShift", "Expense", "StockDocument", "Item", "Service", "PriceList", "Role", "Membership", "ApprovalRequest", "Organization", "Branch", "User", "PayrollScheme", "PayrollPeriod", "PayrollEntry"];
 
-const entityName = (e: string) => (hasKey(`audit.entities.${e}`) ? t(`audit.entities.${e}`) : e);
-const actionName = (a: string) => (hasKey(`audit.actions.${a}`) ? t(`audit.actions.${a}`) : a);
+const entityName = auditEntityName;
+const actionName = auditActionName;
 
 export default function AuditPage() {
   const { can } = useAuth();
@@ -30,12 +31,13 @@ export default function AuditPage() {
   const [from, setFrom] = React.useState("");
   const [to, setTo] = React.useState("");
   const [suspicious, setSuspicious] = React.useState(false);
+  const [action, setAction] = React.useState("");
   const allowed = can(P.auditView);
 
   const staff = useQuery({ queryKey: ["staff", "audit-filter"], queryFn: () => api<Staff[]>("/staff", { query: { include_fired: true } }), enabled: allowed, staleTime: 5 * 60_000 });
 
   const query = useInfiniteQuery({
-    queryKey: ["audit", entity, user, from, to, suspicious],
+    queryKey: ["audit", entity, user, from, to, suspicious, action],
     enabled: allowed,
     initialPageParam: null as string | null,
     queryFn: ({ pageParam }) =>
@@ -46,6 +48,7 @@ export default function AuditPage() {
           from: from ? new Date(`${from}T00:00:00`).toISOString() : undefined,
           to: to ? new Date(`${to}T23:59:59`).toISOString() : undefined,
           suspicious: suspicious || undefined,
+          action: action || undefined,
           cursor: pageParam ?? undefined,
           limit: 50,
         },
@@ -69,11 +72,19 @@ export default function AuditPage() {
     setFrom("");
     setTo("");
     setSuspicious(false);
+    setAction("");
   };
 
   return (
     <div>
       <PageHeader title={t("audit.title")} description={t("audit.description")} />
+      <SuspiciousSummary
+        active={action}
+        onPick={(a) => {
+          setAction(a);
+          if (a) setSuspicious(true);
+        }}
+      />
       <Card className="mb-3 flex flex-wrap items-center gap-3 p-3">
         <NativeSelect className="w-48" value={entity} onChange={(e) => setEntity(e.target.value)} aria-label={t("audit.entity")}>
           <option value="">{t("audit.allEntities")}</option>

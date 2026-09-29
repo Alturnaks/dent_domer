@@ -49,6 +49,7 @@ public static class ErrorCodes
     public const string PriceNotFound = "PRICE_NOT_FOUND";
     public const string DiscountInvalid = "DISCOUNT_INVALID";
     public const string PayrollPeriodLocked = "PAYROLL_PERIOD_LOCKED";
+    public const string PayrollPeriodOverlap = "PAYROLL_PERIOD_OVERLAP";
 
     public const string ShiftNotOpen = "SHIFT_NOT_OPEN";
     public const string ShiftAlreadyOpen = "SHIFT_ALREADY_OPEN";

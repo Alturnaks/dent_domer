@@ -363,7 +363,9 @@ public sealed class VisitService(
     private async Task<bool> IsPayrollLockedAsync(Visit v, CancellationToken ct)
     {
         if (v.ClosedAt is null) return false;
-        var date = DateOnly.FromDateTime(v.ClosedAt.Value.UtcDateTime);
+        // Визит относится к периоду зарплаты по дате закрытия в часовом поясе организации (как в PayrollService).
+        var tz = ScheduleService.FindTz(await db.Organizations.AsNoTracking().Select(o => o.Timezone).FirstAsync(ct));
+        var date = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(v.ClosedAt.Value, tz).DateTime);
         return await db.PayrollPeriods.AnyAsync(p => p.BranchId == v.BranchId && p.Status != PayrollPeriodStatus.Draft && p.PeriodStart <= date && p.PeriodEnd >= date, ct);
     }
 

@@ -27,6 +27,7 @@ public static class SuspiciousTitles
     public static string For(string action) => action switch
     {
         "closed_visit_edit" => "Изменён закрытый визит",
+        "closed_visit_edit_requested" => "Запрошено изменение закрытого визита",
         "discount_over_limit" => "Скидка выше лимита роли",
         "payment_refund" => "Возврат платежа",
         "writeoff_large" => "Крупное ручное списание",
@@ -34,6 +35,7 @@ public static class SuspiciousTitles
         "cash_difference" => "Расхождение кассы при закрытии смены",
         "login_new_device_off_hours" => "Вход с нового устройства вне рабочего времени",
         "visit_cancel_closed" => "Отменён закрытый визит",
+        "storno" => "Сторно складского документа",
         _ => "Подозрительное действие",
     };
 }
