@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import { ShieldX } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
+import { NAV, can } from "@/lib/permissions";
+import { t } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { AppShell } from "@/components/layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +14,7 @@ export default function OrgLayout({ children }: { children: React.ReactNode }) {
   const { status, me, switchOrg } = useAuth();
   const params = useParams<{ orgSlug: string }>();
   const router = useRouter();
+  const pathname = usePathname();
 
   React.useEffect(() => {
     if (status === "anonymous") router.replace("/login");
@@ -36,5 +41,13 @@ export default function OrgLayout({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-  return <AppShell>{children}</AppShell>;
+  // Раздел из меню без нужных прав — показываем «нет доступа» вместо пустой страницы с ошибками API.
+  const section = pathname.split("/").slice(2).join("/");
+  const navItem = [...NAV].sort((a, b) => b.href.length - a.href.length).find((n) => section === n.href || section.startsWith(`${n.href}/`));
+  const forbidden = navItem && !can(me.permissions, ...navItem.anyOf);
+  return (
+    <AppShell>
+      {forbidden ? <EmptyState icon={<ShieldX className="h-8 w-8" />} title={t("errors.FORBIDDEN")} /> : children}
+    </AppShell>
+  );
 }

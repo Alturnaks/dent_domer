@@ -127,6 +127,12 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options, ITenant
                 modelBuilder.Entity(clr).HasIndex(nameof(ITenantEntity.OrganizationId));
             }
 
+            // Id задаётся в коде (Guid v7): без этого новая сущность, добавленная через навигацию
+            // (v.Items.Add(...)), считается существующей и EF делает UPDATE вместо INSERT.
+            var key = entityType.FindPrimaryKey();
+            if (key is { Properties.Count: 1 } && key.Properties[0].ClrType == typeof(Guid))
+                key.Properties[0].ValueGenerated = Microsoft.EntityFrameworkCore.Metadata.ValueGenerated.Never;
+
             if (typeof(IVersioned).IsAssignableFrom(clr))
             {
                 modelBuilder.Entity(clr).Property(nameof(IVersioned.Version)).IsConcurrencyToken();

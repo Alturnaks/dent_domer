@@ -23,6 +23,7 @@ public static class DatabaseBootstrap
             SELECT c.table_name FROM information_schema.columns c
             JOIN information_schema.tables tb ON tb.table_schema = c.table_schema AND tb.table_name = c.table_name
             WHERE c.table_schema = 'public' AND c.column_name = 'organization_id' AND tb.table_type = 'BASE TABLE'
+              AND c.table_name NOT IN ('refresh_tokens')
           LOOP
             EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', t.table_name);
             EXECUTE format('DROP POLICY IF EXISTS tenant_isolation ON %I', t.table_name);
@@ -31,6 +32,10 @@ public static class DatabaseBootstrap
                 WITH CHECK (organization_id = NULLIF(current_setting('app.org_id', true), '')::uuid)$p$, t.table_name);
           END LOOP;
         END $$;
+
+        -- refresh_tokens — глобальная таблица аутентификации (обновление сессии идёт до выбора организации).
+        DROP POLICY IF EXISTS tenant_isolation ON refresh_tokens;
+        ALTER TABLE refresh_tokens DISABLE ROW LEVEL SECURITY;
 
         ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
         DROP POLICY IF EXISTS tenant_isolation ON organizations;

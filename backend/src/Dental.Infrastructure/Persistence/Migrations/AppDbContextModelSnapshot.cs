@@ -151,7 +151,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Audit.MessageTemplate", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -212,7 +211,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Audit.Notification", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -284,7 +282,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Audit.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -334,7 +331,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Audit.OutgoingMessage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -421,7 +417,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Audit.ReportSubscription", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -492,7 +487,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Audit.SavedReportFilter", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -549,7 +543,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Cash.CashOperation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -606,7 +599,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Cash.CashRegister", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -659,7 +651,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Cash.CashShift", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -754,7 +745,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Cash.Expense", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -830,7 +820,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Cash.ExpenseCategory", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -882,7 +871,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Cash.Payment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -991,7 +979,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Catalog.PriceList", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1052,7 +1039,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Catalog.PriceListItem", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1107,7 +1093,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Catalog.Service", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1177,7 +1162,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Catalog.ServiceCategory", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1234,7 +1218,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Catalog.TechCard", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1286,7 +1269,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Catalog.TechCardItem", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1338,7 +1320,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Inventory.Batch", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1407,7 +1388,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Inventory.Item", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1501,7 +1481,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Inventory.ItemCategory", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1551,7 +1530,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Inventory.ItemStockLevel", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1609,7 +1587,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Inventory.ItemUnit", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1663,7 +1640,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Inventory.StockBalance", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1733,7 +1709,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Inventory.StockDocument", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1871,7 +1846,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Inventory.StockDocumentLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -1972,7 +1946,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Inventory.StockMovement", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2064,7 +2037,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Inventory.Warehouse", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2136,7 +2108,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Inventory.WriteoffReason", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2188,7 +2159,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Organizations.ApprovalRequest", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2286,7 +2256,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Organizations.Branch", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2345,7 +2314,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Organizations.Chair", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2433,7 +2401,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Organizations.Membership", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2520,7 +2487,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Organizations.Organization", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2589,7 +2555,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Organizations.PasswordResetToken", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2631,7 +2596,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Organizations.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2691,7 +2655,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Organizations.Role", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2752,7 +2715,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Organizations.Room", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2805,7 +2767,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Organizations.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2884,7 +2845,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Organizations.UserDevice", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2919,7 +2879,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Patients.LeadSource", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -2965,7 +2924,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Patients.Patient", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3088,7 +3046,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Patients.PatientBalance", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3136,7 +3093,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Patients.PatientConsent", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3194,7 +3150,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Payroll.PayrollEntry", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3279,7 +3234,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Payroll.PayrollPeriod", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3341,7 +3295,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Payroll.PayrollScheme", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3407,7 +3360,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Purchasing.PurchaseOrder", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3492,7 +3444,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Purchasing.PurchaseOrderLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3553,7 +3504,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Purchasing.PurchaseRequest", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3613,7 +3563,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Purchasing.PurchaseRequestLine", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3680,7 +3629,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Purchasing.Supplier", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3759,7 +3707,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Purchasing.SupplierInvoice", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3842,7 +3789,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Purchasing.SupplierItem", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -3906,7 +3852,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Scheduling.Appointment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -4034,7 +3979,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Scheduling.AppointmentService", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -4092,7 +4036,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Scheduling.CancelReason", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -4144,7 +4087,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Scheduling.DoctorSchedule", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -4218,7 +4160,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Scheduling.ScheduleException", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -4291,7 +4232,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Scheduling.TimeBlock", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -4355,7 +4295,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Scheduling.WaitlistEntry", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -4435,7 +4374,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Visits.Visit", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -4570,7 +4508,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Visits.VisitItem", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -4654,7 +4591,6 @@ namespace Dental.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Dental.Domain.Visits.VisitMaterialUsage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
