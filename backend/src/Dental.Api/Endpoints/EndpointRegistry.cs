@@ -15,6 +15,7 @@ public static class EndpointRegistry
         app.MapVisitEndpoints();
         app.MapCashEndpoints();
         app.MapInventoryEndpoints();
+        app.MapPurchasingEndpoints();
         app.MapAuditEndpoints();
         return app;
     }
