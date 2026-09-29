@@ -1,6 +1,7 @@
 using Dental.Application.Auth;
 using Dental.Application.Common;
 using Dental.Application.Permissions;
+using Dental.Application.Schedule;
 using Dental.Domain.Cash;
 using Dental.Domain.Inventory;
 using Dental.Domain.Organizations;
@@ -15,12 +16,12 @@ public sealed record OrgDto(Guid Id, string Name, string Slug, string Timezone, 
 public sealed record UpdateOrgRequest(string? Name, string? Timezone, string? LogoUrl, OrganizationSettings? Settings);
 
 public sealed record BranchDto(Guid Id, string Name, string? Address, string? Phone, bool IsActive, WorkingHours WorkingHours);
-public sealed record BranchRequest(string Name, string? Address, string? Phone, bool? IsActive, WorkingHours? WorkingHours);
+public sealed record BranchRequest(string Name, string? Address, string? Phone, bool? IsActive, WorkingHours? WorkingHours, AffectedAppointmentsAction? OnConflict = null);
 
 public sealed record RoomDto(Guid Id, Guid BranchId, string Name);
 public sealed record RoomRequest(string Name);
 public sealed record ChairDto(Guid Id, Guid BranchId, Guid? RoomId, string Name, bool IsActive);
-public sealed record ChairRequest(string Name, Guid? RoomId, bool? IsActive);
+public sealed record ChairRequest(string Name, Guid? RoomId, bool? IsActive, AffectedAppointmentsAction? OnConflict = null);
 
 public sealed record StaffDto(
     Guid MembershipId, Guid UserId, string FullName, string? Email, string? Phone, Guid RoleId, string RoleName, string RoleCode,
@@ -30,7 +31,7 @@ public sealed record CreateStaffRequest(
     bool AllBranches, IReadOnlyList<Guid>? BranchIds);
 public sealed record UpdateStaffRequest(
     string? FullName, string? Email, string? Phone, string? Password, Guid? RoleId, StaffPosition? Position, string? Specialty, string? Color,
-    bool? AllBranches, IReadOnlyList<Guid>? BranchIds);
+    bool? AllBranches, IReadOnlyList<Guid>? BranchIds, AffectedAppointmentsAction? OnConflict = null);
 
 public sealed record RoleDto(Guid Id, string Name, string Code, bool IsPreset, IReadOnlyList<string> Permissions, RoleLimits Limits, int MembersCount);
 public sealed record RoleRequest(string Name, IReadOnlyList<string> Permissions, RoleLimits Limits);
@@ -90,7 +91,8 @@ public sealed class OrgService(
     IPasswordHashing hashing,
     IMembershipCache membershipCache,
     IAuditService audit,
-    TimeProvider clock)
+    TimeProvider clock,
+    ScheduleImpactService impact)
 {
     // Организация
     public async Task<OrgDto> GetOrgAsync(CancellationToken ct)
@@ -154,8 +156,8 @@ public sealed class OrgService(
         b.Phone = r.Phone.NullIfEmpty();
         if (r.IsActive is not null) b.IsActive = r.IsActive.Value;
         if (r.WorkingHours is not null) b.WorkingHours = r.WorkingHours;
-        await db.SaveChangesAsync(ct);
-        return ToDto(b);
+        return await impact.ApplyAsync(async () => { await db.SaveChangesAsync(ct); return ToDto(b); },
+            _ => new ImpactScope(null, b.Id, null, clock.GetUtcNow(), null), r.OnConflict, b.IsActive ? "Изменение филиала" : "Филиал закрыт", ct);
     }
 
     public async Task<IReadOnlyList<RoomDto>> ListRoomsAsync(Guid branchId, CancellationToken ct)
@@ -200,8 +202,8 @@ public sealed class OrgService(
         c.Name = r.Name.Trim();
         c.RoomId = r.RoomId;
         if (r.IsActive is not null) c.IsActive = r.IsActive.Value;
-        await db.SaveChangesAsync(ct);
-        return new ChairDto(c.Id, c.BranchId, c.RoomId, c.Name, c.IsActive);
+        return await impact.ApplyAsync(async () => { await db.SaveChangesAsync(ct); return new ChairDto(c.Id, c.BranchId, c.RoomId, c.Name, c.IsActive); },
+            _ => new ImpactScope(null, c.BranchId, c.Id, clock.GetUtcNow(), null), r.OnConflict, $"Кресло «{c.Name}» отключено", ct);
     }
 
     // Сотрудники
@@ -302,19 +304,22 @@ public sealed class OrgService(
         if (r.Color is not null) m.Color = r.Color.NullIfEmpty();
         if (r.AllBranches is not null) m.AllBranches = r.AllBranches.Value;
         if (r.BranchIds is not null) m.BranchIds = r.BranchIds.Distinct().ToList();
-        await db.SaveChangesAsync(ct);
+        await impact.ApplyAsync(() => db.SaveChangesAsync(ct), new ImpactScope([m.Id], null, null, clock.GetUtcNow(), null), r.OnConflict,
+            $"Изменение филиалов сотрудника {u.FullName}", ct);
         await membershipCache.InvalidateAsync(u.Id, m.OrganizationId, ct);
         return await GetStaffAsync(m.Id, ct);
     }
 
     /// <summary>Увольнение: доступ пропадает немедленно (кэш прав сброшен, refresh-токены отозваны).</summary>
-    public async Task<StaffDto> FireStaffAsync(Guid membershipId, CancellationToken ct)
+    public async Task<StaffDto> FireStaffAsync(Guid membershipId, AffectedAppointmentsAction? onConflict, CancellationToken ct)
     {
         var m = await db.Memberships.GetOrThrowAsync(membershipId, "Сотрудник", ct);
         if (m.UserId == user.UserId) throw AppException.BadRequest(ErrorCodes.ValidationFailed, "Нельзя уволить самого себя");
+        var name = await db.Users.Where(x => x.Id == m.UserId).Select(x => x.FullName).FirstAsync(ct);
         m.IsActive = false;
         m.FiredAt = clock.GetUtcNow();
-        await db.SaveChangesAsync(ct);
+        await impact.ApplyAsync(() => db.SaveChangesAsync(ct), new ImpactScope([m.Id], null, null, clock.GetUtcNow(), null), onConflict,
+            $"Увольнение сотрудника {name}", ct);
         await AuthService.RevokeAllAsync(db, m.UserId, m.OrganizationId, clock.GetUtcNow(), ct);
         await membershipCache.InvalidateAsync(m.UserId, m.OrganizationId, ct);
         return await GetStaffAsync(m.Id, ct);

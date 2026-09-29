@@ -17,7 +17,8 @@ public sealed class ScheduleService(
     CatalogService catalog,
     TimeProvider clock,
     IEnumerable<IAppointmentArrivalHandler> arrivalHandlers,
-    IEnumerable<IReminderSender> reminderSenders)
+    IEnumerable<IReminderSender> reminderSenders,
+    ScheduleImpactService impact)
 {
     // ---------- Общие ----------
     public async Task<(TimeZoneInfo Tz, Organization Org)> OrgTimeAsync(CancellationToken ct)
@@ -68,29 +69,38 @@ public sealed class ScheduleService(
         var s = await db.DoctorSchedules.GetOrThrowAsync(id, "График", ct);
         user.EnsureBranchAccess(s.BranchId);
         user.EnsureBranchAccess(r.BranchId);
-        s.BranchId = r.BranchId;
-        s.Weekday = r.Weekday;
-        s.StartTime = r.StartTime;
-        s.EndTime = r.EndTime;
-        s.ChairId = r.ChairId;
-        if (r.ValidFrom is not null) s.ValidFrom = r.ValidFrom.Value;
-        s.ValidTo = r.ValidTo;
-        await db.SaveChangesAsync(ct);
-        return ToDto(s);
+        var oldBranch = s.BranchId;
+        var (tz, _) = await OrgTimeAsync(ct);
+        return await impact.ApplyAsync(async () =>
+        {
+            s.BranchId = r.BranchId;
+            s.Weekday = r.Weekday;
+            s.StartTime = r.StartTime;
+            s.EndTime = r.EndTime;
+            s.ChairId = r.ChairId;
+            if (r.ValidFrom is not null) s.ValidFrom = r.ValidFrom.Value;
+            s.ValidTo = r.ValidTo;
+            await db.SaveChangesAsync(ct);
+            return ToDto(s);
+        }, _ => new ImpactScope([s.MembershipId], oldBranch == r.BranchId ? r.BranchId : null, null, clock.GetUtcNow(), null),
+            r.OnConflict, "Изменение графика врача", ct);
     }
 
     /// <summary>
     /// Удаление строки шаблона: графики не удаляются физически, а закрываются датой (valid_to = вчера),
     /// чтобы отчёт о загрузке за прошлые периоды оставался корректным.
     /// </summary>
-    public async Task DeleteScheduleAsync(Guid id, CancellationToken ct)
+    public async Task DeleteScheduleAsync(Guid id, AffectedAppointmentsAction? onConflict, CancellationToken ct)
     {
         var s = await db.DoctorSchedules.GetOrThrowAsync(id, "График", ct);
         user.EnsureBranchAccess(s.BranchId);
         var (tz, _) = await OrgTimeAsync(ct);
         var today = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(clock.GetUtcNow(), tz).DateTime);
-        s.ValidTo = today.AddDays(-1) < s.ValidFrom ? s.ValidFrom.AddDays(-1) : today.AddDays(-1);
-        await db.SaveChangesAsync(ct);
+        await impact.ApplyAsync(async () =>
+        {
+            s.ValidTo = today.AddDays(-1) < s.ValidFrom ? s.ValidFrom.AddDays(-1) : today.AddDays(-1);
+            await db.SaveChangesAsync(ct);
+        }, new ImpactScope([s.MembershipId], s.BranchId, null, clock.GetUtcNow(), null), onConflict, "Удаление смены из графика врача", ct);
     }
 
     /// <summary>Замена недельного шаблона: действующие строки закрываются, создаются новые с даты validFrom.</summary>
@@ -99,15 +109,19 @@ public sealed class ScheduleService(
         user.EnsureBranchAccess(r.BranchId);
         var (tz, _) = await OrgTimeAsync(ct);
         var from = r.ValidFrom ?? DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(clock.GetUtcNow(), tz).DateTime);
-        var current = await db.DoctorSchedules.Where(s => s.MembershipId == r.MembershipId && s.BranchId == r.BranchId && (s.ValidTo == null || s.ValidTo >= from)).ToListAsync(ct);
-        foreach (var s in current) s.ValidTo = from.AddDays(-1) < s.ValidFrom ? s.ValidFrom.AddDays(-1) : from.AddDays(-1);
-        var created = r.Days.Select(d => new DoctorSchedule
+        var fromUtc = new DateTimeOffset(from.ToDateTime(TimeOnly.MinValue), tz.GetUtcOffset(from.ToDateTime(TimeOnly.MinValue)));
+        return await impact.ApplyAsync(async () =>
         {
-            MembershipId = r.MembershipId, BranchId = r.BranchId, Weekday = d.Weekday, StartTime = d.StartTime, EndTime = d.EndTime, ChairId = d.ChairId, ValidFrom = from,
-        }).ToList();
-        db.DoctorSchedules.AddRange(created);
-        await db.SaveChangesAsync(ct);
-        return created.Select(ToDto).ToList();
+            var current = await db.DoctorSchedules.Where(s => s.MembershipId == r.MembershipId && s.BranchId == r.BranchId && (s.ValidTo == null || s.ValidTo >= from)).ToListAsync(ct);
+            foreach (var s in current) s.ValidTo = from.AddDays(-1) < s.ValidFrom ? s.ValidFrom.AddDays(-1) : from.AddDays(-1);
+            var created = r.Days.Select(d => new DoctorSchedule
+            {
+                MembershipId = r.MembershipId, BranchId = r.BranchId, Weekday = d.Weekday, StartTime = d.StartTime, EndTime = d.EndTime, ChairId = d.ChairId, ValidFrom = from,
+            }).ToList();
+            db.DoctorSchedules.AddRange(created);
+            await db.SaveChangesAsync(ct);
+            return (IReadOnlyList<DoctorScheduleDto>)created.Select(ToDto).ToList();
+        }, _ => new ImpactScope([r.MembershipId], r.BranchId, null, fromUtc, null), r.OnConflict, "Изменение графика врача", ct);
     }
 
     public async Task<IReadOnlyList<ScheduleExceptionDto>> ListExceptionsAsync(Guid? doctorId, DateOnly? from, DateOnly? to, CancellationToken ct)
@@ -123,14 +137,46 @@ public sealed class ScheduleService(
     public async Task<ScheduleExceptionDto> CreateExceptionAsync(ScheduleExceptionRequest r, CancellationToken ct)
     {
         if (r.BranchId is { } b) user.EnsureBranchAccess(b);
+        if (r.DateTo < r.DateFrom) throw AppException.BadRequest(ErrorCodes.InvalidTimeRange, "Дата окончания раньше начала");
+        var (tz, _) = await OrgTimeAsync(ct);
         var e = new ScheduleException
         {
             MembershipId = r.MembershipId, BranchId = r.BranchId, DateFrom = r.DateFrom, DateTo = r.DateTo, Type = r.Type,
             StartTime = r.StartTime, EndTime = r.EndTime, Comment = r.Comment.NullIfEmpty(),
         };
-        db.ScheduleExceptions.Add(e);
-        await db.SaveChangesAsync(ct);
-        return ToDto(e);
+        var title = r.Type switch
+        {
+            ScheduleExceptionType.Vacation => "Отпуск врача",
+            ScheduleExceptionType.Sick => "Больничный врача",
+            ScheduleExceptionType.DayOff => "Выходной врача",
+            _ => "Изменение графика врача",
+        };
+        return await impact.ApplyAsync(async () =>
+        {
+            db.ScheduleExceptions.Add(e);
+            await db.SaveChangesAsync(ct);
+            return ToDto(e);
+        }, _ => new ImpactScope([r.MembershipId], null, null, LocalDayStart(r.DateFrom, tz), LocalDayStart(r.DateTo.AddDays(1), tz)), r.OnConflict, title, ct);
+    }
+
+    /// <summary>Удаление исключения (ошибочно внесённый отпуск/выходной). Удаление доп. смены проверяет записи на ней.</summary>
+    public async Task DeleteExceptionAsync(Guid id, AffectedAppointmentsAction? onConflict, CancellationToken ct)
+    {
+        var e = await db.ScheduleExceptions.GetOrThrowAsync(id, "Исключение графика", ct);
+        if (e.BranchId is { } b) user.EnsureBranchAccess(b);
+        var (tz, _) = await OrgTimeAsync(ct);
+        audit.Log(nameof(ScheduleException), e.Id, "delete", new { e.MembershipId, e.DateFrom, e.DateTo, e.Type, e.StartTime, e.EndTime, e.Comment }, branchId: e.BranchId);
+        await impact.ApplyAsync(async () =>
+        {
+            db.ScheduleExceptions.Remove(e);
+            await db.SaveChangesAsync(ct);
+        }, new ImpactScope([e.MembershipId], null, null, LocalDayStart(e.DateFrom, tz), LocalDayStart(e.DateTo.AddDays(1), tz)), onConflict, "Удаление доп. смены врача", ct);
+    }
+
+    private static DateTimeOffset LocalDayStart(DateOnly date, TimeZoneInfo tz)
+    {
+        var dt = date.ToDateTime(TimeOnly.MinValue);
+        return new DateTimeOffset(dt, tz.GetUtcOffset(dt)).ToUniversalTime();
     }
 
     public async Task<IReadOnlyList<TimeBlockDto>> ListBlocksAsync(Guid branchId, DateTimeOffset from, DateTimeOffset to, CancellationToken ct)
@@ -144,9 +190,13 @@ public sealed class ScheduleService(
     {
         user.EnsureBranchAccess(r.BranchId);
         var b = new TimeBlock { BranchId = r.BranchId, DoctorId = r.DoctorId, ChairId = r.ChairId, StartsAt = r.StartsAt.ToUniversalTime(), EndsAt = r.EndsAt.ToUniversalTime(), Reason = r.Reason.NullIfEmpty() };
-        db.TimeBlocks.Add(b);
-        await db.SaveChangesAsync(ct);
-        return ToDto(b);
+        return await impact.ApplyAsync(async () =>
+        {
+            db.TimeBlocks.Add(b);
+            await db.SaveChangesAsync(ct);
+            return ToDto(b);
+        }, _ => new ImpactScope(r.DoctorId is { } d && r.ChairId is null ? [d] : null, r.BranchId, null, b.StartsAt, b.EndsAt), r.OnConflict,
+            "Блокировка времени" + (b.Reason is null ? "" : $" ({b.Reason})"), ct);
     }
 
     /// <summary>Блокировки — служебные отметки; удаление снимает блокировку (фиксируется в аудите).</summary>
@@ -174,6 +224,14 @@ public sealed class ScheduleService(
         var working = await WorkingIntervalsAsync(doctorId, branchId, date, tz, ct);
         var ok = SlotCalculator.IsWithinWorkingTime(new TimeRange(start, end), working);
         if (ok) return;
+
+        // Отпуск, больничный или выходной — запись невозможна даже «вне графика».
+        var absence = await AbsenceAsync(doctorId, start, end, tz, ct);
+        if (absence is not null)
+        {
+            throw new AppException(ErrorCodes.DoctorNotWorking, $"Врач отсутствует: {absence}", 422,
+                new Dictionary<string, object?> { ["working"] = working.Select(w => new { start = w.Start, end = w.End }).ToList(), ["canForce"] = false, ["absence"] = absence });
+        }
         if (force && user.Has(Perm.Schedule.DoctorSchedulesManage))
         {
             audit.Log(nameof(Appointment), null, "force_outside_schedule", new { doctorId, start, end }, "Запись вне графика врача (force)", branchId: branchId);
@@ -181,6 +239,31 @@ public sealed class ScheduleService(
         }
         throw new AppException(ErrorCodes.DoctorNotWorking, "Врач не работает в это время по графику", 422,
             new Dictionary<string, object?> { ["working"] = working.Select(w => new { start = w.Start, end = w.End }).ToList(), ["canForce"] = user.Has(Perm.Schedule.DoctorSchedulesManage) });
+    }
+
+    private async Task<string?> AbsenceAsync(Guid doctorId, DateTimeOffset start, DateTimeOffset end, TimeZoneInfo tz, CancellationToken ct)
+    {
+        var d1 = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(start, tz).DateTime);
+        var d2 = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(end, tz).DateTime);
+        var list = await db.ScheduleExceptions.AsNoTracking()
+            .Where(e => e.MembershipId == doctorId && e.Type != ScheduleExceptionType.ExtraShift && e.DateFrom <= d2 && e.DateTo >= d1).ToListAsync(ct);
+        foreach (var e in list)
+        {
+            if (e.StartTime is { } st && e.EndTime is { } et)
+            {
+                var day = e.DateFrom > d1 ? e.DateFrom : d1;
+                var dt1 = day.ToDateTime(st); var dt2 = day.ToDateTime(et);
+                var from = new DateTimeOffset(dt1, tz.GetUtcOffset(dt1)); var to = new DateTimeOffset(dt2, tz.GetUtcOffset(dt2));
+                if (!(from < end && to > start)) continue;
+            }
+            return e.Type switch
+            {
+                ScheduleExceptionType.Vacation => "отпуск",
+                ScheduleExceptionType.Sick => "больничный",
+                _ => "выходной",
+            } + (e.Comment is null ? "" : $" ({e.Comment})");
+        }
+        return null;
     }
 
     // ---------- Записи ----------
@@ -423,7 +506,17 @@ public sealed class ScheduleService(
         }
         else
         {
-            resources = doctors.Select(d => new CalendarResource(d.Id, d.FullName, d.Color, "doctor", d.Specialty)).ToList();
+            var list = doctors.Select(d => new CalendarResource(d.Id, d.FullName, d.Color, "doctor", d.Specialty)).ToList();
+            // Записи уволенных/переведённых врачей не должны «пропадать» из календаря — показываем их отдельной колонкой.
+            var orphanIds = appointments.Where(a => a.Status is AppointmentStatus.Scheduled or AppointmentStatus.Confirmed && !docIds.Contains(a.DoctorId))
+                .Select(a => a.DoctorId).Distinct().ToList();
+            if (orphanIds.Count > 0)
+            {
+                var extra = await (from m in db.Memberships.AsNoTracking() join u in db.Users.AsNoTracking() on m.UserId equals u.Id
+                                   where orphanIds.Contains(m.Id) select new { m.Id, u.FullName, m.Color, m.IsActive }).ToListAsync(ct);
+                list.AddRange(extra.Select(d => new CalendarResource(d.Id, d.FullName + (d.IsActive ? " (не в филиале)" : " (уволен)"), d.Color ?? "#9ca3af", "doctor", "Записи требуют переноса")));
+            }
+            resources = list;
         }
 
         return new CalendarResponse(resources, await MapAsync(appointments, ct), working, blocks, exceptions.Select(ToDto).ToList(), org.Timezone, org.Settings.SlotMinutes);

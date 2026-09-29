@@ -14,6 +14,7 @@ import { api } from "@/lib/api-client";
 import { useBranches } from "@/lib/queries";
 import { t } from "@/lib/i18n";
 import type { NamedRef, Schemas, Staff } from "@/lib/types";
+import { useScheduleConflict } from "@/components/schedule/schedule-conflict";
 
 type Position = Schemas["StaffPosition"];
 export const POSITIONS: Position[] = ["Owner", "SeniorAdmin", "Admin", "Doctor", "Assistant", "Cashier", "Storekeeper", "Other"];
@@ -86,6 +87,7 @@ export function StaffFormDialog({ open, onOpenChange, staff }: { open: boolean; 
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => setF((p) => ({ ...p, [k]: v }));
   const isDoctor = f.position === "Doctor";
 
+  const run = useScheduleConflict();
   const save = useMutation({
     mutationFn: async () => {
       if (staff) {
@@ -101,7 +103,7 @@ export function StaffFormDialog({ open, onOpenChange, staff }: { open: boolean; 
           allBranches: f.allBranches,
           branchIds: f.allBranches ? [] : f.branchIds,
         };
-        return api<Staff>(`/staff/${staff.membershipId}`, { method: "PATCH", body });
+        return run((onConflict) => api<Staff>(`/staff/${staff.membershipId}`, { method: "PATCH", body: { ...body, onConflict } }));
       }
       const body: Schemas["CreateStaffRequest"] = {
         fullName: f.fullName.trim(),

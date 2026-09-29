@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { useConfirm } from "@/components/ui/confirm";
 import { TimeBlockDialog } from "@/components/schedule/time-block-dialog";
+import { useScheduleConflict } from "@/components/schedule/schedule-conflict";
 import { addDays, hhmm, parseHhmm, todayIn, zoned } from "@/components/schedule/tz";
 import { api, ApiError } from "@/lib/api-client";
 import { useAuth, useBranch } from "@/lib/auth";
@@ -187,6 +188,7 @@ function TemplateEditor({ branchId, doctorId, tz }: { branchId: string; doctorId
     return e;
   }, [days]);
 
+  const run = useScheduleConflict();
   const save = useMutation({
     mutationFn: () => {
       const body: Schemas["DoctorWeekTemplateRequest"] = {
@@ -197,7 +199,7 @@ function TemplateEditor({ branchId, doctorId, tz }: { branchId: string; doctorId
           days![wd].working ? days![wd].intervals.map((i) => ({ weekday: wd, startTime: toTime(i.from), endTime: toTime(i.to), chairId: i.chairId || null })) : [],
         ),
       };
-      return api<DoctorSchedule[]>("/doctor-schedules/template", { method: "PUT", body });
+      return run((onConflict) => api<DoctorSchedule[]>("/doctor-schedules/template", { method: "PUT", body: { ...body, onConflict } }));
     },
     onSuccess: () => {
       toast.success(t("doctorSchedules.saved"));
@@ -352,6 +354,18 @@ function Exceptions({ branchId, doctorId, tz }: { branchId: string; doctorId: st
   const timeErr = needTimes && ((parseHhmm(to) ?? 0) <= (parseHhmm(from) ?? 0));
   const dateErr = dateTo < dateFrom;
 
+  const run = useScheduleConflict();
+  const confirmDelete = useConfirm();
+  const remove = useMutation({
+    mutationFn: (id: string) => run((onConflict) => api(`/schedule-exceptions/${id}`, { method: "DELETE", query: { on_conflict: onConflict } })),
+    onSuccess: () => {
+      toast.success(t("doctorSchedules.exceptionDeleted"));
+      qc.invalidateQueries({ queryKey: ["schedule-exceptions"] });
+      qc.invalidateQueries({ queryKey: ["calendar"] });
+      qc.invalidateQueries({ queryKey: ["slots"] });
+    },
+    onError: (e) => toast.error(errText(e)),
+  });
   const add = useMutation({
     mutationFn: () => {
       const body: Schemas["ScheduleExceptionRequest"] = {
@@ -364,7 +378,7 @@ function Exceptions({ branchId, doctorId, tz }: { branchId: string; doctorId: st
         endTime: needTimes ? toTime(to) : null,
         comment: comment.trim() || null,
       };
-      return api<ScheduleException>("/schedule-exceptions", { method: "POST", body });
+      return run((onConflict) => api<ScheduleException>("/schedule-exceptions", { method: "POST", body: { ...body, onConflict } }));
     },
     onSuccess: () => {
       toast.success(t("doctorSchedules.exceptionAdded"));
@@ -456,6 +470,7 @@ function Exceptions({ branchId, doctorId, tz }: { branchId: string; doctorId: st
                 <TH>{t("doctorSchedules.period")}</TH>
                 <TH>{t("doctorSchedules.time")}</TH>
                 <TH>{t("schedule.comment")}</TH>
+                <TH className="w-10" />
               </TR>
             </THead>
             <TBody>
@@ -469,6 +484,19 @@ function Exceptions({ branchId, doctorId, tz }: { branchId: string; doctorId: st
                   </TD>
                   <TD className="whitespace-nowrap">{e.startTime && e.endTime ? `${e.startTime.slice(0, 5)}–${e.endTime.slice(0, 5)}` : t("doctorSchedules.allDay")}</TD>
                   <TD className="text-sm">{e.comment ?? "—"}</TD>
+                  <TD>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={t("common.delete")}
+                      loading={remove.isPending && remove.variables === e.id}
+                      onClick={async () => {
+                        if (await confirmDelete({ title: t("doctorSchedules.deleteExceptionConfirm"), destructive: true, confirmText: t("common.delete") })) remove.mutate(e.id);
+                      }}
+                    >
+                      <Trash2 />
+                    </Button>
+                  </TD>
                 </TR>
               ))}
             </TBody>

@@ -12,6 +12,7 @@ import { useChairs } from "@/lib/queries";
 import { t } from "@/lib/i18n";
 import type { Schemas, TimeBlock } from "@/lib/types";
 import { hhmm, parseHhmm, toIso } from "./tz";
+import { useScheduleConflict } from "@/components/schedule/schedule-conflict";
 
 export function TimeBlockDialog({
   open,
@@ -52,6 +53,7 @@ export function TimeBlockDialog({
   const b = parseHhmm(to);
   const valid = !!date && a !== null && b !== null && b > a;
 
+  const run = useScheduleConflict();
   const m = useMutation({
     mutationFn: () => {
       const body: Schemas["TimeBlockRequest"] = {
@@ -62,7 +64,7 @@ export function TimeBlockDialog({
         endsAt: toIso(date, b!, tz),
         reason: reason.trim() || null,
       };
-      return api<TimeBlock>("/time-blocks", { method: "POST", body });
+      return run((onConflict) => api<TimeBlock>("/time-blocks", { method: "POST", body: { ...body, onConflict } }));
     },
     onSuccess: () => {
       toast.success(t("schedule.blockCreated"));

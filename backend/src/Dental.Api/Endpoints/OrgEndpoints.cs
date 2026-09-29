@@ -2,6 +2,7 @@ using Dental.Api.Auth;
 using Dental.Api.Infrastructure;
 using Dental.Application.Common;
 using Dental.Application.Orgs;
+using Dental.Application.Schedule;
 using Dental.Application.Permissions;
 using Dental.Domain.Organizations;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +49,8 @@ public static class OrgEndpoints
             .RequirePermission(Perm.Org.StaffManage).WithName("GetStaff");
         g.MapPatch("/staff/{id:guid}", async (Guid id, UpdateStaffRequest r, OrgService s, CancellationToken ct) => TypedResults.Ok(await s.UpdateStaffAsync(id, r, ct)))
             .RequirePermission(Perm.Org.StaffManage).WithName("UpdateStaff");
-        g.MapPost("/staff/{id:guid}/fire", async (Guid id, OrgService s, CancellationToken ct) => TypedResults.Ok(await s.FireStaffAsync(id, ct)))
+        g.MapPost("/staff/{id:guid}/fire", async (Guid id, [FromQuery(Name = "on_conflict")] AffectedAppointmentsAction? onConflict, OrgService s, CancellationToken ct) =>
+                TypedResults.Ok(await s.FireStaffAsync(id, onConflict, ct)))
             .RequirePermission(Perm.Org.StaffManage).WithName("FireStaff");
         g.MapGet("/staff/role-options", async (OrgService s, CancellationToken ct) =>
                 TypedResults.Ok((await s.ListRolesAsync(ct)).Select(r => new NamedRefDto(r.Id, r.Name, r.Code)).ToList()))

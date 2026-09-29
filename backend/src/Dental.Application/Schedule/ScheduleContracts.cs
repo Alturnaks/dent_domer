@@ -4,16 +4,20 @@ using FluentValidation;
 namespace Dental.Application.Schedule;
 
 public sealed record DoctorScheduleDto(Guid Id, Guid MembershipId, Guid BranchId, int Weekday, TimeOnly StartTime, TimeOnly EndTime, Guid? ChairId, DateOnly ValidFrom, DateOnly? ValidTo);
-public sealed record DoctorScheduleRequest(Guid MembershipId, Guid BranchId, int Weekday, TimeOnly StartTime, TimeOnly EndTime, Guid? ChairId, DateOnly? ValidFrom, DateOnly? ValidTo);
+public sealed record DoctorScheduleRequest(Guid MembershipId, Guid BranchId, int Weekday, TimeOnly StartTime, TimeOnly EndTime, Guid? ChairId, DateOnly? ValidFrom, DateOnly? ValidTo,
+    AffectedAppointmentsAction? OnConflict = null);
 /// <summary>Замена недельного шаблона врача в филиале целиком.</summary>
-public sealed record DoctorWeekTemplateRequest(Guid MembershipId, Guid BranchId, DateOnly? ValidFrom, IReadOnlyList<DoctorWeekDay> Days);
+public sealed record DoctorWeekTemplateRequest(Guid MembershipId, Guid BranchId, DateOnly? ValidFrom, IReadOnlyList<DoctorWeekDay> Days,
+    AffectedAppointmentsAction? OnConflict = null);
 public sealed record DoctorWeekDay(int Weekday, TimeOnly StartTime, TimeOnly EndTime, Guid? ChairId);
 
 public sealed record ScheduleExceptionDto(Guid Id, Guid MembershipId, Guid? BranchId, DateOnly DateFrom, DateOnly DateTo, ScheduleExceptionType Type, TimeOnly? StartTime, TimeOnly? EndTime, string? Comment);
-public sealed record ScheduleExceptionRequest(Guid MembershipId, Guid? BranchId, DateOnly DateFrom, DateOnly DateTo, ScheduleExceptionType Type, TimeOnly? StartTime, TimeOnly? EndTime, string? Comment);
+public sealed record ScheduleExceptionRequest(Guid MembershipId, Guid? BranchId, DateOnly DateFrom, DateOnly DateTo, ScheduleExceptionType Type, TimeOnly? StartTime, TimeOnly? EndTime, string? Comment,
+    AffectedAppointmentsAction? OnConflict = null);
 
 public sealed record TimeBlockDto(Guid Id, Guid BranchId, Guid? DoctorId, Guid? ChairId, DateTimeOffset StartsAt, DateTimeOffset EndsAt, string? Reason);
-public sealed record TimeBlockRequest(Guid BranchId, Guid? DoctorId, Guid? ChairId, DateTimeOffset StartsAt, DateTimeOffset EndsAt, string? Reason);
+public sealed record TimeBlockRequest(Guid BranchId, Guid? DoctorId, Guid? ChairId, DateTimeOffset StartsAt, DateTimeOffset EndsAt, string? Reason,
+    AffectedAppointmentsAction? OnConflict = null);
 
 public sealed record AppointmentServiceDto(Guid ServiceId, string Name, int DurationMin, long PlannedPrice, int Qty);
 public sealed record AppointmentDto(

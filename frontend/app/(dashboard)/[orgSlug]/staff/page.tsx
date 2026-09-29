@@ -24,6 +24,7 @@ import { formatDate, formatPhone } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { P } from "@/lib/permissions";
 import type { Staff } from "@/lib/types";
+import { useScheduleConflict } from "@/components/schedule/schedule-conflict";
 
 export default function StaffPage() {
   const { can } = useAuth();
@@ -95,8 +96,9 @@ function EmployeesTab({ onEdit, onCreate }: { onEdit: (s: Staff) => void; onCrea
     queryFn: () => api<Staff[]>("/staff", { query: { position: position || undefined, branch_id: branch || undefined, include_fired: fired || undefined } }),
   });
 
+  const run = useScheduleConflict();
   const fire = useMutation({
-    mutationFn: (id: string) => api<Staff>(`/staff/${id}/fire`, { method: "POST" }),
+    mutationFn: (id: string) => run((onConflict) => api<Staff>(`/staff/${id}/fire`, { method: "POST", query: { on_conflict: onConflict } })),
     onSuccess: () => {
       toast.success(t("staff.firedToast"));
       void qc.invalidateQueries({ queryKey: ["staff"] });

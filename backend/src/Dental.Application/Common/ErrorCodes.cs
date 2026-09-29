@@ -36,6 +36,7 @@ public static class ErrorCodes
 
     public const string DoctorNotWorking = "DOCTOR_NOT_WORKING";
     public const string SlotConflict = "SLOT_CONFLICT";
+    public const string ScheduleHasAppointments = "SCHEDULE_HAS_APPOINTMENTS";
     public const string InvalidStatusTransition = "INVALID_STATUS_TRANSITION";
     public const string CancelReasonRequired = "CANCEL_REASON_REQUIRED";
     public const string InvalidTimeRange = "INVALID_TIME_RANGE";

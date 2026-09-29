@@ -64,7 +64,8 @@ public static class PatientScheduleEndpoints
             .RequirePermission(Perm.Schedule.DoctorSchedulesManage).Validate<DoctorWeekTemplateRequest>().WithName("ReplaceDoctorWeekTemplate");
         g.MapPatch("/doctor-schedules/{id:guid}", async (Guid id, DoctorScheduleRequest r, ScheduleService s, CancellationToken ct) => TypedResults.Ok(await s.UpdateScheduleAsync(id, r, ct)))
             .RequirePermission(Perm.Schedule.DoctorSchedulesManage).Validate<DoctorScheduleRequest>().WithName("UpdateDoctorSchedule");
-        g.MapDelete("/doctor-schedules/{id:guid}", async (Guid id, ScheduleService s, CancellationToken ct) => { await s.DeleteScheduleAsync(id, ct); return TypedResults.NoContent(); })
+        g.MapDelete("/doctor-schedules/{id:guid}", async (Guid id, [FromQuery(Name = "on_conflict")] AffectedAppointmentsAction? onConflict, ScheduleService s, CancellationToken ct) =>
+            { await s.DeleteScheduleAsync(id, onConflict, ct); return TypedResults.NoContent(); })
             .RequirePermission(Perm.Schedule.DoctorSchedulesManage).WithName("DeleteDoctorSchedule");
 
         g.MapGet("/schedule-exceptions", async ([FromQuery(Name = "doctor_id")] Guid? doctorId, DateOnly? from, DateOnly? to, ScheduleService s, CancellationToken ct) =>
@@ -72,6 +73,9 @@ public static class PatientScheduleEndpoints
             .RequirePermission(view).WithName("ListScheduleExceptions");
         g.MapPost("/schedule-exceptions", async (ScheduleExceptionRequest r, ScheduleService s, CancellationToken ct) => TypedResults.Ok(await s.CreateExceptionAsync(r, ct)))
             .RequirePermission(Perm.Schedule.DoctorSchedulesManage).Validate<ScheduleExceptionRequest>().WithName("CreateScheduleException");
+        g.MapDelete("/schedule-exceptions/{id:guid}", async (Guid id, [FromQuery(Name = "on_conflict")] AffectedAppointmentsAction? onConflict, ScheduleService s, CancellationToken ct) =>
+            { await s.DeleteExceptionAsync(id, onConflict, ct); return TypedResults.NoContent(); })
+            .RequirePermission(Perm.Schedule.DoctorSchedulesManage).WithName("DeleteScheduleException");
 
         g.MapGet("/time-blocks", async ([FromQuery(Name = "branch_id")] Guid branchId, DateTimeOffset from, DateTimeOffset to, ScheduleService s, CancellationToken ct) =>
                 TypedResults.Ok(await s.ListBlocksAsync(branchId, from, to, ct)))

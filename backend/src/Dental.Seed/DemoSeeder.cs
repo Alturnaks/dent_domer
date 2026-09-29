@@ -253,6 +253,7 @@ internal sealed partial class SeedContext(IServiceProvider sp, ILogger logger, C
 
         _db.MessageTemplates.AddRange(
             new MessageTemplate { OrganizationId = orgId, Type = "reminder_24h", Channel = MessageChannel.Whatsapp, Text = "Здравствуйте, {patient_name}! Напоминаем о записи {date} в {time} к врачу {doctor}. Адрес: {branch_address}. Ответьте «1» для подтверждения." },
+            new MessageTemplate { OrganizationId = orgId, Type = "clinic_cancel", Channel = MessageChannel.Whatsapp, Text = "Здравствуйте, {patient_name}! К сожалению, врач {doctor} не сможет принять вас {date} в {time}. Мы свяжемся с вами и подберём другое удобное время. Приносим извинения." },
             new MessageTemplate { OrganizationId = orgId, Type = "reminder_2h", Channel = MessageChannel.Whatsapp, Text = "{patient_name}, ждём вас сегодня в {time} ({doctor}). Адрес: {branch_address}." },
             new MessageTemplate { OrganizationId = orgId, Type = "recall_6m", Channel = MessageChannel.Whatsapp, Text = "{patient_name}, прошло полгода с последнего визита. Рекомендуем профилактический осмотр — запишитесь по телефону клиники." },
             new MessageTemplate { OrganizationId = orgId, Type = "birthday", Channel = MessageChannel.Whatsapp, Text = "{patient_name}, коллектив «Дентал Плюс» поздравляет вас с днём рождения! Дарим скидку 10% на гигиену в этом месяце." });

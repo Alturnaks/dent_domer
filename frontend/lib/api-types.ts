@@ -1156,6 +1156,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/schedule-exceptions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["DeleteScheduleException"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/time-blocks": {
         parameters: {
             query?: never;
@@ -1775,6 +1791,8 @@ export interface components {
             /** Format: uuid */
             organizationId: string;
         };
+        /** @enum {unknown} */
+        AffectedAppointmentsAction: "Keep" | "CancelToWaitlist" | null;
         AnonymousTypeOfboolean: {
             sent: boolean;
         };
@@ -1925,6 +1943,7 @@ export interface components {
             phone: null | string;
             isActive: null | boolean;
             workingHours: null | components["schemas"]["WorkingHours"];
+            onConflict?: null | components["schemas"]["AffectedAppointmentsAction"];
         };
         BulkPriceUpdateRequest: {
             /** Format: uuid */
@@ -2074,6 +2093,7 @@ export interface components {
             /** Format: uuid */
             roomId: null | string;
             isActive: null | boolean;
+            onConflict?: null | components["schemas"]["AffectedAppointmentsAction"];
         };
         CloseShiftRequest: {
             /** Format: int64 */
@@ -2214,6 +2234,7 @@ export interface components {
             validFrom: null | string;
             /** Format: date */
             validTo: null | string;
+            onConflict?: null | components["schemas"]["AffectedAppointmentsAction"];
         };
         DoctorWeekDay: {
             /** Format: int32 */
@@ -2233,6 +2254,7 @@ export interface components {
             /** Format: date */
             validFrom: null | string;
             days: components["schemas"]["DoctorWeekDay"][];
+            onConflict?: null | components["schemas"]["AffectedAppointmentsAction"];
         };
         DuplicateCandidate: {
             /** Format: uuid */
@@ -2879,6 +2901,7 @@ export interface components {
             /** Format: time */
             endTime: null | string;
             comment: null | string;
+            onConflict?: null | components["schemas"]["AffectedAppointmentsAction"];
         };
         /** @enum {unknown} */
         ScheduleExceptionType: "Vacation" | "Sick" | "DayOff" | "ExtraShift";
@@ -3236,6 +3259,7 @@ export interface components {
             /** Format: date-time */
             endsAt: string;
             reason: null | string;
+            onConflict?: null | components["schemas"]["AffectedAppointmentsAction"];
         };
         UpdateAppointmentRequest: {
             comment: null | string;
@@ -3263,6 +3287,7 @@ export interface components {
             color: null | string;
             allBranches: null | boolean;
             branchIds: null | string[];
+            onConflict?: null | components["schemas"]["AffectedAppointmentsAction"];
         };
         UpdateStockDocumentRequest: {
             /** Format: uuid */
@@ -4191,7 +4216,9 @@ export interface operations {
     };
     FireStaff: {
         parameters: {
-            query?: never;
+            query?: {
+                on_conflict?: components["schemas"]["AffectedAppointmentsAction"];
+            };
             header?: never;
             path: {
                 id: string;
@@ -6325,7 +6352,9 @@ export interface operations {
     };
     DeleteDoctorSchedule: {
         parameters: {
-            query?: never;
+            query?: {
+                on_conflict?: components["schemas"]["AffectedAppointmentsAction"];
+            };
             header?: never;
             path: {
                 id: string;
@@ -6432,6 +6461,28 @@ export interface operations {
                 content: {
                     "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
+            };
+        };
+    };
+    DeleteScheduleException: {
+        parameters: {
+            query?: {
+                on_conflict?: components["schemas"]["AffectedAppointmentsAction"];
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

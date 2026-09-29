@@ -20,6 +20,7 @@ import { useAuth } from "@/lib/auth";
 import { formatPhone } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import type { Branch, Chair, Schemas } from "@/lib/types";
+import { useScheduleConflict } from "@/components/schedule/schedule-conflict";
 
 type Room = Schemas["RoomDto"];
 type Day = { dayOfWeek: number; isWorking: boolean; open: string; close: string };
@@ -145,6 +146,7 @@ function BranchDialog({ open, onOpenChange, branch }: { open: boolean; onOpenCha
     setDays(normalizeDays(branch));
   }, [open, branch]);
 
+  const run = useScheduleConflict();
   const save = useMutation({
     mutationFn: () => {
       const body: Schemas["BranchRequest"] = {
@@ -154,7 +156,7 @@ function BranchDialog({ open, onOpenChange, branch }: { open: boolean; onOpenCha
         isActive,
         workingHours: { days: days.map((d) => ({ dayOfWeek: d.dayOfWeek, isWorking: d.isWorking, open: hhmmss(d.open), close: hhmmss(d.close) })) },
       };
-      return branch ? api<Branch>(`/branches/${branch.id}`, { method: "PATCH", body }) : api<Branch>("/branches", { method: "POST", body });
+      return branch ? run((onConflict) => api<Branch>(`/branches/${branch.id}`, { method: "PATCH", body: { ...body, onConflict } })) : api<Branch>("/branches", { method: "POST", body });
     },
     onSuccess: () => {
       toast.success(branch ? t("settings.branches.savedToast") : t("settings.branches.createdToast"));
@@ -269,12 +271,15 @@ function RoomsChairsDialog({ branch, onOpenChange }: { branch: Branch | null; on
     },
     onError: toastError,
   });
+  const run = useScheduleConflict();
   const updateChair = useMutation({
     mutationFn: ({ chair, patch }: { chair: Chair; patch: Partial<Schemas["ChairRequest"]> }) =>
-      api<Chair>(`/chairs/${chair.id}`, {
-        method: "PATCH",
-        body: { name: chair.name, roomId: chair.roomId ?? null, isActive: chair.isActive, ...patch } satisfies Schemas["ChairRequest"],
-      }),
+      run((onConflict) =>
+        api<Chair>(`/chairs/${chair.id}`, {
+          method: "PATCH",
+          body: { name: chair.name, roomId: chair.roomId ?? null, isActive: chair.isActive, ...patch, onConflict } satisfies Schemas["ChairRequest"],
+        }),
+      ),
     onSuccess: () => {
       toast.success(t("common.saved"));
       invalidateChairs();
