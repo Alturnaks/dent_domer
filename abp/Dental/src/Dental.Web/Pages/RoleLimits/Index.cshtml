@@ -1,0 +1,24 @@
+@page
+@model Dental.Web.Pages.RoleLimits.IndexModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Menu:Settings:RoleLimits"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.SettingsRoleLimits;
+}
+@section scripts {
+    <abp-script src="/Pages/RoleLimits/Index.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_8"><abp-card-title>@L["Menu:Settings:RoleLimits"]</abp-card-title></abp-column>
+            <abp-column size-md="_4" class="text-end">
+                <a class="btn btn-outline-secondary btn-sm" href="~/Identity/Roles"><i class="fa fa-key"></i> @L["RoleLimits:PermissionsLink"]</a>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <p class="text-muted small">@L["RoleLimits:Hint"]</p>
+        <abp-table striped-rows="true" id="RoleLimitsTable"></abp-table>
+    </abp-card-body>
+</abp-card>

@@ -1,0 +1,76 @@
+# ABP-стек Dental: PostgreSQL 16 + Redis + DbMigrator (одноразово) + Web (http://localhost:3100).
+# Запуск: start-abp.bat (или: docker compose -f abp/docker-compose.yml up -d --build)
+# Порты хоста не пересекаются со старым стеком (55432/56379): 55433 (postgres), 56380 (redis).
+name: dental-abp
+
+x-app-env: &app-env
+  ConnectionStrings__Default: Host=postgres;Port=5432;Database=dental_abp;Username=abp;Password=${ABP_DB_PASSWORD:-abp}
+  App__SelfUrl: http://localhost:${ABP_WEB_PORT:-3100}
+  AuthServer__Authority: http://localhost:${ABP_WEB_PORT:-3100}
+  AuthServer__RequireHttpsMetadata: "false"
+  AuthServer__UseDevelopmentCertificate: "true"
+  OpenIddict__Applications__Dental_App__RootUrl: http://localhost:${ABP_WEB_PORT:-3100}
+  OpenIddict__Applications__Dental_Swagger__RootUrl: http://localhost:${ABP_WEB_PORT:-3100}/
+  StringEncryption__DefaultPassPhrase: ${ABP_STRING_ENCRYPTION:-J5vQv2e7mCQYnFbq}
+  TZ: UTC
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: abp
+      POSTGRES_PASSWORD: ${ABP_DB_PASSWORD:-abp}
+      POSTGRES_DB: dental_abp
+    ports: ["55433:5432"]
+    volumes:
+      - abp_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U abp -d dental_abp"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  # Пока не используется приложением (кэш ABP — in-memory); зарезервирован под распределённый кэш.
+  redis:
+    image: redis:7-alpine
+    ports: ["56380:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      retries: 20
+
+  migrator:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: migrator
+    image: dental-abp-migrator
+    environment:
+      <<: *app-env
+      Dental__SeedDemo: ${ABP_SEED_DEMO:-true}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: web
+    image: dental-abp-web
+    environment:
+      <<: *app-env
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+    ports: ["${ABP_WEB_PORT:-3100}:80"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrator:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  abp_pgdata:

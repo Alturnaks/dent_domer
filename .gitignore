@@ -36,3 +36,9 @@ Thumbs.db
 # Redis
 dump.rdb
 .claude/
+
+# ABP
+abp/**/wwwroot/libs/
+abp/**/node_modules/
+abp/**/Logs/
+abp/**/.abp/

@@ -1,0 +1,8 @@
+@page
+@model Dental.Web.Pages.Catalog.IndexModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Menu:Catalog"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.Catalog;
+}
+<partial name="_UnderDevelopment" model="@("Menu:Catalog")" />

@@ -50,6 +50,8 @@ using Volo.Abp.OpenIddict;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.SettingManagement.Web;
 using Volo.Abp.Studio.Client.AspNetCore;
+using Volo.Abp.MultiTenancy;
+using Volo.Abp.AspNetCore.Mvc.Libs;
 
 namespace Dental.Web;
 
@@ -96,7 +98,8 @@ public class DentalWebModule : AbpModule
             });
         });
 
-        if (!hostingEnvironment.IsDevelopment())
+        // AuthServer:UseDevelopmentCertificate=true — dev-сертификат подписи и вне Development (Docker без openiddict.pfx).
+        if (!hostingEnvironment.IsDevelopment() && !configuration.GetValue<bool>("AuthServer:UseDevelopmentCertificate"))
         {
             PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
             {
@@ -143,6 +146,12 @@ public class DentalWebModule : AbpModule
                 .AddRazorRuntimeCompilation();
         }
 
+        ConfigureTenantResolvers(configuration);
+        if (configuration.GetValue<bool>("App:DisableLibsCheck"))
+        {
+            // Только для окружений без wwwroot/libs (CI, офлайн-контейнер). Обычно libs ставит `abp install-libs`.
+            Configure<AbpMvcLibsOptions>(options => options.CheckLibs = false);
+        }
         ConfigureStudio(hostingEnvironment);
         ConfigureBundles(hostingEnvironment);
         ConfigureUrls(configuration);
@@ -159,6 +168,22 @@ public class DentalWebModule : AbpModule
         });
     }
 
+
+    /// <summary>
+    /// Арендатор определяется (по умолчанию ABP): пользователь (claim) → ?__tenant= → маршрут → заголовок __tenant → cookie __tenant
+    /// (переключатель арендатора на странице входа). Опционально — по поддомену: App:TenantDomainFormat = "{0}.dental.kz".
+    /// </summary>
+    private void ConfigureTenantResolvers(IConfiguration configuration)
+    {
+        var domainFormat = configuration["App:TenantDomainFormat"];
+        if (!domainFormat.IsNullOrWhiteSpace())
+        {
+            Configure<Volo.Abp.MultiTenancy.AbpTenantResolveOptions>(options =>
+            {
+                options.AddDomainTenantResolver(domainFormat);
+            });
+        }
+    }
 
     private void ConfigureHealthChecks(ServiceConfigurationContext context)
     {

@@ -26,6 +26,12 @@ public class DentalDbContext :
     IIdentityDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+    public DbSet<Dental.Branches.Branch> Branches { get; set; }
+    public DbSet<Dental.Branches.Room> Rooms { get; set; }
+    public DbSet<Dental.Branches.Chair> Chairs { get; set; }
+    public DbSet<Dental.Staff.Employee> Employees { get; set; }
+    public DbSet<Dental.Roles.RoleLimit> RoleLimits { get; set; }
+
 
 
     #region Entities from the modules
@@ -80,6 +86,7 @@ public class DentalDbContext :
         builder.ConfigureBlobStoring();
 
         /* Configure your own tables/entities inside here */
+        builder.ConfigureDentalFoundation();
 
         //builder.Entity<YourEntity>(b =>
         //{

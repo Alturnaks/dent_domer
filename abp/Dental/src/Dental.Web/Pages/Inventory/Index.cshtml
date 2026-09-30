@@ -1,0 +1,8 @@
+@page
+@model Dental.Web.Pages.Inventory.IndexModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Menu:Inventory"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.Inventory;
+}
+<partial name="_UnderDevelopment" model="@("Menu:Inventory")" />

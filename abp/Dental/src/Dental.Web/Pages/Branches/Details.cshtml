@@ -1,0 +1,44 @@
+@page
+@model Dental.Web.Pages.Branches.DetailsModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = Model.Branch.Name;
+    PageLayout.Content.MenuItemName = DentalMenus.SettingsBranches;
+}
+@section scripts {
+    <abp-script src="/Pages/Branches/Details.js" />
+}
+<div id="BranchDetails" data-branch-id="@Model.Id">
+    <abp-row>
+        <abp-column size-md="_6">
+            <abp-card>
+                <abp-card-header>
+                    <abp-card-title>@L["Branch:Rooms"]</abp-card-title>
+                </abp-card-header>
+                <abp-card-body>
+                    <div class="input-group mb-3">
+                        <input id="NewRoomName" class="form-control" placeholder="@L["Branch:RoomName"]" maxlength="64" />
+                        <button id="AddRoomButton" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> @L["Add"]</button>
+                    </div>
+                    <table class="table table-sm" id="RoomsTable"><tbody></tbody></table>
+                </abp-card-body>
+            </abp-card>
+        </abp-column>
+        <abp-column size-md="_6">
+            <abp-card>
+                <abp-card-header>
+                    <abp-card-title>@L["Branch:Chairs"]</abp-card-title>
+                </abp-card-header>
+                <abp-card-body>
+                    <div class="input-group mb-3">
+                        <input id="NewChairName" class="form-control" placeholder="@L["Branch:ChairName"]" maxlength="64" />
+                        <select id="NewChairRoom" class="form-select"></select>
+                        <button id="AddChairButton" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> @L["Add"]</button>
+                    </div>
+                    <table class="table table-sm" id="ChairsTable"><tbody></tbody></table>
+                </abp-card-body>
+            </abp-card>
+        </abp-column>
+    </abp-row>
+    <a href="~/Branches" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> @L["Back"]</a>
+</div>

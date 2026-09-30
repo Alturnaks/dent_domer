@@ -39,6 +39,9 @@ public class DentalDomainModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+        // Время — UTC (SPEC §4). Отчёты по дням переводятся в часовой пояс организации (Dental.Org.Timezone).
+        Configure<Volo.Abp.Timing.AbpClockOptions>(options => options.Kind = System.DateTimeKind.Utc);
+
         Configure<AbpMultiTenancyOptions>(options =>
         {
             options.IsEnabled = MultiTenancyConsts.IsEnabled;

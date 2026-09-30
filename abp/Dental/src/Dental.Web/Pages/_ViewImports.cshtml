@@ -3,3 +3,10 @@
 @addTagHelper *, Volo.Abp.AspNetCore.Mvc.UI.Bootstrap
 @addTagHelper *, Volo.Abp.AspNetCore.Mvc.UI.Bundling
 @addTagHelper *, Owl.reCAPTCHA
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Authorization
+@using Dental.Localization
+@using Dental.Permissions
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@inject IHtmlLocalizer<DentalResource> L
+@inject IPageLayout PageLayout

@@ -1,0 +1,25 @@
+@model Dental.Web.Pages.Branches.BranchFormViewModel
+<abp-input asp-for="Name" label="@L["Branch:Name"].Value" />
+<abp-input asp-for="Address" label="@L["Branch:Address"].Value" />
+<abp-input asp-for="Phone" label="@L["Branch:Phone"].Value" />
+<abp-input asp-for="IsActive" label="@L["Branch:IsActive"].Value" />
+<h6 class="mt-3">@L["Branch:WorkingHours"]</h6>
+<table class="table table-sm align-middle">
+    <thead>
+    <tr><th></th><th>@L["Branch:IsWorking"]</th><th>@L["Branch:Open"]</th><th>@L["Branch:Close"]</th></tr>
+    </thead>
+    <tbody>
+    @for (var i = 0; i < Model.Days.Count; i++)
+    {
+        <tr>
+            <td>
+                @L["DayOfWeek:" + Model.Days[i].DayOfWeek]
+                <input type="hidden" name="Branch.Days[@i].DayOfWeek" value="@Model.Days[i].DayOfWeek" />
+            </td>
+            <td><input type="checkbox" class="form-check-input" name="Branch.Days[@i].IsWorking" value="true" @(Model.Days[i].IsWorking ? "checked" : "") /></td>
+            <td><input type="time" class="form-control form-control-sm" name="Branch.Days[@i].Open" value="@Model.Days[i].Open" /></td>
+            <td><input type="time" class="form-control form-control-sm" name="Branch.Days[@i].Close" value="@Model.Days[i].Close" /></td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,15 @@
+@page
+@model Dental.Web.Pages.Branches.CreateModalModel
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@{
+    Layout = null;
+}
+<form asp-page="/Branches/CreateModal" method="post">
+    <abp-modal size="Large">
+        <abp-modal-header title="@L["Branch:New"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <partial name="_BranchForm" model="Model.Branch" view-data="@(new ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = "Branch" } })" />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel | AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>

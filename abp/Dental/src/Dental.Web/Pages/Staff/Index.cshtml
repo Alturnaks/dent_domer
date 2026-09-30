@@ -1,0 +1,33 @@
+@page
+@model Dental.Web.Pages.Staff.IndexModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Menu:Staff"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.Staff;
+}
+@section scripts {
+    <abp-script src="/Pages/Staff/Index.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6"><abp-card-title>@L["Menu:Staff"]</abp-card-title></abp-column>
+            <abp-column size-md="_6" class="text-end">
+                <abp-button id="NewEmployeeButton" text="@L["Employee:New"].Value" icon="plus" button-type="Primary" />
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-row class="mb-3">
+            <abp-column size-md="_4"><input id="StaffFilter" class="form-control" placeholder="@L["Search"]" /></abp-column>
+            <abp-column size-md="_3">
+                <select id="StaffActiveFilter" class="form-select">
+                    <option value="true">@L["Employee:ActiveOnly"]</option>
+                    <option value="false">@L["Employee:FiredOnly"]</option>
+                    <option value="">@L["All"]</option>
+                </select>
+            </abp-column>
+        </abp-row>
+        <abp-table striped-rows="true" id="StaffTable"></abp-table>
+    </abp-card-body>
+</abp-card>

@@ -1,0 +1,41 @@
+@page
+@model Dental.Web.Pages.Settings.OrganizationModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Menu:Settings:Organization"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.SettingsOrganization;
+}
+<abp-card>
+    <abp-card-body>
+        @if (Model.Saved)
+        {
+            <abp-alert alert-type="Success">@L["SavedSuccessfully"]</abp-alert>
+        }
+        <form method="post">
+            <abp-row>
+                <abp-column size-md="_4"><abp-input asp-for="Settings.Timezone" label="@L["Setting:Dental.Org.Timezone"].Value" /></abp-column>
+                <abp-column size-md="_4"><abp-input asp-for="Settings.Currency" label="@L["Setting:Dental.Org.Currency"].Value" /></abp-column>
+                <abp-column size-md="_4"><abp-input asp-for="Settings.SlotMinutes" label="@L["Setting:Dental.Org.SlotMinutes"].Value" /></abp-column>
+            </abp-row>
+            <abp-row>
+                <abp-column size-md="_4"><abp-input asp-for="Settings.DefaultOpen" label="@L["Setting:Dental.Org.DefaultOpen"].Value" /></abp-column>
+                <abp-column size-md="_4"><abp-input asp-for="Settings.DefaultClose" label="@L["Setting:Dental.Org.DefaultClose"].Value" /></abp-column>
+                <abp-column size-md="_4"><abp-input asp-for="Settings.NoShowAfterMinutes" label="@L["Setting:Dental.Org.NoShowAfterMinutes"].Value" /></abp-column>
+            </abp-row>
+            <abp-row>
+                <abp-column size-md="_4"><abp-input asp-for="Settings.PurchaseOrderApprovalThreshold" label="@L["Setting:Dental.Org.PurchaseOrderApprovalThreshold"].Value" /></abp-column>
+                <abp-column size-md="_4"><abp-input asp-for="Settings.SuspiciousWriteoffAmount" label="@L["Setting:Dental.Org.SuspiciousWriteoffAmount"].Value" /></abp-column>
+                <abp-column size-md="_4"><abp-input asp-for="Settings.SuspiciousInventoryDiffAmount" label="@L["Setting:Dental.Org.SuspiciousInventoryDiffAmount"].Value" /></abp-column>
+            </abp-row>
+            <p class="text-muted small">@L["Settings:MoneyInTiyn"]</p>
+            <abp-row>
+                <abp-column size-md="_4"><abp-input asp-for="Settings.DailySummaryTime" label="@L["Setting:Dental.Org.DailySummaryTime"].Value" /></abp-column>
+            </abp-row>
+            <abp-input asp-for="Settings.Reminder24h" label="@L["Setting:Dental.Org.Reminder24h"].Value" />
+            <abp-input asp-for="Settings.Reminder2h" label="@L["Setting:Dental.Org.Reminder2h"].Value" />
+            <abp-input asp-for="Settings.AllowNegativeStock" label="@L["Setting:Dental.Org.AllowNegativeStock"].Value" />
+            <abp-input asp-for="Settings.PayrollOnlyPaidVisits" label="@L["Setting:Dental.Org.PayrollOnlyPaidVisits"].Value" />
+            <abp-button button-type="Primary" type="submit" text="@L["Save"].Value" icon="save" />
+        </form>
+    </abp-card-body>
+</abp-card>

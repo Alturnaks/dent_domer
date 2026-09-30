@@ -1,0 +1,23 @@
+@page
+@model Dental.Web.Pages.Branches.IndexModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Menu:Settings:Branches"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.SettingsBranches;
+}
+@section scripts {
+    <abp-script src="/Pages/Branches/Index.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6"><abp-card-title>@L["Menu:Settings:Branches"]</abp-card-title></abp-column>
+            <abp-column size-md="_6" class="text-end">
+                <abp-button id="NewBranchButton" text="@L["Branch:New"].Value" icon="plus" button-type="Primary" />
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="BranchesTable"></abp-table>
+    </abp-card-body>
+</abp-card>

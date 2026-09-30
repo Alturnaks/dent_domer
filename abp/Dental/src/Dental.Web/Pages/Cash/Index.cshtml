@@ -1,0 +1,8 @@
+@page
+@model Dental.Web.Pages.Cash.IndexModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Menu:Cash"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.Cash;
+}
+<partial name="_UnderDevelopment" model="@("Menu:Cash")" />

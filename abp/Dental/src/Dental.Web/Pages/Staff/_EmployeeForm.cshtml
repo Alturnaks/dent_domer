@@ -1,0 +1,38 @@
+@model Dental.Web.Pages.Staff.EmployeeModalModelBase
+@{
+    var isCreate = Model is Dental.Web.Pages.Staff.CreateModalModel;
+}
+@if (isCreate)
+{
+    <abp-row>
+        <abp-column size-md="_6"><abp-input asp-for="Employee.Email" label="@L["Employee:Email"].Value" /></abp-column>
+        <abp-column size-md="_6"><abp-input asp-for="Employee.Password" label="@L["Employee:Password"].Value" /></abp-column>
+    </abp-row>
+}
+else
+{
+    <p class="text-muted">@Model.Employee.Email</p>
+}
+<abp-input asp-for="Employee.FullName" label="@L["Employee:FullName"].Value" />
+<abp-row>
+    <abp-column size-md="_6"><abp-input asp-for="Employee.Phone" label="@L["Employee:Phone"].Value" /></abp-column>
+    <abp-column size-md="_6"><abp-select asp-for="Employee.RoleName" asp-items="Model.Roles" label="@L["Employee:Role"].Value" /></abp-column>
+</abp-row>
+<abp-row>
+    <abp-column size-md="_6"><abp-select asp-for="Employee.Position" asp-items="Model.Positions" label="@L["Employee:Position"].Value" /></abp-column>
+    <abp-column size-md="_4"><abp-input asp-for="Employee.Specialty" label="@L["Employee:Specialty"].Value" /></abp-column>
+    <abp-column size-md="_2">
+        <label class="form-label" for="Employee_Color">@L["Employee:Color"]</label>
+        <input type="color" class="form-control form-control-color" id="Employee_Color" name="Employee.Color" value="@(Model.Employee.Color ?? "#2563eb")" />
+    </abp-column>
+</abp-row>
+<abp-input asp-for="Employee.AllBranches" label="@L["AllBranches"].Value" />
+<div class="mb-3">
+    <label class="form-label" for="Employee_BranchIds">@L["Employee:Branches"]</label>
+    <select class="form-select" id="Employee_BranchIds" name="Employee.BranchIds" multiple size="4">
+        @foreach (var b in Model.Branches)
+        {
+            <option value="@b.Value" selected="@b.Selected">@b.Text</option>
+        }
+    </select>
+</div>
