@@ -1,0 +1,118 @@
+{
+  "template": "app",
+  "imports": {
+    "Volo.Abp.LeptonXLiteTheme": {
+      "version": "5.6.1",
+      "isInstalled": true,
+      "creationTime": "09/30/2026 07:51:04 +00:00"
+    },
+    "Volo.Abp.Account": {
+      "version": "10.6.1",
+      "isInstalled": true,
+      "creationTime": "09/30/2026 07:51:04 +00:00"
+    },
+    "Volo.Abp.OpenIddict": {
+      "version": "10.6.1",
+      "isInstalled": true,
+      "creationTime": "09/30/2026 07:51:04 +00:00"
+    },
+    "Volo.Abp.Identity": {
+      "version": "10.6.1",
+      "isInstalled": true,
+      "creationTime": "09/30/2026 07:51:04 +00:00"
+    },
+    "Volo.Abp.TenantManagement": {
+      "version": "10.6.1",
+      "isInstalled": true,
+      "creationTime": "09/30/2026 07:51:04 +00:00"
+    },
+    "Volo.Abp.SettingManagement": {
+      "version": "10.6.1",
+      "isInstalled": true,
+      "creationTime": "09/30/2026 07:51:04 +00:00"
+    },
+    "Volo.Abp.PermissionManagement": {
+      "version": "10.6.1",
+      "isInstalled": true,
+      "creationTime": "09/30/2026 07:51:04 +00:00"
+    },
+    "Volo.Abp.FeatureManagement": {
+      "version": "10.6.1",
+      "isInstalled": true,
+      "creationTime": "09/30/2026 07:51:04 +00:00"
+    },
+    "Volo.Abp.BlobStoring.Database": {
+      "version": "10.6.1",
+      "isInstalled": true,
+      "creationTime": "09/30/2026 07:51:04 +00:00"
+    }
+  },
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "Dental.Application": {
+      "path": "src/Dental.Application/Dental.Application.abppkg",
+      "folder": "src"
+    },
+    "Dental.Application.Tests": {
+      "path": "test/Dental.Application.Tests/Dental.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "Dental.Domain.Shared": {
+      "path": "src/Dental.Domain.Shared/Dental.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "Dental.Application.Contracts": {
+      "path": "src/Dental.Application.Contracts/Dental.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "Dental.HttpApi": {
+      "path": "src/Dental.HttpApi/Dental.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "Dental.HttpApi.Client": {
+      "path": "src/Dental.HttpApi.Client/Dental.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "Dental.Web": {
+      "path": "src/Dental.Web/Dental.Web.abppkg",
+      "folder": "src"
+    },
+    "Dental.Web.Tests": {
+      "path": "test/Dental.Web.Tests/Dental.Web.Tests.abppkg",
+      "folder": "test"
+    },
+    "Dental.EntityFrameworkCore.Tests": {
+      "path": "test/Dental.EntityFrameworkCore.Tests/Dental.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "Dental.EntityFrameworkCore": {
+      "path": "src/Dental.EntityFrameworkCore/Dental.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "Dental.TestBase": {
+      "path": "test/Dental.TestBase/Dental.TestBase.abppkg",
+      "folder": "test"
+    },
+    "Dental.Domain.Tests": {
+      "path": "test/Dental.Domain.Tests/Dental.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "Dental.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/Dental.HttpApi.Client.ConsoleTestApp/Dental.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "Dental.DbMigrator": {
+      "path": "src/Dental.DbMigrator/Dental.DbMigrator.abppkg",
+      "folder": "src"
+    },
+    "Dental.Domain": {
+      "path": "src/Dental.Domain/Dental.Domain.abppkg",
+      "folder": "src"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<Solution>
+    <Configurations>
+        <Platform Name="Any CPU" />
+    </Configurations>
+    <Folder Name="/src/">
+        <Project Path="src/Dental.Domain/Dental.Domain.csproj" />
+        <Project Path="src/Dental.Application/Dental.Application.csproj" />
+        <Project Path="src/Dental.EntityFrameworkCore/Dental.EntityFrameworkCore.csproj" />
+        <Project Path="src/Dental.Web/Dental.Web.csproj" />
+        <Project Path="src/Dental.Domain.Shared/Dental.Domain.Shared.csproj" />
+        <Project Path="src/Dental.Application.Contracts/Dental.Application.Contracts.csproj" />
+        <Project Path="src/Dental.HttpApi/Dental.HttpApi.csproj" />
+        <Project Path="src/Dental.HttpApi.Client/Dental.HttpApi.Client.csproj" />
+        <Project Path="src/Dental.DbMigrator/Dental.DbMigrator.csproj" />
+    </Folder>
+    <Folder Name="/test/">
+        <Project Path="test/Dental.Application.Tests/Dental.Application.Tests.csproj" />
+        <Project Path="test/Dental.Web.Tests/Dental.Web.Tests.csproj" />
+        <Project Path="test/Dental.EntityFrameworkCore.Tests/Dental.EntityFrameworkCore.Tests.csproj" />
+        <Project Path="test/Dental.TestBase/Dental.TestBase.csproj" />
+        <Project Path="test/Dental.Domain.Tests/Dental.Domain.Tests.csproj" />
+        <Project Path="test/Dental.HttpApi.Client.ConsoleTestApp/Dental.HttpApi.Client.ConsoleTestApp.csproj" />
+    </Folder>
+</Solution>
