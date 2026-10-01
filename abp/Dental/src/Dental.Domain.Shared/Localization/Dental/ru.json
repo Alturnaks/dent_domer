@@ -635,6 +635,7 @@
     "Calendar:WaitlistNotificationTitle": "Освободилось время для пациентов из листа ожидания",
     "Calendar:WaitlistNotificationBody": "Дата: {0}. Подходящих пациентов: {1}.",
     "Calendar:AnyDoctor": "Любой врач",
-    "Calendar:ChoosePatient": "Найдите и выберите пациента."
+    "Calendar:ChoosePatient": "Найдите и выберите пациента.",
+    "Calendar:AllDoctors": "Все врачи"
   }
 }

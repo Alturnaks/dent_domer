@@ -15,4 +15,8 @@ assert.equal(dates.normalize('29.02.2028'), '2028-02-29');
 for (const invalid of ['29.02.2026', '31.04.2026', '', '06/10/2026']) {
     assert.throws(() => dates.normalize(invalid), /Invalid calendar date/);
 }
-console.log('Calendar dates: 11 checks passed');
+assert.equal(dates.startOfWeek('06.10.2026'), '2026-10-05');
+assert.equal(dates.startOfWeek('11.10.2026'), '2026-10-05');
+assert.equal(dates.startOfWeek('05.10.2026'), '2026-10-05');
+assert.equal(dates.startOfWeek('01.01.2027'), '2026-12-28');
+console.log('Calendar dates: 15 checks passed');

@@ -14,5 +14,9 @@ var dentalCalendarDates = (function () {
         date.setUTCDate(date.getUTCDate() + delta);
         return date.toISOString().slice(0, 10);
     }
-    return { normalize: normalize, addDays: addDays };
+    function startOfWeek(value) {
+        var date = new Date(normalize(value) + 'T12:00:00Z');
+        return addDays(value, -((date.getUTCDay() + 6) % 7));
+    }
+    return { normalize: normalize, addDays: addDays, startOfWeek: startOfWeek };
 })();

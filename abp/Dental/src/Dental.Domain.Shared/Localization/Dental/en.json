@@ -619,6 +619,7 @@
     "Calendar:WaitlistNotificationTitle": "A slot is available for waitlisted patients",
     "Calendar:WaitlistNotificationBody": "Date: {0}. Matching patients: {1}.",
     "Calendar:AnyDoctor": "Any doctor",
-    "Calendar:ChoosePatient": "Find and select a patient."
+    "Calendar:ChoosePatient": "Find and select a patient.",
+    "Calendar:AllDoctors": "All doctors"
   }
 }
