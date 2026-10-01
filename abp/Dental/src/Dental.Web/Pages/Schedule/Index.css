@@ -1,0 +1,15 @@
+#CalendarGrid {display:flex; min-width:600px; gap:2px; padding-bottom:12px;}
+.calendar-scroll {overflow-x:auto; border:1px solid var(--bs-border-color); border-radius:8px; background:var(--bs-body-bg);}
+.calendar-column {flex:1; min-width:180px;}
+.calendar-header {height:44px; padding:10px; text-align:center; font-weight:600; border-bottom:1px solid var(--bs-border-color);}
+.calendar-track {position:relative; background:repeating-linear-gradient(to bottom,transparent 0,transparent 47px,var(--bs-border-color) 47px,var(--bs-border-color) 48px);}
+.calendar-hours {width:60px; flex:none;}
+.calendar-hours .calendar-track span {position:absolute; left:4px; font-size:12px; color:var(--bs-secondary-color);}
+.calendar-working {position:absolute; left:0; right:0; background:rgba(35,160,90,.08); pointer-events:none;}
+.calendar-block {position:absolute; left:0; right:0; background:repeating-linear-gradient(45deg,rgba(110,110,110,.12),rgba(110,110,110,.12) 6px,transparent 6px,transparent 12px); pointer-events:none;}
+.calendar-appointment {position:absolute; left:4px; right:4px; border:0; border-left:4px solid var(--doctor-color,#386ec4); border-radius:4px; background:#dbeafe; color:#153961; padding:3px 6px; text-align:left; overflow:hidden; font-size:12px; cursor:pointer;}
+.calendar-appointment.status-1 {background:#dcfce7; color:#14532d;}
+.calendar-appointment.status-2,.calendar-appointment.status-3 {background:#fef3c7; color:#713f12;}
+.calendar-appointment.status-4 {background:#e2e8f0; color:#334155;}
+.calendar-appointment.status-5,.calendar-appointment.status-6 {background:#fee2e2; color:#7f1d1d; opacity:.7;}
+.calendar-appointment:focus-visible {outline:3px solid var(--bs-primary); z-index:10;}

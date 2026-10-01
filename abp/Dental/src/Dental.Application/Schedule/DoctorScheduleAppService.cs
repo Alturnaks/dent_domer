@@ -20,7 +20,7 @@ public class DoctorScheduleAppService(
     IRepository<TimeBlock, Guid> blocks,
     IRepository<Employee, Guid> employees,
     DoctorScheduleManager manager,
-    ISettingProvider settings) : DentalAppService, IDoctorScheduleAppService
+    ISettingProvider settings, ScheduleImpactGuard impact) : DentalAppService, IDoctorScheduleAppService
 {
     private async Task EnsureCanReadAsync(Guid branchId, Guid doctorId)
     {
@@ -44,6 +44,8 @@ public class DoctorScheduleAppService(
         await BranchScope.EnsureCanAccessAsync(input.BranchId);
         var rows = await manager.ReplaceWeekAsync(CurrentTenant.Id, input.BranchId, input.DoctorId, input.ValidFrom,
             input.Days.Select(d => new DoctorShiftData(d.Weekday, d.StartTime, d.EndTime, d.ChairId)).ToList());
+        await CurrentUnitOfWork!.SaveChangesAsync();
+        await impact.EnsureAsync(input.DoctorId, input.BranchId);
         return new(rows.Select(ToDto).ToList());
     }
 
@@ -88,6 +90,7 @@ public class DoctorScheduleAppService(
         var row = new ScheduleException(GuidGenerator.Create(), CurrentTenant.Id, input.DoctorId, input.BranchId,
             input.DateFrom, input.DateTo, input.Type, input.StartTime, input.EndTime, input.Comment);
         await exceptions.InsertAsync(row, autoSave: true);
+        await impact.EnsureAsync(input.DoctorId, input.BranchId);
         return ToDto(row);
     }
 
@@ -97,6 +100,8 @@ public class DoctorScheduleAppService(
         var row = await exceptions.GetAsync(id);
         await EnsureDoctorScopeAsync(row.DoctorId, row.BranchId, true);
         await exceptions.DeleteAsync(row);
+        await CurrentUnitOfWork!.SaveChangesAsync();
+        await impact.EnsureAsync(row.DoctorId, row.BranchId);
     }
 
     [Authorize(DentalPermissions.Schedule.DoctorSchedulesManage)]
@@ -116,6 +121,7 @@ public class DoctorScheduleAppService(
         var row = new TimeBlock(GuidGenerator.Create(), CurrentTenant.Id, input.BranchId, input.DoctorId, input.ChairId,
             input.StartsAt.UtcDateTime, input.EndsAt.UtcDateTime, input.Reason);
         await blocks.InsertAsync(row, autoSave: true);
+        await impact.EnsureAsync(input.DoctorId, input.BranchId, row.StartsAt, row.EndsAt);
         return ToDto(row);
     }
 

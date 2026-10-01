@@ -2,6 +2,11 @@ namespace Dental;
 
 public static class DentalDomainErrorCodes
 {
+    public const string AppointmentSlotConflict = "Dental:AppointmentSlotConflict";
+    public const string AppointmentDoctorNotWorking = "Dental:AppointmentDoctorNotWorking";
+    public const string AppointmentInvalidStatus = "Dental:AppointmentInvalidStatus";
+    public const string AppointmentReasonRequired = "Dental:AppointmentReasonRequired";
+    public const string ScheduleHasAppointments = "Dental:ScheduleHasAppointments";
     public const string ScheduleInvalidRange = "Dental:ScheduleInvalidRange";
     public const string ScheduleDoctorInvalid = "Dental:ScheduleDoctorInvalid";
     public const string ScheduleChairInvalid = "Dental:ScheduleChairInvalid";

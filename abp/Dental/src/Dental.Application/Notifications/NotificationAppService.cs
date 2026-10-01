@@ -47,6 +47,7 @@ public class NotificationAppService : DentalAppService, INotificationAppService
     public static string? UrlFor(string? entityType, Guid? entityId) => entityType switch
     {
         nameof(ApprovalRequest) => "/Approvals",
+        "Appointment" when entityId is { } appointmentId => "/Schedule?appointmentId=" + appointmentId,
         "Patient" when entityId is { } id => "/Patients/Detail?id=" + id,
         "StockDocument" when entityId is { } id => "/Inventory/Documents/Edit?id=" + id,
         _ => null,

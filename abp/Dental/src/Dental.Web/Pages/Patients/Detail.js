@@ -4,6 +4,18 @@ $(function () {
     var esc = dentalUi.esc;
     var $root = $('#PatientDetail');
     var id = $root.data('id');
+    if (abp.auth.isGranted('Dental.Schedule.ViewAll') || abp.auth.isGranted('Dental.Schedule.ViewOwn') || abp.auth.isGranted('Dental.Schedule.Manage')) {
+        dental.schedule.appointment.getPatientAppointments(id).then(function (r) {
+            var timezone = abp.setting.get('Dental.Org.Timezone') || 'Asia/Almaty';
+            var body = $('#PatientAppointments tbody').empty();
+            r.items.forEach(function (a) {
+                var when = new Intl.DateTimeFormat(abp.localization.currentCulture.name || 'ru', {timeZone:timezone,dateStyle:'short',timeStyle:'short'}).format(new Date(a.startsAt));
+                body.append($('<tr>').append($('<td>').append($('<a>').attr('href','/Schedule?appointmentId='+encodeURIComponent(a.id)).text(when)),
+                    $('<td>').text(a.doctorName), $('<td>').text(l('Calendar:Status:'+a.status)), $('<td>').text(a.services.map(function(s){return s.name;}).join(', '))));
+            });
+            if (!r.items.length) body.append($('<tr>').append($('<td colspan="4" class="text-muted">').text(l('Calendar:NoPatientAppointments'))));
+        });
+    }
 
     $root.find('[data-role=phone]').each(function () { $(this).text(dentalUi.phone($(this).data('phone')) || '—'); });
     $root.find('[data-role=age]').each(function () { $(this).text(' (' + dentalUi.age($(this).data('birth')) + ')'); });

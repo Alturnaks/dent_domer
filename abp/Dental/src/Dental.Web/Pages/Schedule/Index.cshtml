@@ -5,4 +5,40 @@
     PageLayout.Content.Title = L["Menu:Schedule"].Value;
     PageLayout.Content.MenuItemName = DentalMenus.Schedule;
 }
-<partial name="_UnderDevelopment" model="@("Menu:Schedule")" />
+@section scripts {
+    <abp-script src="/Pages/Patients/patient-form.js" />
+    <abp-script src="/Pages/Schedule/Index.js" />
+}
+@section styles { <abp-style src="/Pages/Schedule/Index.css" /> }
+<div class="row g-2 mb-3">
+    <div class="col-md-3"><label for="CalendarBranch">@L["Schedule:Branch"]</label><select id="CalendarBranch" class="form-select"></select></div>
+    <div class="col-md-2"><label for="CalendarDate">@L["Calendar:Date"]</label><input id="CalendarDate" type="date" class="form-control" /></div>
+    <div class="col-md-3"><label for="CalendarView">@L["Calendar:View"]</label><select id="CalendarView" class="form-select"><option value="doctors">@L["Calendar:Doctors"]</option><option value="chairs">@L["Calendar:Chairs"]</option><option value="week">@L["Calendar:DoctorWeek"]</option></select></div>
+    <div class="col-md-3"><label for="CalendarDoctor">@L["Schedule:Doctor"]</label><select id="CalendarDoctor" class="form-select"></select></div>
+    <div class="col-md-1 d-flex align-items-end"><button id="CalendarRefresh" class="btn btn-outline-primary" aria-label="@L["Calendar:Refresh"]"><i class="fa fa-sync"></i></button></div>
+</div>
+<div class="d-flex flex-wrap gap-2 mb-3"><button id="CalendarPrev" class="btn btn-outline-secondary">@L["Calendar:Previous"]</button><button id="CalendarToday" class="btn btn-outline-secondary">@L["Calendar:Today"]</button><button id="CalendarNext" class="btn btn-outline-secondary">@L["Calendar:Next"]</button><button id="NewAppointment" class="btn btn-primary">@L["Calendar:New"]</button><span id="CalendarTimezone" class="align-self-center text-muted"></span></div>
+<div id="CalendarEmpty" class="alert alert-info d-none">@L["Calendar:Empty"]</div>
+<label class="mb-2"><input id="ShowCancelled" type="checkbox" class="form-check-input" /> @L["Calendar:ShowCancelled"]</label>
+<div class="calendar-scroll"><div id="CalendarGrid" aria-label="@L["Menu:Schedule"]"></div></div>
+<div class="mt-4" id="WaitlistPanel"><h4>@L["Calendar:Waitlist"]</h4><p class="text-muted">@L["Calendar:WaitlistHint"]</p><button id="NewWaitlist" class="btn btn-outline-primary mb-2">@L["Calendar:AddWaitlist"]</button><div id="WaitlistRows"></div></div>
+<div class="modal fade" id="AppointmentModal" tabindex="-1" aria-labelledby="AppointmentTitle"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <form id="AppointmentForm"><div class="modal-header"><h5 class="modal-title" id="AppointmentTitle">@L["Calendar:New"]</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Calendar:Close"]"></button></div>
+    <div class="modal-body"><div class="row g-3">
+        <div class="col-md-6 new-fields"><label for="PatientSearch">@L["Calendar:PatientSearch"]</label><input id="PatientSearch" class="form-control" autocomplete="off" /><select id="AppointmentPatient" class="form-select mt-1" aria-label="@L["Calendar:Patient"]"></select><button id="QuickPatient" type="button" class="btn btn-link">@L["Calendar:NewPatient"]</button></div>
+        <div class="col-md-6"><label for="AppointmentDoctor">@L["Schedule:Doctor"]</label><select id="AppointmentDoctor" class="form-select" required></select></div>
+        <div class="col-md-6"><label for="AppointmentStart">@L["Schedule:Start"]</label><input id="AppointmentStart" type="datetime-local" class="form-control" required /></div>
+        <div class="col-md-6"><label for="AppointmentEnd">@L["Schedule:End"]</label><input id="AppointmentEnd" type="datetime-local" class="form-control" required /></div>
+        <div class="col-md-6"><label for="AppointmentChair">@L["Schedule:Chair"]</label><select id="AppointmentChair" class="form-select"></select></div>
+        <div class="col-md-6 new-fields"><label for="AppointmentServices">@L["Calendar:Services"]</label><select id="AppointmentServices" class="form-select" multiple size="4"></select></div>
+        <div class="col-12 new-fields"><label for="AppointmentComment">@L["Schedule:Comment"]</label><textarea id="AppointmentComment" class="form-control" maxlength="2000"></textarea></div>
+        <div class="col-md-6 waitlist-fields"><label for="WaitlistFrom">@L["Schedule:From"]</label><input id="WaitlistFrom" type="date" class="form-control" /></div>
+        <div class="col-md-6 waitlist-fields"><label for="WaitlistTo">@L["Schedule:To"]</label><input id="WaitlistTo" type="date" class="form-control" /></div>
+        <div class="col-12"><button id="FindSlots" type="button" class="btn btn-outline-primary">@L["Calendar:FindSlots"]</button><div id="AvailableSlots" class="d-flex flex-wrap gap-1 mt-2"></div></div>
+        <div class="col-12" id="ForcePanel"><label><input id="AppointmentForce" type="checkbox" class="form-check-input" /> @L["Calendar:Force"]</label></div>
+        <div class="col-12 existing-fields"><label for="MoveReason">@L["Calendar:MoveReason"]</label><select id="MoveReason" class="form-select"></select></div>
+        <div class="col-12 existing-fields"><div id="AppointmentInfo" class="alert alert-info"></div><div id="StatusActions" class="d-flex flex-wrap gap-2"></div><label for="CancelReason" class="mt-2">@L["Calendar:CancelReason"]</label><select id="CancelReason" class="form-select"></select><input id="CancelComment" class="form-control mt-1" maxlength="2000" placeholder="@L["Schedule:Comment"]" /></div>
+        <div class="col-12"><p class="text-muted mb-0">@L["Calendar:ReminderHint"]</p></div>
+    </div></div><div class="modal-footer"><button type="submit" id="SaveAppointment" class="btn btn-primary">@L["Calendar:Save"]</button></div></form>
+</div></div></div>
+<partial name="~/Pages/Patients/_PatientFormModal.cshtml" />
