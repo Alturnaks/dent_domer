@@ -1,0 +1,6 @@
+@model Dental.Patients.PatientDto
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Dental.Localization
+@inject IHtmlLocalizer<DentalResource> L
+@* Точка расширения: модуль «Касса» заменяет это представление платежами пациента (Model.Id). *@
+<div class="text-muted py-3"><i class="fa fa-hourglass-half me-1"></i>@L["ComingSoon", L["Menu:Cash"].Value]</div>

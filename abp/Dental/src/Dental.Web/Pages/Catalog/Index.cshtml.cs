@@ -3,7 +3,7 @@ using Dental.Web.Authorization;
 
 namespace Dental.Web.Pages.Catalog;
 
-/// <summary>Заглушка раздела — будет заменена модулем.</summary>
+/// <summary>Услуги и прайсы: дерево категорий, услуги с действующей ценой, прайс-листы, техкарты.</summary>
 [AnyPermission(DentalPermissions.Catalog.PricesManage, DentalPermissions.Catalog.TechCardsManage)]
 public class IndexModel : DentalPageModel
 {

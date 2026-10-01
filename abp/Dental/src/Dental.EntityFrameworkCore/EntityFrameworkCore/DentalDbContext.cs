@@ -32,6 +32,21 @@ public class DentalDbContext :
     public DbSet<Dental.Staff.Employee> Employees { get; set; }
     public DbSet<Dental.Roles.RoleLimit> RoleLimits { get; set; }
 
+    // Пациенты, каталог, подтверждения, уведомления, справочники
+    public DbSet<Dental.Patients.Patient> Patients { get; set; }
+    public DbSet<Dental.Patients.PatientConsent> PatientConsents { get; set; }
+    public DbSet<Dental.Patients.PatientBalance> PatientBalances { get; set; }
+    public DbSet<Dental.Patients.LeadSource> LeadSources { get; set; }
+    public DbSet<Dental.References.CancelReason> CancelReasons { get; set; }
+    public DbSet<Dental.Catalog.ServiceCategory> ServiceCategories { get; set; }
+    public DbSet<Dental.Catalog.ClinicService> ClinicServices { get; set; }
+    public DbSet<Dental.Catalog.PriceList> PriceLists { get; set; }
+    public DbSet<Dental.Catalog.PriceListItem> PriceListItems { get; set; }
+    public DbSet<Dental.Catalog.TechCard> TechCards { get; set; }
+    public DbSet<Dental.Catalog.TechCardItem> TechCardItems { get; set; }
+    public DbSet<Dental.Approvals.ApprovalRequest> ApprovalRequests { get; set; }
+    public DbSet<Dental.Notifications.Notification> Notifications { get; set; }
+
 
 
     #region Entities from the modules
@@ -87,6 +102,7 @@ public class DentalDbContext :
 
         /* Configure your own tables/entities inside here */
         builder.ConfigureDentalFoundation();
+        builder.ConfigurePatientsCatalogApprovals();
 
         //builder.Entity<YourEntity>(b =>
         //{

@@ -23,4 +23,5 @@ public static class DentalMenus
     public const string SettingsOrganization = Settings + ".Organization";
     public const string SettingsBranches = Settings + ".Branches";
     public const string SettingsRoleLimits = Settings + ".RoleLimits";
+    public const string SettingsReferences = Settings + ".References";
 }

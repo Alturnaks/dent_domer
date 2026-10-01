@@ -5,4 +5,210 @@
     PageLayout.Content.Title = L["Menu:Catalog"].Value;
     PageLayout.Content.MenuItemName = DentalMenus.Catalog;
 }
-<partial name="_UnderDevelopment" model="@("Menu:Catalog")" />
+@section scripts {
+    <abp-script src="/Pages/Catalog/Index.js" />
+}
+<abp-card>
+    <abp-card-body>
+        <ul class="nav nav-tabs mb-3" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#TabServices" type="button">@L["Catalog:Services"]</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#TabPriceLists" type="button">@L["Catalog:PriceLists"]</button></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="TabServices">
+                <div class="row">
+                    <div class="col-lg-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong>@L["Catalog:Categories"]</strong>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-perm="prices" id="NewCategoryButton"><i class="fa fa-plus"></i></button>
+                        </div>
+                        <div class="list-group small" id="CategoryTree"></div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="row g-2 mb-2 align-items-center">
+                            <div class="col-md-4"><input type="search" class="form-control" id="ServiceFilter" placeholder="@L["Search"]" /></div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="PriceBranch" title="@L["Catalog:PriceFor"]"><option value="">@L["Catalog:NetworkPrice"]</option></select>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="ShowInactive" />
+                                    <label class="form-check-label small" for="ShowInactive">@L["Catalog:ShowInactive"]</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 text-end">
+                                <button type="button" class="btn btn-primary" data-perm="prices" id="NewServiceButton"><i class="fa fa-plus me-1"></i>@L["Catalog:NewService"]</button>
+                            </div>
+                        </div>
+                        <div class="small text-muted mb-2">@L["Catalog:ResolveHint"]</div>
+                        <table class="table table-sm table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th style="width: 70px">@L["Catalog:Code"]</th>
+                                    <th>@L["Catalog:ServiceName"]</th>
+                                    <th class="text-end" style="width: 90px">@L["Catalog:Duration"]</th>
+                                    <th class="text-end" style="width: 130px">@L["Catalog:Price"]</th>
+                                    <th style="width: 150px">@L["Catalog:TechCard"]</th>
+                                    <th style="width: 50px"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="ServicesBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="TabPriceLists">
+                <div class="text-end mb-2">
+                    <button type="button" class="btn btn-primary" data-perm="prices" id="NewPriceListButton"><i class="fa fa-plus me-1"></i>@L["Catalog:NewPriceList"]</button>
+                </div>
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th>@L["Name"]</th>
+                            <th>@L["Catalog:PriceListBranch"]</th>
+                            <th>@L["Catalog:ValidFrom"]</th>
+                            <th class="text-end">@L["Catalog:ItemsCount"]</th>
+                            <th>@L["Status"]</th>
+                            <th class="text-end"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="PriceListsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </abp-card-body>
+</abp-card>
+
+@* Категория *@
+<div class="modal fade" id="CategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" data-role="title"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" name="id" />
+                <div class="mb-3"><label class="form-label">@L["Name"] *</label><input class="form-control" name="name" required maxlength="200" /></div>
+                <div class="mb-3"><label class="form-label">@L["Catalog:ParentCategory"]</label><select class="form-select" name="parentId"></select></div>
+                <div class="mb-3"><label class="form-label">@L["Catalog:Sort"]</label><input type="number" class="form-control" name="sort" value="0" /></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger me-auto" data-role="delete">@L["Delete"]</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">@L["Save"]</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* Услуга *@
+<div class="modal fade" id="ServiceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" data-role="title"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" name="id" />
+                <div class="mb-3"><label class="form-label">@L["Catalog:Category"] *</label><select class="form-select" name="categoryId" required></select></div>
+                <div class="row g-3 mb-3">
+                    <div class="col-4"><label class="form-label">@L["Catalog:Code"] *</label><input class="form-control" name="code" required maxlength="40" /></div>
+                    <div class="col-8"><label class="form-label">@L["Catalog:Duration"] *</label><input type="number" class="form-control" name="durationMin" min="5" max="600" step="5" required /></div>
+                </div>
+                <div class="mb-3"><label class="form-label">@L["Catalog:ServiceName"] *</label><input class="form-control" name="name" required maxlength="300" /></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="isActive" id="ServiceIsActive" /><label class="form-check-label" for="ServiceIsActive">@L["Catalog:IsActive"]</label></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">@L["Save"]</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* Техкарта *@
+<div class="modal fade" id="TechCardModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <form class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" data-role="title"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div data-role="versions" class="mb-3"></div>
+                <div data-perm="techcards">
+                    <h6>@L["Catalog:TechCardNewVersion"]</h6>
+                    <p class="small text-muted">@L["Catalog:TechCardHint"]</p>
+                    <div class="alert alert-secondary small d-none" data-role="no-items">@L["Catalog:ItemsUnavailable"]</div>
+                    <table class="table table-sm align-middle">
+                        <thead><tr><th>@L["Catalog:Material"]</th><th style="width: 160px">@L["Catalog:Quantity"]</th><th style="width: 40px"></th></tr></thead>
+                        <tbody data-role="rows"></tbody>
+                    </table>
+                    <div class="position-relative" style="max-width: 420px">
+                        <input class="form-control form-control-sm" data-role="item-search" placeholder="@L["Catalog:ItemSearch"]" autocomplete="off" />
+                        <div class="dropdown-menu w-100" data-role="item-results"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@L["Close"]</button>
+                <button type="submit" class="btn btn-primary" data-perm="techcards">@L["Catalog:TechCardNewVersion"]</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* Прайс-лист *@
+<div class="modal fade" id="PriceListModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" data-role="title"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" name="id" />
+                <div class="mb-3"><label class="form-label">@L["Name"] *</label><input class="form-control" name="name" required maxlength="200" /></div>
+                <div class="mb-3"><label class="form-label">@L["Catalog:PriceListBranch"]</label><select class="form-select" name="branchId"><option value="">@L["Catalog:PriceListNetwork"]</option></select></div>
+                <div class="mb-3"><label class="form-label">@L["Catalog:ValidFrom"] *</label><input type="date" class="form-control" name="validFrom" required /></div>
+                <div class="mb-3" data-role="copy"><label class="form-label">@L["Catalog:CopyFrom"]</label><select class="form-select" name="copyFromId"><option value="">@L["Catalog:NoCopy"]</option></select></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="isActive" id="PriceListIsActive" /><label class="form-check-label" for="PriceListIsActive">@L["Catalog:IsActive"]</label></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">@L["Save"]</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* Цены прайс-листа *@
+<div class="modal fade" id="PricesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <form class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" data-role="title"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="row g-2 mb-2">
+                    <div class="col-md-5"><input type="search" class="form-control form-control-sm" data-role="filter" placeholder="@L["Search"]" /></div>
+                    <div class="col-md-7 small text-muted">@L["Catalog:PricesHint"]</div>
+                </div>
+                <table class="table table-sm align-middle">
+                    <thead><tr><th style="width: 70px">@L["Catalog:Code"]</th><th>@L["Catalog:ServiceName"]</th><th style="width: 170px">@L["Catalog:Price"]</th></tr></thead>
+                    <tbody data-role="rows"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary" data-perm="prices">@L["Save"]</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* Массовое изменение *@
+<div class="modal fade" id="BulkModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" data-role="title"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-3"><label class="form-label">@L["Catalog:BulkPercent"] *</label><input type="number" class="form-control" name="percent" min="-90" max="500" step="0.1" required /></div>
+                <div class="mb-3"><label class="form-label">@L["Catalog:BulkRoundTo"]</label><input type="number" class="form-control" name="roundTo" min="1" value="100" /></div>
+                <div class="mb-3"><label class="form-label">@L["Catalog:BulkCategory"]</label><select class="form-select" name="categoryId"><option value="">@L["Catalog:AllCategories"]</option></select></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">@L["Catalog:BulkUpdate"]</button>
+            </div>
+        </form>
+    </div>
+</div>

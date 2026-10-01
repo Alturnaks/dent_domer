@@ -154,6 +154,13 @@ public class DentalWebModule : AbpModule
         }
         ConfigureStudio(hostingEnvironment);
         ConfigureBundles(hostingEnvironment);
+
+        // XSRF-TOKEN по умолчанию SameSite=None: по http (Docker, localhost) браузер отбрасывает такую куку без Secure,
+        // и все AJAX-POST (abp.ajax / JS-прокси) получают 400 «RequestVerificationToken is not present».
+        Configure<Volo.Abp.AspNetCore.Mvc.AntiForgery.AbpAntiForgeryOptions>(options =>
+        {
+            options.TokenCookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+        });
         ConfigureUrls(configuration);
         ConfigureHealthChecks(context);
         ConfigureAuthentication(context);
@@ -218,6 +225,7 @@ public class DentalWebModule : AbpModule
                 bundle =>
                 {
                     bundle.AddFiles("/global-scripts.js");
+                    bundle.AddFiles("/js/dental-common.js");
                     if (hostingEnvironment.IsDevelopment())
                     {
                         bundle.AddFiles("/dev-login-helper.js");

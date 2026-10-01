@@ -25,6 +25,26 @@ public class DentalHttpApiModule : AbpModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ConfigureLocalization();
+        ConfigureErrorStatusCodes();
+    }
+
+    /// <summary>HTTP-коды для бизнес-ошибок модулей (по умолчанию ABP отдаёт 403). Модули дописывают свои коды.</summary>
+    private void ConfigureErrorStatusCodes()
+    {
+        Configure<Volo.Abp.AspNetCore.ExceptionHandling.AbpExceptionHttpStatusCodeOptions>(options =>
+        {
+            options.Map(DentalDomainErrorCodes.PatientDuplicate, System.Net.HttpStatusCode.Conflict);
+            options.Map(DentalDomainErrorCodes.IinTaken, System.Net.HttpStatusCode.Conflict);
+            options.Map(DentalDomainErrorCodes.InvalidIin, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.InvalidPhone, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.InvalidBirthDate, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.PatientMergeInvalid, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.CategoryParentInvalid, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.ServiceCodeAlreadyExists, System.Net.HttpStatusCode.Conflict);
+            options.Map(DentalDomainErrorCodes.PriceInvalid, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.TechCardItemInvalid, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.ApprovalNotPending, System.Net.HttpStatusCode.Conflict);
+        });
     }
 
     private void ConfigureLocalization()

@@ -5,4 +5,44 @@
     PageLayout.Content.Title = L["Menu:Approvals"].Value;
     PageLayout.Content.MenuItemName = DentalMenus.Approvals;
 }
-<partial name="_UnderDevelopment" model="@("Menu:Approvals")" />
+@section scripts {
+    <abp-script src="/Pages/Approvals/Index.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6"><abp-card-title>@L["Menu:Approvals"]</abp-card-title></abp-column>
+            <abp-column size-md="_6" class="text-end">
+                <select class="form-select d-inline-block w-auto" id="ApprovalTypeFilter"><option value="">@L["All"]</option></select>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item"><button class="nav-link active" data-status="0" type="button">@L["Approval:Pending"] <span class="badge bg-danger d-none" id="PendingCount"></span></button></li>
+            <li class="nav-item"><button class="nav-link" data-status="" type="button">@L["Approval:History"]</button></li>
+        </ul>
+        <abp-table striped-rows="true" id="ApprovalsTable"></abp-table>
+    </abp-card-body>
+</abp-card>
+
+<div class="modal fade" id="ApprovalDecisionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" data-role="title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2" data-role="summary"></div>
+                <pre class="small bg-light p-2 rounded mb-3" data-role="payload" style="white-space: pre-wrap"></pre>
+                <label class="form-label">@L["Comment"]</label>
+                <textarea class="form-control" name="comment" rows="3" maxlength="1000"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn" data-role="submit"></button>
+            </div>
+        </form>
+    </div>
+</div>

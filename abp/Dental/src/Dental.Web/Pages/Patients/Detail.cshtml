@@ -1,0 +1,126 @@
+@page
+@model Dental.Web.Pages.Patients.DetailModel
+@using Dental.Permissions
+@using Dental.Web.Menus
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService Authorization
+@{
+    PageLayout.Content.Title = Model.Patient.FullName;
+    PageLayout.Content.MenuItemName = DentalMenus.Patients;
+    var p = Model.Patient;
+    var canEdit = await Authorization.IsGrantedAsync(DentalPermissions.Patients.Edit);
+}
+@section scripts {
+    <abp-script src="/Pages/Patients/patient-form.js" />
+    <abp-script src="/Pages/Patients/Detail.js" />
+}
+<div id="PatientDetail" data-id="@p.Id" data-can-edit="@(canEdit ? "true" : "false")">
+    <div class="mb-2"><a href="~/Patients"><i class="fa fa-arrow-left me-1"></i>@L["Menu:Patients"]</a></div>
+
+    @if (p.MergedIntoId is { } mainId)
+    {
+        <div class="alert alert-info">
+            @L["Patient:Merged"] — <a href="~/Patients/Detail?id=@mainId">@L["Patient:OpenMain"]</a>
+        </div>
+    }
+
+    <abp-card>
+        <abp-card-body>
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                <div>
+                    <h3 class="mb-1">
+                        @p.FullName
+                        @if (p.IsVip)
+                        {
+                            <span class="badge bg-warning text-dark align-middle">VIP</span>
+                        }
+                    </h3>
+                    <div class="text-muted">
+                        @if (p.BirthDate is { } bd)
+                        {
+                            <span>@bd.ToString("dd.MM.yyyy")</span><span data-role="age" data-birth="@bd.ToString("yyyy-MM-dd")"></span><span> · </span>
+                        }
+                        <span data-role="phone" data-phone="@p.Phone"></span>
+                        @if (!string.IsNullOrEmpty(p.SourceName))
+                        {
+                            <span> · @L["Patient:Source"]: @p.SourceName</span>
+                        }
+                    </div>
+                    <div class="mt-1">
+                        @foreach (var tag in p.Tags)
+                        {
+                            <span class="badge bg-light text-dark border me-1">@tag</span>
+                        }
+                    </div>
+                </div>
+                <div class="d-flex gap-4 text-center" id="PatientBalanceBox">
+                    <div><div class="small text-muted">@L["Patient:Balance"]</div><div class="fs-5" data-role="balance">…</div></div>
+                    <div><div class="small text-muted">@L["Patient:TotalPaid"]</div><div class="fs-5" data-role="paid">…</div></div>
+                    <div><div class="small text-muted">@L["Patient:VisitsCount"]</div><div class="fs-5">@p.VisitsCount</div></div>
+                    <div><div class="small text-muted">@L["Patient:NextAppointment"]</div><div class="fs-6" data-role="next" data-value="@p.NextAppointmentAt?.ToString("o")">—</div></div>
+                </div>
+                @if (canEdit && p.MergedIntoId == null)
+                {
+                    <div><button type="button" class="btn btn-primary" id="EditPatientButton"><i class="fa fa-pen me-1"></i>@L["Edit"]</button></div>
+                }
+            </div>
+        </abp-card-body>
+    </abp-card>
+
+    <abp-card>
+        <abp-card-body>
+            <ul class="nav nav-tabs mb-3" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#TabInfo" type="button">@L["Patient:Info"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#TabAppointments" type="button">@L["Patient:Appointments"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#TabVisits" type="button">@L["Patient:Visits"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#TabPayments" type="button">@L["Patient:Payments"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#TabConsents" type="button">@L["Patient:Consents"]</button></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="TabInfo">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">@L["Patient:Gender"]</dt><dd class="col-sm-9">@L["Enum:Gender." + p.Gender]</dd>
+                        <dt class="col-sm-3">@L["Patient:Iin"]</dt><dd class="col-sm-9">@(p.Iin ?? "—")</dd>
+                        <dt class="col-sm-3">@L["Patient:Phone"]</dt><dd class="col-sm-9"><span data-role="phone" data-phone="@p.Phone"></span></dd>
+                        <dt class="col-sm-3">@L["Patient:PhoneExtra"]</dt><dd class="col-sm-9"><span data-role="phone" data-phone="@p.PhoneExtra"></span></dd>
+                        <dt class="col-sm-3">@L["Patient:Email"]</dt><dd class="col-sm-9">@(p.Email ?? "—")</dd>
+                        <dt class="col-sm-3">@L["Patient:Address"]</dt><dd class="col-sm-9">@(p.Address ?? "—")</dd>
+                        <dt class="col-sm-3">@L["Patient:Source"]</dt><dd class="col-sm-9">@(p.SourceName ?? "—")</dd>
+                        <dt class="col-sm-3">@L["Patient:LastVisit"]</dt><dd class="col-sm-9" data-role="date" data-value="@p.LastVisitAt?.ToString("o")">—</dd>
+                        <dt class="col-sm-3">@L["Patient:CreatedAt"]</dt><dd class="col-sm-9" data-role="date" data-value="@p.CreationTime.ToString("o")"></dd>
+                        <dt class="col-sm-3">@L["Patient:Notes"]</dt><dd class="col-sm-9" style="white-space: pre-wrap">@(p.Notes ?? "—")</dd>
+                    </dl>
+                </div>
+                <div class="tab-pane fade" id="TabAppointments"><partial name="Tabs/_Appointments" model="p" /></div>
+                <div class="tab-pane fade" id="TabVisits"><partial name="Tabs/_Visits" model="p" /></div>
+                <div class="tab-pane fade" id="TabPayments"><partial name="Tabs/_Payments" model="p" /></div>
+                <div class="tab-pane fade" id="TabConsents">
+                    @if (canEdit)
+                    {
+                        <form class="row g-2 align-items-end mb-3" id="ConsentForm">
+                            <div class="col-md-5">
+                                <label class="form-label small mb-1">@L["Patient:ConsentType"]</label>
+                                <input class="form-control" name="type" list="ConsentTypes" required maxlength="100" />
+                                <datalist id="ConsentTypes"></datalist>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small mb-1">@L["Patient:ConsentSignedAt"]</label>
+                                <input type="date" class="form-control" name="signedAt" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small mb-1">@L["Patient:ConsentFileUrl"]</label>
+                                <input class="form-control" name="fileUrl" maxlength="1000" />
+                            </div>
+                            <div class="col-md-2"><button type="submit" class="btn btn-outline-primary w-100"><i class="fa fa-plus me-1"></i>@L["Add"]</button></div>
+                        </form>
+                    }
+                    <table class="table table-sm">
+                        <thead><tr><th>@L["Patient:ConsentType"]</th><th>@L["Patient:ConsentSignedAt"]</th><th>@L["Patient:ConsentFileUrl"]</th></tr></thead>
+                        <tbody id="ConsentsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </abp-card-body>
+    </abp-card>
+</div>
+<partial name="_PatientFormModal" />

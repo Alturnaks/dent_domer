@@ -1,8 +1,66 @@
 @page
 @model Dental.Web.Pages.Patients.IndexModel
+@using Dental.Permissions
 @using Dental.Web.Menus
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService Authorization
 @{
     PageLayout.Content.Title = L["Menu:Patients"].Value;
     PageLayout.Content.MenuItemName = DentalMenus.Patients;
+    var canEdit = await Authorization.IsGrantedAsync(DentalPermissions.Patients.Edit);
+    var canMerge = await Authorization.IsGrantedAsync(DentalPermissions.Patients.Merge);
 }
-<partial name="_UnderDevelopment" model="@("Menu:Patients")" />
+@section scripts {
+    <abp-script src="/Pages/Patients/patient-form.js" />
+    <abp-script src="/Pages/Patients/Index.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6"><abp-card-title>@L["Menu:Patients"]</abp-card-title></abp-column>
+            <abp-column size-md="_6" class="text-end">
+                @if (canMerge)
+                {
+                    <a class="btn btn-outline-secondary me-1" href="~/Patients/Duplicates"><i class="fa fa-clone me-1"></i>@L["Patient:Duplicates"]</a>
+                }
+                @if (canEdit)
+                {
+                    <abp-button id="NewPatientButton" text="@L["Patient:New"].Value" icon="plus" button-type="Primary" />
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <div class="row g-2 mb-3 align-items-end" id="PatientFilters">
+            <div class="col-md-4">
+                <label class="form-label small mb-1">@L["Search"]</label>
+                <input type="search" class="form-control" id="PatientFilter" value="@Model.Filter" placeholder="@L["Patient:SearchPlaceholder"]" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">@L["Patient:Source"]</label>
+                <select class="form-select" id="PatientSourceFilter"><option value="">@L["All"]</option></select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">@L["Patient:Tags"]</label>
+                <select class="form-select" id="PatientTagFilter"><option value="">@L["All"]</option></select>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label small mb-1">@L["Patient:FilterNotVisited"]</label>
+                <input type="number" min="1" max="60" class="form-control" id="PatientNotVisitedFilter" />
+            </div>
+            <div class="col-md-3">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="PatientDebtorsFilter" />
+                    <label class="form-check-label" for="PatientDebtorsFilter">@L["Patient:FilterDebtors"]</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="PatientVipFilter" />
+                    <label class="form-check-label" for="PatientVipFilter">@L["Patient:FilterVip"]</label>
+                </div>
+                <button type="button" class="btn btn-link btn-sm" id="PatientFiltersReset">@L["Reset"]</button>
+            </div>
+        </div>
+        <abp-table striped-rows="true" id="PatientsTable"></abp-table>
+    </abp-card-body>
+</abp-card>
+<partial name="_PatientFormModal" />

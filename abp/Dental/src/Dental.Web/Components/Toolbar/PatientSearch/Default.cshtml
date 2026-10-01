@@ -1,0 +1,8 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Dental.Localization
+@inject IHtmlLocalizer<DentalResource> L
+<div class="dental-patient-search position-relative me-2 d-none d-md-block" id="DentalPatientSearch">
+    <input type="search" class="form-control form-control-sm" style="width: 260px" autocomplete="off"
+           placeholder="@L["GlobalSearch:Placeholder"]" aria-label="@L["GlobalSearch:Placeholder"]" />
+    <div class="dropdown-menu shadow" style="width: 340px; max-height: 420px; overflow-y: auto"></div>
+</div>

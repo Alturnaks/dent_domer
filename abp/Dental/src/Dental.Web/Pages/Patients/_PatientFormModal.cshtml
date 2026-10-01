@@ -1,0 +1,91 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Dental.Localization
+@inject IHtmlLocalizer<DentalResource> L
+@* Форма создания/редактирования пациента (логика — patient-form.js). Используется на списке и в карточке. *@
+<div class="modal fade" id="PatientFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <form class="modal-content" id="PatientForm" novalidate>
+            <div class="modal-header">
+                <h5 class="modal-title" data-role="title">@L["Patient:New"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="id" />
+                <div class="alert alert-warning d-none" data-role="duplicates">
+                    <div class="fw-semibold mb-1">@L["Patient:DuplicatesFound"]</div>
+                    <ul class="mb-2" data-role="duplicates-list"></ul>
+                    <button type="button" class="btn btn-sm btn-warning" data-role="create-anyway">@L["Patient:CreateAnyway"]</button>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Patient:LastName"] *</label>
+                        <input class="form-control" name="lastName" required maxlength="100" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Patient:FirstName"] *</label>
+                        <input class="form-control" name="firstName" required maxlength="100" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Patient:MiddleName"]</label>
+                        <input class="form-control" name="middleName" maxlength="100" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Patient:BirthDate"]</label>
+                        <input type="date" class="form-control" name="birthDate" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Patient:Gender"]</label>
+                        <select class="form-select" name="gender">
+                            <option value="0">@L["Enum:Gender.Unknown"]</option>
+                            <option value="1">@L["Enum:Gender.Male"]</option>
+                            <option value="2">@L["Enum:Gender.Female"]</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Patient:Iin"]</label>
+                        <input class="form-control" name="iin" maxlength="12" inputmode="numeric" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Patient:Phone"]</label>
+                        <input class="form-control" name="phone" maxlength="20" placeholder="+7 7__ ___-__-__" inputmode="tel" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Patient:PhoneExtra"]</label>
+                        <input class="form-control" name="phoneExtra" maxlength="20" inputmode="tel" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Patient:Email"]</label>
+                        <input type="email" class="form-control" name="email" maxlength="256" />
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">@L["Patient:Address"]</label>
+                        <input class="form-control" name="address" maxlength="500" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Patient:Source"]</label>
+                        <select class="form-select" name="sourceId"><option value=""></option></select>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">@L["Patient:Tags"] <span class="text-muted small">(@L["Patient:TagsHint"])</span></label>
+                        <input class="form-control" name="tags" list="PatientTagsList" />
+                        <datalist id="PatientTagsList"></datalist>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="isVip" id="PatientFormIsVip" />
+                            <label class="form-check-label" for="PatientFormIsVip">@L["Patient:IsVip"]</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">@L["Patient:Notes"]</label>
+                        <textarea class="form-control" name="notes" rows="3" maxlength="4000"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check me-1"></i>@L["Save"]</button>
+            </div>
+        </form>
+    </div>
+</div>

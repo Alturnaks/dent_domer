@@ -1,0 +1,18 @@
+@page
+@model Dental.Web.Pages.Patients.DuplicatesModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Patient:Duplicates"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.Patients;
+}
+@section scripts {
+    <abp-script src="/Pages/Patients/Duplicates.js" />
+}
+<div class="mb-2"><a href="~/Patients"><i class="fa fa-arrow-left me-1"></i>@L["Menu:Patients"]</a></div>
+<abp-card>
+    <abp-card-header><abp-card-title>@L["Patient:Duplicates"]</abp-card-title></abp-card-header>
+    <abp-card-body>
+        <p class="text-muted">@L["Patient:DuplicatesHint"]</p>
+        <div id="DuplicatesList"><div class="text-muted"><i class="fa fa-spinner fa-spin"></i></div></div>
+    </abp-card-body>
+</abp-card>

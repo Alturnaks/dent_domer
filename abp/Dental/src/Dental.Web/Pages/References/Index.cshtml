@@ -1,0 +1,40 @@
+@page
+@model Dental.Web.Pages.References.IndexModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Menu:Settings:References"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.SettingsReferences;
+}
+@section scripts {
+    <abp-script src="/Pages/References/Index.js" />
+}
+<abp-row>
+    <abp-column size-lg="_6">
+        <abp-card>
+            <abp-card-header><abp-card-title>@L["References:LeadSources"]</abp-card-title></abp-card-header>
+            <abp-card-body>
+                <form class="input-group mb-3" id="LeadSourceForm">
+                    <input class="form-control" name="name" maxlength="200" required placeholder="@L["Name"]" />
+                    <button class="btn btn-primary" type="submit"><i class="fa fa-plus me-1"></i>@L["Add"]</button>
+                </form>
+                <table class="table table-sm align-middle"><tbody id="LeadSourcesBody"></tbody></table>
+            </abp-card-body>
+        </abp-card>
+    </abp-column>
+    <abp-column size-lg="_6">
+        <abp-card>
+            <abp-card-header><abp-card-title>@L["References:CancelReasons"]</abp-card-title></abp-card-header>
+            <abp-card-body>
+                <form class="input-group mb-3" id="CancelReasonForm">
+                    <input class="form-control" name="name" maxlength="200" required placeholder="@L["Name"]" />
+                    <select class="form-select" name="type" style="max-width: 140px">
+                        <option value="0">@L["Enum:CancelReasonType.Cancel"]</option>
+                        <option value="1">@L["Enum:CancelReasonType.Reschedule"]</option>
+                    </select>
+                    <button class="btn btn-primary" type="submit"><i class="fa fa-plus me-1"></i>@L["Add"]</button>
+                </form>
+                <table class="table table-sm align-middle"><tbody id="CancelReasonsBody"></tbody></table>
+            </abp-card-body>
+        </abp-card>
+    </abp-column>
+</abp-row>

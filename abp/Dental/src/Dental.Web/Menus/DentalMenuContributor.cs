@@ -52,7 +52,8 @@ public class DentalMenuContributor : IMenuContributor
         menu.AddItem(new ApplicationMenuItem(DentalMenus.Reports, l["Menu:Reports"], "~/Reports", icon: "fa fa-chart-line", order: 11)
             .RequirePermissions(false, P.Reports.Branch, P.Reports.Network, P.Reports.Finance, P.Reports.Payroll));
         menu.AddItem(new ApplicationMenuItem(DentalMenus.Approvals, l["Menu:Approvals"], "~/Approvals", icon: "fa fa-circle-check", order: 12)
-            .RequirePermissions(false, P.Purchase.OrderApprove, P.Inventory.CountApprove, P.Visits.EditClosed, P.Org.RolesManage));
+            .RequirePermissions(false, P.Catalog.DiscountsApply, P.Inventory.Writeoff, P.Cash.PaymentRefund, P.Visits.EditClosed,
+                P.Purchase.OrderApprove, P.Payroll.Manage, P.Inventory.CountApprove, P.Org.SettingsManage, P.Org.RolesManage));
         menu.AddItem(new ApplicationMenuItem(DentalMenus.AuditLog, l["Menu:AuditLog"], "~/AuditLog", icon: "fa fa-clock-rotate-left", order: 13)
             .RequirePermissions(P.Audit.View));
 
@@ -63,6 +64,8 @@ public class DentalMenuContributor : IMenuContributor
             .RequirePermissions(P.Org.BranchesManage));
         settings.AddItem(new ApplicationMenuItem(DentalMenus.SettingsRoleLimits, l["Menu:Settings:RoleLimits"], "~/RoleLimits")
             .RequirePermissions(P.Org.RolesManage));
+        settings.AddItem(new ApplicationMenuItem(DentalMenus.SettingsReferences, l["Menu:Settings:References"], "~/References")
+            .RequirePermissions(P.Org.SettingsManage));
         menu.AddItem(settings);
 
         // Администрирование ABP (пользователи, роли и права, арендаторы, настройки).
