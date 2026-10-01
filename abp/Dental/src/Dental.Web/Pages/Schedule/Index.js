@@ -14,14 +14,15 @@ $(function () {
         for (var i=0;i<4;i++) {var wall=parts(guess); guess=new Date(guess.getTime()+target-Date.parse(wall.date+'T'+wall.time+':00Z'));}
         return guess.toISOString();
     }
-    function addDays(date, delta) {var d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+delta);return d.toISOString().slice(0,10);}
+    function calendarDate() {return dentalCalendarDates.normalize($('#CalendarDate').val());}
+    function addDays(date, delta) {return dentalCalendarDates.addDays(date,delta);}
     function wall(date, minute) {date=addDays(date,Math.floor(minute/1440));minute=minute%1440;return date+'T'+String(Math.floor(minute/60)).padStart(2,'0')+':'+String(minute%60).padStart(2,'0');}
     function branch() {return $('#CalendarBranch').val();}
     function fill(select, rows, empty) {var s=$(select).empty();if(empty) s.append($('<option>').val('').text(empty));rows.forEach(function(r){s.append($('<option>').val(r.id).text(r.name||r.fullName));});}
     function statusName(status) {return l('Calendar:Status:'+status);}
     function load() {
         if (!branch() || !$('#CalendarDate').val()) return;
-        var n=++generation, date=$('#CalendarDate').val(), week=$('#CalendarView').val()==='week';
+        var n=++generation, date=calendarDate(), week=$('#CalendarView').val()==='week';
         api.getCalendar({branchId:branch(),from:date,to:week?addDays(date,6):date,doctorId:week?$('#CalendarDoctor').val()||null:null}).then(function(r){
             if(n!==generation)return;data=r;timezone=r.timezone;$('#CalendarTimezone').text(l('Schedule:Timezone',timezone));render();
             if(linkedAppointment){var linked=linkedAppointment;linkedAppointment=null;open(linked);}
@@ -29,7 +30,7 @@ $(function () {
         if(manage) api.getWaitlist(branch()).then(function(r){if(n===generation)renderWaitlist(r.items);});
     }
     function render() {
-        var grid=$('#CalendarGrid').empty(), date=$('#CalendarDate').val(), mode=$('#CalendarView').val(), columns=[];
+        var grid=$('#CalendarGrid').empty(), date=calendarDate(), mode=$('#CalendarView').val(), columns=[];
         if(mode==='week') for(var d=0;d<7;d++)columns.push({date:addDays(date,d),id:$('#CalendarDoctor').val(),name:addDays(date,d)});
         else (mode==='chairs'?chairs.concat([{id:null,name:l('Schedule:NoChair')}]):data.doctors).forEach(function(r){columns.push({date:date,id:r.id,name:r.name});});
         $('#CalendarEmpty').toggleClass('d-none',columns.length>0);
@@ -83,7 +84,7 @@ $(function () {
         if(waitingMode){$('#AppointmentTitle').text(l('Calendar:AddWaitlist'));$('#FindSlots,#ForcePanel').hide();}
         var selected=row?row.doctorId:$('#CalendarDoctor').val();fill('#AppointmentDoctor',doctors,waitingMode?l('Calendar:AnyDoctor'):null);$('#AppointmentDoctor').prop('required',!waitingMode).val(waitingMode?'':selected||doctors[0]?.id);
         fill('#AppointmentChair',chairs,l('Schedule:NoChair'));$('#AppointmentChair').val(row?.chairId||'');
-        var start=row?parts(row.startsAt):{date:$('#CalendarDate').val(),time:'09:00'};
+        var start=row?parts(row.startsAt):{date:calendarDate(),time:'09:00'};
         $('#AppointmentStart').val(start.date+'T'+start.time);
         $('#AppointmentEnd').val(row?parts(row.endsAt).date+'T'+parts(row.endsAt).time:start.date+'T09:30');
         if(column){var duration=row?Math.round((Date.parse(row.endsAt)-Date.parse(row.startsAt))/60000):30;
@@ -108,7 +109,7 @@ $(function () {
         if(!current&&!$('#AppointmentPatient').val()){abp.message.warn(l('Calendar:ChoosePatient'));return;}
         if(waitingMode){saving=true;$('#SaveAppointment').prop('disabled',true);
             api.createWaitlist({branchId:branch(),patientId:$('#AppointmentPatient').val(),doctorId:$('#AppointmentDoctor').val()||null,
-                preferredFrom:$('#WaitlistFrom').val()||null,preferredTo:$('#WaitlistTo').val()||null,comment:$('#AppointmentComment').val()})
+                preferredFrom:$('#WaitlistFrom').val()?dentalCalendarDates.normalize($('#WaitlistFrom').val()):null,preferredTo:$('#WaitlistTo').val()?dentalCalendarDates.normalize($('#WaitlistTo').val()):null,comment:$('#AppointmentComment').val()})
                 .then(function(){modal.hide();load();}).always(function(){saving=false;$('#SaveAppointment').prop('disabled',false);});return;}
         var input={doctorId:$('#AppointmentDoctor').val(),chairId:$('#AppointmentChair').val()||null,startsAt:instant($('#AppointmentStart').val()),endsAt:instant($('#AppointmentEnd').val()),force:$('#AppointmentForce').is(':checked')};
         if(Date.parse(input.endsAt)<=Date.parse(input.startsAt)){abp.message.warn(l('Dental:ScheduleInvalidRange'));return;}
@@ -135,7 +136,7 @@ $(function () {
     $('#NewWaitlist').on('click',function(){open(null,null,null,true);});
     $('#NewAppointment').toggle(manage).on('click',function(){open(null);});$('#WaitlistPanel').toggle(manage);
     $('#CalendarDate').val(parts(new Date()).date);$('#CalendarDate,#CalendarView,#CalendarDoctor').on('change',load);$('#CalendarRefresh').on('click',load);
-    $('#CalendarPrev,#CalendarNext').on('click',function(){var step=$('#CalendarView').val()==='week'?7:1;$('#CalendarDate').val(addDays($('#CalendarDate').val(),this.id==='CalendarPrev'?-step:step));load();});
+    $('#CalendarPrev,#CalendarNext').on('click',function(){var step=$('#CalendarView').val()==='week'?7:1;$('#CalendarDate').val(addDays(calendarDate(),this.id==='CalendarPrev'?-step:step));load();});
     $('#CalendarToday').on('click',function(){$('#CalendarDate').val(parts(new Date()).date);load();});
     $('#ShowCancelled').on('change',function(){if(data)render();});
     $('#CalendarBranch').on('change',function(){var n=++generation;$.when(dental.staff.employee.getLookup({branchId:branch(),position:3}),dental.branches.branch.getChairs(branch()),dental.staff.employee.getCurrent()).then(function(d,c,me){
