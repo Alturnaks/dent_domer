@@ -8,6 +8,7 @@ public static class DentalMenus
     public const string Home = Prefix + ".Home";
     public const string Dashboard = Prefix + ".Dashboard";
     public const string Schedule = Prefix + ".Schedule";
+    public const string Visits = Prefix + ".Visits";
     public const string DoctorSchedules = Prefix + ".DoctorSchedules";
     public const string Patients = Prefix + ".Patients";
     public const string Cash = Prefix + ".Cash";

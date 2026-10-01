@@ -28,7 +28,14 @@
                 }
                 <span>@(Model.Me.AllBranches ? L["AllBranches"].Value : string.Join(", ", Model.BranchNames))</span>
             </p>
-            <p class="text-muted">@L["Dashboard:Placeholder"]</p>
         }
     </abp-card-body>
 </abp-card>
+@if (CurrentTenant.IsAvailable)
+{
+    <div class="row g-3 my-3"><div class="col-md-6"><label for="DashboardBranch">@L["Branch"]</label><select id="DashboardBranch" class="form-select"></select></div><div class="col-md-4"><label for="DashboardDate">@L["Finance:Date"]</label><input id="DashboardDate" type="date" class="form-control" /></div><div class="col-md-2 d-flex align-items-end"><button id="DashboardRefresh" class="btn btn-outline-primary">@L["Dashboard:Refresh"]</button></div></div>
+    <div id="DashboardCards" class="row g-3 mb-4"></div>
+    <abp-card><abp-card-body><h4>@L["Dashboard:Attention"]</h4><div id="DashboardAttention" class="d-flex flex-wrap gap-3"></div></abp-card-body></abp-card>
+    <abp-card><abp-card-body><h4>@L["Dashboard:Branches"]</h4><div class="table-responsive"><table class="table"><thead><tr><th>@L["Branch"]</th><th>@L["Dashboard:Appointments"]</th><th>@L["Dashboard:Unconfirmed"]</th><th class="dashboard-finance">@L["Dashboard:RevenueDay"]</th><th class="dashboard-finance">@L["Finance:Debt"]</th></tr></thead><tbody id="DashboardBranches"></tbody></table></div></abp-card-body></abp-card>
+}
+@section scripts { <abp-script src="/Pages/Schedule/calendar-date.js" /><abp-script src="/Pages/Index.js" /> }

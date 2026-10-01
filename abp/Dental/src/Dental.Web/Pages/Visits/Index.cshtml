@@ -1,0 +1,10 @@
+@page
+@model Dental.Web.Pages.Visits.IndexModel
+@using Dental.Web.Menus
+@{ PageLayout.Content.Title = L["Menu:Visits"].Value; PageLayout.Content.MenuItemName = DentalMenus.Visits; }
+@section scripts { <abp-script src="/Pages/Visits/Index.js" /> }
+<abp-card><abp-card-body>
+    <label for="VisitBranch">@L["Branch"]</label><select id="VisitBranch" class="form-select mb-3"></select>
+    <div class="table-responsive"><table class="table"><thead><tr><th>@L["Finance:Date"]</th><th>@L["Finance:Patient"]</th><th>@L["Finance:Doctor"]</th><th>@L["Finance:Status"]</th><th>@L["Finance:Total"]</th><th>@L["Finance:Debt"]</th><th></th></tr></thead><tbody id="VisitRows"></tbody></table></div>
+    <p id="VisitsEmpty" class="text-muted d-none">@L["Finance:VisitsEmpty"]</p>
+</abp-card-body></abp-card>

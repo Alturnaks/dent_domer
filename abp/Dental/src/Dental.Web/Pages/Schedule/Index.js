@@ -119,6 +119,7 @@ $(function () {
             $('#AppointmentStart').val(wall(column.date,minute));$('#AppointmentEnd').val(wall(column.date,minute+duration));
             if($('#CalendarView').val()==='chairs')$('#AppointmentChair').val(column.id);else $('#AppointmentDoctor').val(column.id);}
         if(row){
+            if(row.status===2||row.status===3||row.status===4) $('#StatusActions').append($('<button type="button" class="btn btn-primary">').text(l('Finance:Visit')).on('click',function(){dental.finance.visit.getByAppointment(row.id).then(function(v){if(v)window.location.href='/Visits/Detail?id='+v.id;else abp.message.info(l('Finance:VisitsEmpty'));});}));
             $('#AppointmentInfo').text(statusName(row.status)+' · '+row.services.map(function(s){return s.name;}).join(', ')+' · '+(row.comment||''));
             if(manage){var targets={0:[1,2,5,6],1:[2,5,6],2:[3,4],3:[4],6:[2]}[row.status]||[];
                 targets.forEach(function(s){$('#StatusActions').append($('<button type="button" class="btn btn-outline-primary">').text(statusName(s)).on('click',function(){changeStatus(s);}));});

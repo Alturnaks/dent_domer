@@ -39,6 +39,8 @@ public class DentalMenuContributor : IMenuContributor
             .RequirePermissions(P.Patients.View));
         menu.AddItem(new ApplicationMenuItem(DentalMenus.Cash, l["Menu:Cash"], "~/Cash", icon: "fa fa-cash-register", order: 5)
             .RequirePermissions(false, P.Cash.ShiftOpenClose, P.Cash.PaymentCreate, P.Cash.PaymentRefund, P.Cash.ExpenseCreate));
+        menu.AddItem(new ApplicationMenuItem(DentalMenus.Visits, l["Menu:Visits"], "~/Visits", icon: "fa fa-tooth", order: 5)
+            .RequirePermissions(false, P.Visits.EditOpen, P.Visits.Complete, P.Schedule.Manage, P.Cash.PaymentCreate));
         menu.AddItem(new ApplicationMenuItem(DentalMenus.Inventory, l["Menu:Inventory"], "~/Inventory", icon: "fa fa-boxes-stacked", order: 6)
             .RequirePermissions(P.Inventory.View));
         menu.AddItem(new ApplicationMenuItem(DentalMenus.Purchasing, l["Menu:Purchasing"], "~/Purchasing", icon: "fa fa-truck", order: 7)

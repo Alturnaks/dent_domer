@@ -1,0 +1,18 @@
+@page
+@model Dental.Web.Pages.Visits.DetailModel
+@using Dental.Web.Menus
+@{ PageLayout.Content.Title = L["Menu:Visits"].Value; PageLayout.Content.MenuItemName = DentalMenus.Visits; }
+@section scripts { <abp-script src="/Pages/Visits/Detail.js" /> }
+<abp-card><abp-card-body>
+    <h3 id="VisitPatient"></h3><p id="VisitSummary" class="text-muted"></p>
+    <label for="VisitAssistant">@L["Finance:Assistant"]</label><select id="VisitAssistant" class="form-select mb-3"></select>
+    <div class="d-flex gap-3 flex-wrap mb-3"><strong id="VisitTotal"></strong><span id="VisitPaid"></span><span id="VisitDebt"></span><span id="VisitBalance"></span></div>
+    <h4>@L["Finance:Services"]</h4>
+    <div class="table-responsive"><table class="table"><thead><tr><th>@L["Finance:Service"]</th><th>@L["Finance:Doctor"]</th><th>@L["Finance:Quantity"]</th><th>@L["Finance:Price"]</th><th>@L["Finance:Discount"]</th><th>@L["Finance:Teeth"]</th><th></th></tr></thead><tbody id="VisitItems"></tbody></table></div>
+    <div id="VisitEditTools" class="d-flex gap-2 mb-3"><select id="VisitService" class="form-select"></select><button id="VisitAddService" class="btn btn-outline-primary">@L["Finance:Add"]</button></div>
+    <h4>@L["Finance:Materials"]</h4>
+    <div class="table-responsive"><table class="table"><thead><tr><th>@L["Finance:Material"]</th><th>@L["Finance:Quantity"]</th><th>@L["Finance:Norm"]</th><th>@L["Finance:Cost"]</th><th></th></tr></thead><tbody id="VisitMaterials"></tbody></table></div>
+    <div id="MaterialEditTools" class="d-flex gap-2 mb-3"><select id="VisitMaterial" class="form-select"></select><button id="VisitAddMaterial" class="btn btn-outline-primary">@L["Finance:Add"]</button></div>
+    <label for="VisitReason">@L["Finance:Reason"]</label><textarea id="VisitReason" class="form-control mb-3" maxlength="2000"></textarea>
+    <div class="d-flex gap-2 flex-wrap"><button id="VisitSave" class="btn btn-primary">@L["Finance:Save"]</button><button id="MaterialsSave" class="btn btn-outline-primary">@L["Finance:SaveMaterials"]</button><button id="VisitClose" class="btn btn-success">@L["Finance:CloseVisit"]</button><button id="VisitCorrect" class="btn btn-warning">@L["Finance:Correct"]</button><button id="VisitCancel" class="btn btn-outline-danger">@L["Finance:CancelVisit"]</button><a id="VisitPay" class="btn btn-outline-success">@L["Finance:Pay"]</a></div>
+</abp-card-body></abp-card>

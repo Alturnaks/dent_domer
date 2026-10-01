@@ -79,6 +79,13 @@ public class Appointment : FullAuditedAggregateRoot<Guid>, IMultiTenant
         if (hours == 24) Reminder24hSentAt = now; else if (hours == 2) Reminder2hSentAt = now;
     }
     public void MergePatient(Guid patientId) => PatientId = patientId;
+    public void CancelFromVisit(string reason)
+    {
+        if (Status != AppointmentStatus.Arrived && Status != AppointmentStatus.InChair && Status != AppointmentStatus.Completed)
+            throw new BusinessException(DentalDomainErrorCodes.AppointmentInvalidStatus);
+        CancelComment = Check.NotNullOrWhiteSpace(reason, nameof(reason), ScheduleConsts.MaxCommentLength);
+        Status = AppointmentStatus.Cancelled;
+    }
 }
 
 [Audited]

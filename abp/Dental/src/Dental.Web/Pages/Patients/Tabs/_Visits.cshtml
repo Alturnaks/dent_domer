@@ -2,5 +2,4 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Dental.Localization
 @inject IHtmlLocalizer<DentalResource> L
-@* Точка расширения: модуль «Визиты» заменяет это представление историей визитов пациента (Model.Id). *@
-<div class="text-muted py-3"><i class="fa fa-hourglass-half me-1"></i>@L["ComingSoon", L["Patient:Visits"].Value]</div>
+<div class="table-responsive"><table class="table"><thead><tr><th>@L["Finance:Date"]</th><th>@L["Finance:Doctor"]</th><th>@L["Finance:Status"]</th><th>@L["Finance:Total"]</th><th>@L["Finance:Debt"]</th></tr></thead><tbody id="PatientVisitRows"></tbody></table></div>

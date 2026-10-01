@@ -22,7 +22,7 @@ public class SchedulePatientMergeContributor(IAppointmentStore appointments, IRe
         return rows.Count + waiting.Count;
     }
 }
-[Dependency(ReplaceServices = true)]
+[Dependency(TryRegister = true)]
 public class SchedulePatientActivityProvider(IAppointmentStore appointments, IAsyncQueryableExecuter executer, IClock clock) : IPatientActivityProvider, ITransientDependency
 {
     public Task<IQueryable<Guid>?> GetVisitedSinceQueryAsync(DateTime sinceUtc) => Task.FromResult<IQueryable<Guid>?>(null);

@@ -4,6 +4,8 @@ $(function () {
     var esc = dentalUi.esc;
     var $root = $('#PatientDetail');
     var id = $root.data('id');
+    dental.finance.visit.getList({patientId:id}).then(function(rows){var body=$('#PatientVisitRows').empty();rows.forEach(function(v){body.append($('<tr>').append($('<td>').append($('<a>').attr('href','/Visits/Detail?id='+v.id).text(dentalUi.dateTime(v.openedAt))),$('<td>').text(v.doctorName),$('<td>').text(l('Finance:VisitStatus:'+v.status)),$('<td>').text(dentalUi.money(v.total)),$('<td>').text(dentalUi.money(v.debt))));});});
+    if(abp.auth.isGranted('Dental.Cash.PaymentCreate')||abp.auth.isGranted('Dental.Cash.ShiftOpenClose')||abp.auth.isGranted('Dental.Cash.ExpenseCreate')||abp.auth.isGranted('Dental.Reports.Finance'))dental.finance.cash.getPayments({patientId:id}).then(function(rows){var body=$('#PatientPaymentRows').empty();rows.forEach(function(p){body.append($('<tr>').append($('<td>').text(dentalUi.dateTime(p.creationTime)),$('<td>').text(l('Finance:PaymentType:'+p.type)),$('<td>').text(l('Finance:Method:'+p.method)),$('<td>').text(dentalUi.money(p.amount)),$('<td>').text(l('Finance:PaymentState:'+p.state))));});});
     if (abp.auth.isGranted('Dental.Schedule.ViewAll') || abp.auth.isGranted('Dental.Schedule.ViewOwn') || abp.auth.isGranted('Dental.Schedule.Manage')) {
         dental.schedule.appointment.getPatientAppointments(id).then(function (r) {
             var timezone = abp.setting.get('Dental.Org.Timezone') || 'Asia/Almaty';

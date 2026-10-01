@@ -5,4 +5,12 @@
     PageLayout.Content.Title = L["Menu:Cash"].Value;
     PageLayout.Content.MenuItemName = DentalMenus.Cash;
 }
-<partial name="_UnderDevelopment" model="@("Menu:Cash")" />
+@section scripts { <abp-script src="/Pages/Cash/Index.js" /> }
+<abp-card><abp-card-body>
+    <label for="CashBranch">@L["Branch"]</label><select id="CashBranch" class="form-select mb-3"></select>
+    <div class="d-flex gap-2 flex-wrap mb-3"><button id="CashNewRegister" class="btn btn-outline-secondary">@L["Finance:NewRegister"]</button><button id="CashOpenShift" class="btn btn-primary">@L["Finance:OpenShift"]</button><button id="CashPay" class="btn btn-success">@L["Finance:Pay"]</button><button id="CashExpense" class="btn btn-outline-primary">@L["Finance:Expense"]</button><button id="CashOperation" class="btn btn-outline-primary">@L["Finance:CashOperation"]</button><button id="CashCategory" class="btn btn-outline-secondary">@L["Finance:NewCategory"]</button></div>
+    <h4>@L["Finance:Shifts"]</h4><div class="table-responsive"><table class="table"><thead><tr><th>@L["Finance:Register"]</th><th>@L["Finance:Date"]</th><th>@L["Finance:Status"]</th><th>@L["Finance:ExpectedCash"]</th><th>@L["Finance:ActualCash"]</th><th>@L["Finance:Difference"]</th><th></th></tr></thead><tbody id="CashShifts"></tbody></table></div>
+    <h4>@L["Finance:Payments"]</h4><div class="table-responsive"><table class="table"><thead><tr><th>@L["Finance:Date"]</th><th>@L["Finance:Patient"]</th><th>@L["Finance:Method"]</th><th>@L["Finance:Type"]</th><th>@L["Finance:Amount"]</th><th>@L["Finance:Status"]</th><th></th></tr></thead><tbody id="CashPayments"></tbody></table></div>
+    <h4>@L["Finance:Expenses"]</h4><div class="table-responsive"><table class="table"><thead><tr><th>@L["Finance:Date"]</th><th>@L["Finance:Category"]</th><th>@L["Finance:Amount"]</th><th>@L["Finance:Comment"]</th></tr></thead><tbody id="CashExpenses"></tbody></table></div>
+</abp-card-body></abp-card>
+<div class="modal fade" id="CashModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><form id="CashForm"><div class="modal-header"><h5 id="CashModalTitle" class="modal-title"></h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button></div><div class="modal-body" id="CashFields"></div><div class="modal-footer"><button type="submit" id="CashSubmit" class="btn btn-primary">@L["Finance:Save"]</button></div></form></div></div></div>

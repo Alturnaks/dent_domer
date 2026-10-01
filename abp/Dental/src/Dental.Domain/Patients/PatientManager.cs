@@ -90,6 +90,7 @@ public class PatientManager : DomainService
     /// </summary>
     public async Task<Dictionary<string, int>> MergeAsync(Patient main, Patient dup)
     {
+        await LazyServiceProvider.LazyGetRequiredService<Dental.Finance.IFinanceLock>().AcquireAsync();
         if (main.Id == dup.Id || main.MergedIntoId != null || dup.MergedIntoId != null)
         {
             throw new BusinessException(DentalDomainErrorCodes.PatientMergeInvalid);

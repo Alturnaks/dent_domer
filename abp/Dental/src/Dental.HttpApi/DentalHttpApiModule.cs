@@ -33,6 +33,9 @@ public class DentalHttpApiModule : AbpModule
     {
         Configure<Volo.Abp.AspNetCore.ExceptionHandling.AbpExceptionHttpStatusCodeOptions>(options =>
         {
+            options.Map("Dental:FinanceInvalidInput", System.Net.HttpStatusCode.BadRequest);
+            foreach (var code in new[] { "FinanceConcurrency", "VisitNotOpen", "VisitNotClosed", "VisitArrivalRequired", "VisitPriceMissing", "VisitPendingApproval", "ShiftNotOpen", "ShiftAlreadyOpen", "InsufficientBalance", "RefundExceedsPayment" })
+                options.Map("Dental:" + code, System.Net.HttpStatusCode.Conflict);
             options.Map(DentalDomainErrorCodes.AppointmentSlotConflict, System.Net.HttpStatusCode.Conflict);
             options.Map(DentalDomainErrorCodes.AppointmentDoctorNotWorking, System.Net.HttpStatusCode.UnprocessableEntity);
             options.Map(DentalDomainErrorCodes.AppointmentInvalidStatus, System.Net.HttpStatusCode.Conflict);

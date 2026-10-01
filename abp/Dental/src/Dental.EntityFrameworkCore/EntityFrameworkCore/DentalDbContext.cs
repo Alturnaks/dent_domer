@@ -53,6 +53,15 @@ public class DentalDbContext :
     public DbSet<Dental.Schedule.Appointment> Appointments { get; set; }
     public DbSet<Dental.Schedule.AppointmentLine> AppointmentLines { get; set; }
     public DbSet<Dental.Schedule.WaitlistEntry> WaitlistEntries { get; set; }
+    public DbSet<Dental.Finance.Visit> Visits { get; set; }
+    public DbSet<Dental.Finance.VisitItem> VisitItems { get; set; }
+    public DbSet<Dental.Finance.VisitMaterial> VisitMaterials { get; set; }
+    public DbSet<Dental.Finance.CashRegister> CashRegisters { get; set; }
+    public DbSet<Dental.Finance.CashShift> CashShifts { get; set; }
+    public DbSet<Dental.Finance.Payment> Payments { get; set; }
+    public DbSet<Dental.Finance.ExpenseCategory> ExpenseCategories { get; set; }
+    public DbSet<Dental.Finance.Expense> Expenses { get; set; }
+    public DbSet<Dental.Finance.CashOperation> CashOperations { get; set; }
 
     // Склад
     public DbSet<Dental.Inventory.Warehouse> Warehouses { get; set; }
@@ -128,6 +137,7 @@ public class DentalDbContext :
         builder.ConfigurePatientsCatalogApprovals();
         builder.ConfigureInventory();
         builder.ConfigureSchedule();
+        builder.ConfigureFinance();
 
         //builder.Entity<YourEntity>(b =>
         //{

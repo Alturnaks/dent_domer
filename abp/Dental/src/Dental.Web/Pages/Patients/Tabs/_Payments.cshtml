@@ -2,5 +2,4 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Dental.Localization
 @inject IHtmlLocalizer<DentalResource> L
-@* Точка расширения: модуль «Касса» заменяет это представление платежами пациента (Model.Id). *@
-<div class="text-muted py-3"><i class="fa fa-hourglass-half me-1"></i>@L["ComingSoon", L["Menu:Cash"].Value]</div>
+<div class="table-responsive"><table class="table"><thead><tr><th>@L["Finance:Date"]</th><th>@L["Finance:Type"]</th><th>@L["Finance:Method"]</th><th>@L["Finance:Amount"]</th><th>@L["Finance:Status"]</th></tr></thead><tbody id="PatientPaymentRows"></tbody></table></div>
