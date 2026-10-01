@@ -63,7 +63,8 @@ public class OpenIddictDataSeedContributor : OpenIddictDataSeedContributorBase, 
         var appClientId = configurationSection["Dental_App:ClientId"];
         if (!appClientId.IsNullOrWhiteSpace())
         {
-            var appClientRootUrl = configurationSection["Dental_App:RootUrl"]?.TrimEnd('/');
+            var appClientRootUrl = configurationSection["Dental_App:RootUrl"]?.TrimEnd('/')
+                ?? throw new System.InvalidOperationException("OpenIddict:Applications:Dental_App:RootUrl is required.");
             await CreateOrUpdateApplicationAsync(
                 applicationType: OpenIddictConstants.ApplicationTypes.Web,
                 name: appClientId!,
@@ -97,7 +98,8 @@ public class OpenIddictDataSeedContributor : OpenIddictDataSeedContributorBase, 
         var swaggerClientId = configurationSection["Dental_Swagger:ClientId"];
         if (!swaggerClientId.IsNullOrWhiteSpace())
         {
-            var swaggerRootUrl = configurationSection["Dental_Swagger:RootUrl"]?.TrimEnd('/');
+            var swaggerRootUrl = configurationSection["Dental_Swagger:RootUrl"]?.TrimEnd('/')
+                ?? throw new System.InvalidOperationException("OpenIddict:Applications:Dental_Swagger:RootUrl is required.");
 
             await CreateOrUpdateApplicationAsync(
                 applicationType: OpenIddictConstants.ApplicationTypes.Web,

@@ -5,4 +5,53 @@
     PageLayout.Content.Title = L["Menu:DoctorSchedules"].Value;
     PageLayout.Content.MenuItemName = DentalMenus.DoctorSchedules;
 }
-<partial name="_UnderDevelopment" model="@("Menu:DoctorSchedules")" />
+@section scripts {
+    <abp-script src="/Pages/DoctorSchedules/Index.js" />
+}
+<div class="row g-3 mb-3">
+    <div class="col-md-4"><label for="ScheduleBranch" class="form-label">@L["Schedule:Branch"]</label><select id="ScheduleBranch" class="form-select"></select></div>
+    <div class="col-md-4"><label for="ScheduleDoctor" class="form-label">@L["Schedule:Doctor"]</label><select id="ScheduleDoctor" class="form-select"></select></div>
+    <div class="col-md-4"><label for="ScheduleFrom" class="form-label">@L["Schedule:ValidFrom"]</label><input id="ScheduleFrom" type="date" class="form-control" required /></div>
+</div>
+<div id="ScheduleEmpty" class="alert alert-info d-none">@L["Schedule:NoDoctors"]</div>
+<abp-card>
+    <abp-card-header><abp-card-title>@L["Schedule:WeeklyTemplate"]</abp-card-title></abp-card-header>
+    <abp-card-body>
+        <p class="text-muted">@L["Schedule:TemplateHint"]</p>
+        <div class="table-responsive"><table class="table"><thead><tr>
+            <th>@L["Schedule:Weekday"]</th><th>@L["Schedule:Working"]</th><th>@L["Schedule:Start"]</th><th>@L["Schedule:End"]</th><th>@L["Schedule:Chair"]</th><th></th>
+        </tr></thead><tbody id="WeekRows"></tbody></table></div>
+        <button id="AddShift" class="btn btn-outline-primary">@L["Schedule:AddShift"]</button>
+        <button id="SaveWeek" class="btn btn-primary">@L["Schedule:Save"]</button>
+    </abp-card-body>
+</abp-card>
+<abp-card class="mt-3">
+    <abp-card-header><abp-card-title>@L["Schedule:Exceptions"]</abp-card-title></abp-card-header>
+    <abp-card-body>
+        <form id="ExceptionForm" class="row g-2 mb-3">
+            <div class="col-md-3"><label for="ExceptionType" class="form-label">@L["Schedule:ExceptionType"]</label><select id="ExceptionType" class="form-select">
+                @for (var i = 0; i < 4; i++) { <option value="@i">@L[$"Schedule:ExceptionType:{i}"]</option> }
+            </select></div>
+            <div class="col-md-3"><label for="ExceptionFrom" class="form-label">@L["Schedule:From"]</label><input id="ExceptionFrom" type="date" class="form-control" required /></div>
+            <div class="col-md-3"><label for="ExceptionTo" class="form-label">@L["Schedule:To"]</label><input id="ExceptionTo" type="date" class="form-control" required /></div>
+            <div class="col-md-3"><label for="ExceptionStart" class="form-label">@L["Schedule:StartOptional"]</label><input id="ExceptionStart" type="time" class="form-control" /></div>
+            <div class="col-md-3"><label for="ExceptionEnd" class="form-label">@L["Schedule:EndOptional"]</label><input id="ExceptionEnd" type="time" class="form-control" /></div>
+            <div class="col-md-6"><label for="ExceptionComment" class="form-label">@L["Schedule:Comment"]</label><input id="ExceptionComment" maxlength="2000" class="form-control" /></div>
+            <div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary" type="submit">@L["Schedule:AddException"]</button></div>
+        </form>
+        <div class="table-responsive"><table class="table"><tbody id="ExceptionRows"></tbody></table></div>
+    </abp-card-body>
+</abp-card>
+<abp-card class="mt-3">
+    <abp-card-header><abp-card-title>@L["Schedule:Blocks"]</abp-card-title></abp-card-header>
+    <abp-card-body>
+        <form id="BlockForm" class="row g-2 mb-3">
+            <div class="col-md-3"><label for="BlockStart" class="form-label">@L["Schedule:Start"]</label><input id="BlockStart" type="datetime-local" class="form-control" required /></div>
+            <div class="col-md-3"><label for="BlockEnd" class="form-label">@L["Schedule:End"]</label><input id="BlockEnd" type="datetime-local" class="form-control" required /></div>
+            <div class="col-md-3"><label for="BlockReason" class="form-label">@L["Schedule:Comment"]</label><input id="BlockReason" maxlength="2000" class="form-control" /></div>
+            <div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary" type="submit">@L["Schedule:AddBlock"]</button></div>
+        </form>
+        <p class="text-muted" id="BlockTimezone"></p>
+        <div class="table-responsive"><table class="table"><tbody id="BlockRows"></tbody></table></div>
+    </abp-card-body>
+</abp-card>

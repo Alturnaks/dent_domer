@@ -47,6 +47,10 @@ public class DentalDbContext :
     public DbSet<Dental.Approvals.ApprovalRequest> ApprovalRequests { get; set; }
     public DbSet<Dental.Notifications.Notification> Notifications { get; set; }
 
+    public DbSet<Dental.Schedule.DoctorSchedule> DoctorSchedules { get; set; }
+    public DbSet<Dental.Schedule.ScheduleException> ScheduleExceptions { get; set; }
+    public DbSet<Dental.Schedule.TimeBlock> TimeBlocks { get; set; }
+
     // Склад
     public DbSet<Dental.Inventory.Warehouse> Warehouses { get; set; }
     public DbSet<Dental.Inventory.ItemCategory> ItemCategories { get; set; }
@@ -120,6 +124,7 @@ public class DentalDbContext :
         builder.ConfigureDentalFoundation();
         builder.ConfigurePatientsCatalogApprovals();
         builder.ConfigureInventory();
+        builder.ConfigureSchedule();
 
         //builder.Entity<YourEntity>(b =>
         //{

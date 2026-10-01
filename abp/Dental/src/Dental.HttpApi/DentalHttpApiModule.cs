@@ -33,6 +33,10 @@ public class DentalHttpApiModule : AbpModule
     {
         Configure<Volo.Abp.AspNetCore.ExceptionHandling.AbpExceptionHttpStatusCodeOptions>(options =>
         {
+            options.Map(DentalDomainErrorCodes.ScheduleInvalidRange, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.ScheduleDoctorInvalid, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.ScheduleChairInvalid, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.ScheduleOverlappingShifts, System.Net.HttpStatusCode.Conflict);
             options.Map(DentalDomainErrorCodes.PatientDuplicate, System.Net.HttpStatusCode.Conflict);
             options.Map(DentalDomainErrorCodes.IinTaken, System.Net.HttpStatusCode.Conflict);
             options.Map(DentalDomainErrorCodes.InvalidIin, System.Net.HttpStatusCode.BadRequest);

@@ -6,6 +6,7 @@ using Dental.Branches;
 using Dental.Roles;
 using Dental.Staff;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Volo.Abp.Data;
@@ -42,7 +43,7 @@ public class DentalDemoDataSeedContributor : IDataSeedContributor, ITransientDep
     private readonly IGuidGenerator _guidGenerator;
     private readonly IUnitOfWorkManager _unitOfWorkManager;
     private readonly IConfiguration _configuration;
-    private readonly IEnumerable<IDentalDemoModuleSeeder> _moduleSeeders;
+    private readonly IServiceScopeFactory _scopeFactory;
 
     public ILogger<DentalDemoDataSeedContributor> Logger { get; set; } = NullLogger<DentalDemoDataSeedContributor>.Instance;
 
@@ -60,9 +61,9 @@ public class DentalDemoDataSeedContributor : IDataSeedContributor, ITransientDep
         IGuidGenerator guidGenerator,
         IUnitOfWorkManager unitOfWorkManager,
         IConfiguration configuration,
-        IEnumerable<IDentalDemoModuleSeeder> moduleSeeders)
+        IServiceScopeFactory scopeFactory)
     {
-        _moduleSeeders = moduleSeeders;
+        _scopeFactory = scopeFactory;
         _tenantRepository = tenantRepository;
         _tenantManager = tenantManager;
         _dataSeeder = dataSeeder;
@@ -114,11 +115,18 @@ public class DentalDemoDataSeedContributor : IDataSeedContributor, ITransientDep
             await uow.CompleteAsync();
         }
 
-        // Демо-данные модулей (склад и т.д.) — после того, как филиалы и сотрудники созданы.
-        foreach (var seeder in _moduleSeeders.OrderBy(s => s.Order))
+        // Module seeders use independent transactions. They must run after the enclosing
+        // seed transaction commits, otherwise PostgreSQL cannot see the new branches.
+        async Task SeedModulesAsync()
         {
-            await seeder.SeedDemoAsync(tenantId);
+            using var scope = _scopeFactory.CreateScope();
+            foreach (var seeder in scope.ServiceProvider.GetServices<IDentalDemoModuleSeeder>().OrderBy(s => s.Order))
+                await seeder.SeedDemoAsync(tenantId);
         }
+        if (_unitOfWorkManager.Current is { } outerUnitOfWork)
+            outerUnitOfWork.OnCompleted(SeedModulesAsync);
+        else
+            await SeedModulesAsync();
     }
 
     private async Task<List<Branch>> SeedBranchesAsync(Guid tenantId)

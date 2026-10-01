@@ -2,6 +2,10 @@ namespace Dental;
 
 public static class DentalDomainErrorCodes
 {
+    public const string ScheduleInvalidRange = "Dental:ScheduleInvalidRange";
+    public const string ScheduleDoctorInvalid = "Dental:ScheduleDoctorInvalid";
+    public const string ScheduleChairInvalid = "Dental:ScheduleChairInvalid";
+    public const string ScheduleOverlappingShifts = "Dental:ScheduleOverlappingShifts";
     public const string BranchAccessDenied = "Dental:BranchAccessDenied";
     public const string BranchNameAlreadyExists = "Dental:BranchNameAlreadyExists";
     public const string EmployeeAlreadyExists = "Dental:EmployeeAlreadyExists";

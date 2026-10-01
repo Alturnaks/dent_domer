@@ -3,7 +3,7 @@ using Dental.Web.Authorization;
 
 namespace Dental.Web.Pages.DoctorSchedules;
 
-/// <summary>Заглушка раздела — будет заменена модулем.</summary>
+/// <summary>Недельные графики врачей, исключения и блокировки.</summary>
 [AnyPermission(DentalPermissions.Schedule.DoctorSchedulesManage)]
 public class IndexModel : DentalPageModel
 {
