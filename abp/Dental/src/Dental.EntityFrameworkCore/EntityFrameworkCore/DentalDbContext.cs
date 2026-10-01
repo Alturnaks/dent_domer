@@ -63,6 +63,18 @@ public class DentalDbContext :
     public DbSet<Dental.Finance.Expense> Expenses { get; set; }
     public DbSet<Dental.Finance.CashOperation> CashOperations { get; set; }
 
+    public DbSet<Dental.Payroll.PayrollScheme> PayrollSchemes { get; set; }
+    public DbSet<Dental.Payroll.PayrollPeriod> PayrollPeriods { get; set; }
+    public DbSet<Dental.Payroll.PayrollEntry> PayrollEntries { get; set; }
+    public DbSet<Dental.Purchasing.PurchaseRequest> PurchaseRequests { get; set; }
+    public DbSet<Dental.Purchasing.PurchaseRequestLine> PurchaseRequestLines { get; set; }
+    public DbSet<Dental.Purchasing.PurchaseOrder> PurchaseOrders { get; set; }
+    public DbSet<Dental.Purchasing.PurchaseOrderLine> PurchaseOrderLines { get; set; }
+    public DbSet<Dental.Purchasing.SupplierInvoice> SupplierInvoices { get; set; }
+    public DbSet<Dental.Purchasing.SupplierInvoicePayment> SupplierInvoicePayments { get; set; }
+    public DbSet<Dental.Reports.ReportSubscription> ReportSubscriptions { get; set; }
+    public DbSet<Dental.Reports.OperationsRun> OperationsRuns { get; set; }
+
     // Склад
     public DbSet<Dental.Inventory.Warehouse> Warehouses { get; set; }
     public DbSet<Dental.Inventory.ItemCategory> ItemCategories { get; set; }
@@ -138,6 +150,10 @@ public class DentalDbContext :
         builder.ConfigureInventory();
         builder.ConfigureSchedule();
         builder.ConfigureFinance();
+        builder.ConfigurePayroll();
+        builder.ConfigurePurchasing();
+        builder.Entity<Dental.Reports.ReportSubscription>(e => { e.HasBaseType((System.Type?)null); e.ToTable("AppReportSubscriptions"); e.ConfigureByConvention(); e.Property(x => x.Code).HasMaxLength(100); e.Property(x => x.Channel).HasMaxLength(20); e.Property(x => x.LastError).HasMaxLength(2000); e.Property(x => x.Email).HasMaxLength(256); });
+        builder.Entity<Dental.Reports.OperationsRun>(e => { e.HasBaseType((System.Type?)null); e.ToTable("AppOperationsRuns"); e.ConfigureByConvention(); e.Property(x => x.Key).HasMaxLength(100); e.HasIndex(x => new {x.TenantId,x.Key,x.Date}).IsUnique(); });
 
         //builder.Entity<YourEntity>(b =>
         //{

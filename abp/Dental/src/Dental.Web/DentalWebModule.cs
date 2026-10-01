@@ -117,6 +117,9 @@ public class DentalWebModule : AbpModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         context.Services.AddHostedService<Dental.Web.Schedule.AppointmentWorker>();
+        context.Services.AddSingleton<Dental.Web.Reports.OperationsWorker>();
+        context.Services.AddSingleton<Dental.Reports.IOperationsRunner>(sp=>sp.GetRequiredService<Dental.Web.Reports.OperationsWorker>());
+        context.Services.AddHostedService(sp=>sp.GetRequiredService<Dental.Web.Reports.OperationsWorker>());
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 

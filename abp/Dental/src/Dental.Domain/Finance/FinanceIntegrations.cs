@@ -43,6 +43,20 @@ public class RefundApprovalHandler(FinanceManager manager, IRepository<Payment, 
     public async Task OnApprovedAsync(ApprovalRequest request) => await manager.ApplyRefundAsync(await payments.GetAsync(request.EntityId));
     public async Task OnRejectedAsync(ApprovalRequest request) { await financeLock.AcquireAsync(); var p = await payments.GetAsync(request.EntityId); p.State = 2; await payments.UpdateAsync(p, true); }
 }
+public class PayrollVisitChangeApprovalHandler(FinanceManager manager, IRepository<Visit, Guid> visits, IFinanceLock financeLock) : IApprovalHandler, ITransientDependency
+{
+    public string Type => ApprovalTypes.PayrollPeriodChange;
+    public async Task OnApprovedAsync(ApprovalRequest request)
+    {
+        await financeLock.AcquireAsync();
+        using var json = JsonDocument.Parse(request.Payload);
+        if (json.RootElement.TryGetProperty("cancel", out var cancel) && cancel.GetBoolean())
+            await manager.CancelVisitAsync(request.EntityId,json.RootElement.GetProperty("stamp").GetString()!,json.RootElement.GetProperty("reason").GetString()!,true);
+        else await manager.ApplyCorrectionAsync(await manager.GetVisitAsync(request.EntityId),JsonSerializer.Deserialize<CorrectionData>(request.Payload,ApprovalManager.Json)!);
+    }
+    public async Task OnRejectedAsync(ApprovalRequest request)
+    { await financeLock.AcquireAsync(); var v = await visits.GetAsync(request.EntityId); v.ApprovalState = VisitApprovalState.None; await visits.UpdateAsync(v,true); }
+}
 [ExposeServices(typeof(IPatientMergeContributor))]
 public class FinancePatientMergeContributor(IRepository<Visit, Guid> visits, IRepository<Payment, Guid> payments, IFinanceLock financeLock) : IPatientMergeContributor, ITransientDependency
 {

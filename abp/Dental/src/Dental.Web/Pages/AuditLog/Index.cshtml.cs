@@ -3,7 +3,7 @@ using Dental.Web.Authorization;
 
 namespace Dental.Web.Pages.AuditLog;
 
-/// <summary>Заглушка раздела — будет заменена модулем.</summary>
+/// <summary>Раздел приложения с проверкой прав текущего пользователя.</summary>
 [AnyPermission(DentalPermissions.Audit.View)]
 public class IndexModel : DentalPageModel
 {

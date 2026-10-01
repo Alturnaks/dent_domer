@@ -172,27 +172,40 @@ public class FinanceManager : DomainService
         if (lines.Any(i => !limit.AllowsDiscount(i.DiscountPct))) throw new BusinessException("Dental:RoleLimitExceeded");
         var closedShift = v.CashShiftId == null || (await R<CashShift>().GetAsync(v.CashShiftId.Value)).Status == CashShiftStatus.Closed;
         var payload = new CorrectionData(lines, materials, reason, v.Total, v.ConcurrencyStamp);
-        if (closedShift && !limit.CanEditClosedShiftVisits)
-        { v.ApprovalState = VisitApprovalState.PendingCorrection; await R<Visit>().UpdateAsync(v, true); payload = payload with { OriginalStamp = v.ConcurrencyStamp }; await Approvals.RequestAsync(ApprovalTypes.ClosedVisitEdit, nameof(Visit), v.Id, v.Total, reason, payload, v.BranchId); }
+        var payrollLocked = await InApprovedPayrollAsync(v);
+        if (payrollLocked || closedShift && !limit.CanEditClosedShiftVisits)
+        { v.ApprovalState = VisitApprovalState.PendingCorrection; await R<Visit>().UpdateAsync(v, true); payload = payload with { OriginalStamp = v.ConcurrencyStamp }; await Approvals.RequestAsync(payrollLocked ? ApprovalTypes.PayrollPeriodChange : ApprovalTypes.ClosedVisitEdit, nameof(Visit), v.Id, v.Total, reason, payload, v.BranchId); }
         else await ApplyCorrectionAsync(v, payload);
         return v;
     }
     public async Task ApplyCorrectionAsync(Visit v, CorrectionData data)
     {
-        if (v.Status != VisitStatus.Closed || v.Total != data.OriginalTotal) throw new BusinessException("Dental:FinanceConcurrency");
+        if (v.Status != VisitStatus.Closed || v.Total != data.OriginalTotal || v.ConcurrencyStamp != data.OriginalStamp) throw new BusinessException("Dental:FinanceConcurrency");
         var oldTotal = v.Total;
         if (v.ConsumptionDocumentId != null) await LazyServiceProvider.LazyGetRequiredService<IVisitStockConsumer>().ReverseAsync(v.ConsumptionDocumentId.Value, data.Reason);
         await ReplaceItemsAsync(v, data.Items); await ReplaceMaterialsAsync(v, data.Materials); v.Recalculate(); await ConsumeAsync(v);
         await AddBalanceAsync(v.PatientId, oldTotal - v.Total); v.ApprovalState = VisitApprovalState.None; await R<Visit>().UpdateAsync(v, true);
         await NotifySuspiciousAsync(v.BranchId, nameof(Visit), v.Id, data.Reason, $"Visit corrected: {oldTotal} → {v.Total}");
     }
-    public async Task<Visit> CancelVisitAsync(Guid id, string stamp, string reason)
+    private async Task<bool> InApprovedPayrollAsync(Visit v)
     {
-        await RequireAsync(DentalPermissions.Visits.Cancel); await Lock.AcquireAsync(); var v = await GetVisitAsync(id); CheckStamp(v.ConcurrencyStamp, stamp); Check.NotNullOrWhiteSpace(reason, nameof(reason), 2000);
+        if (v.ClosedAt == null) return false;
+        var tz = await LazyServiceProvider.LazyGetRequiredService<AppointmentManager>().GetTimezoneAsync();
+        var date = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(v.ClosedAt.Value, tz));
+        return await R<Dental.Payroll.PayrollPeriod>().AnyAsync(p => p.BranchId == v.BranchId && p.Status != Dental.Payroll.PayrollPeriodStatus.Draft && p.PeriodStart <= date && p.PeriodEnd >= date);
+    }
+    public async Task<Visit> CancelVisitAsync(Guid id, string stamp, string reason, bool payrollApproved = false)
+    {
+        if (!payrollApproved) await RequireAsync(DentalPermissions.Visits.Cancel); await Lock.AcquireAsync(); var v = await GetVisitAsync(id); CheckStamp(v.ConcurrencyStamp, stamp); Check.NotNullOrWhiteSpace(reason, nameof(reason), 2000);
         if (v.Status == VisitStatus.Cancelled) return v;
         if (v.Status == VisitStatus.Closed)
         {
-            if (!Approvals.IsOwner()) throw new AbpAuthorizationException();
+            if (!payrollApproved && !Approvals.IsOwner()) throw new AbpAuthorizationException();
+            if (!payrollApproved && await InApprovedPayrollAsync(v))
+            {
+                v.ApprovalState = VisitApprovalState.PendingCorrection; await R<Visit>().UpdateAsync(v, true);
+                await Approvals.RequestAsync(ApprovalTypes.PayrollPeriodChange, nameof(Visit), v.Id, v.Total, reason, new { cancel = true, reason, stamp = v.ConcurrencyStamp }, v.BranchId); return v;
+            }
             if (v.ConsumptionDocumentId != null) await LazyServiceProvider.LazyGetRequiredService<IVisitStockConsumer>().ReverseAsync(v.ConsumptionDocumentId.Value, reason);
             await AddBalanceAsync(v.PatientId, v.Total); await NotifySuspiciousAsync(v.BranchId, nameof(Visit), v.Id, reason, "Closed visit cancelled");
         }

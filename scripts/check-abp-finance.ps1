@@ -1,4 +1,4 @@
-param([string]$BaseUrl = 'http://localhost:3102')
+﻿param([string]$BaseUrl = 'http://localhost:3102')
 $ErrorActionPreference = 'Stop'
 if (-not ([Uri]$BaseUrl).IsLoopback) { throw 'Only a local demo server is supported.' }
 function Login([string]$name) { $token=Invoke-RestMethod -Method Post -Uri "$BaseUrl/connect/token" -Headers @{__tenant='dental-plus'} -ContentType 'application/x-www-form-urlencoded' -Body "grant_type=password&client_id=Dental_App&username=$name@demo.kz&password=demo12345&scope=Dental"; return @{Authorization="Bearer $($token.access_token)";__tenant='dental-plus'} }

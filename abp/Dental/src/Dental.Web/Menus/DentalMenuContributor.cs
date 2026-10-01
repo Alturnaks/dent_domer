@@ -52,7 +52,7 @@ public class DentalMenuContributor : IMenuContributor
         menu.AddItem(new ApplicationMenuItem(DentalMenus.Payroll, l["Menu:Payroll"], "~/Payroll", icon: "fa fa-money-bill-wave", order: 10)
             .RequirePermissions(false, P.Payroll.ViewOwn, P.Payroll.ViewAll, P.Payroll.Manage));
         menu.AddItem(new ApplicationMenuItem(DentalMenus.Reports, l["Menu:Reports"], "~/Reports", icon: "fa fa-chart-line", order: 11)
-            .RequirePermissions(false, P.Reports.Branch, P.Reports.Network, P.Reports.Finance, P.Reports.Payroll));
+            .RequirePermissions(false, P.Reports.Branch, P.Reports.Network, P.Reports.Finance, P.Reports.Payroll, P.Inventory.View));
         menu.AddItem(new ApplicationMenuItem(DentalMenus.Approvals, l["Menu:Approvals"], "~/Approvals", icon: "fa fa-circle-check", order: 12)
             .RequirePermissions(false, P.Catalog.DiscountsApply, P.Inventory.Writeoff, P.Cash.PaymentRefund, P.Visits.EditClosed,
                 P.Purchase.OrderApprove, P.Payroll.Manage, P.Inventory.CountApprove, P.Org.SettingsManage, P.Org.RolesManage));

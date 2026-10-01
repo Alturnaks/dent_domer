@@ -5,4 +5,12 @@
     PageLayout.Content.Title = L["Menu:Payroll"].Value;
     PageLayout.Content.MenuItemName = DentalMenus.Payroll;
 }
-<partial name="_UnderDevelopment" model="@("Menu:Payroll")" />
+@section scripts { <abp-script src="/Pages/Schedule/calendar-date.js" /> <abp-script src="/Pages/Payroll/Index.js" /> }
+<abp-card><abp-card-body>
+<label for="PayrollBranch">Филиал</label><select id="PayrollBranch" class="form-select mb-3"></select>
+<div id="PayrollManage" class="mb-3 d-flex flex-wrap gap-2"><button class="btn btn-primary" id="PayrollCreate">Новая ведомость</button><button class="btn btn-outline-primary" id="PayrollScheme">Новая схема зарплаты</button></div>
+<div class="table-responsive"><table class="table"><thead><tr><th>Период</th><th>Статус</th><th>Начислено, ₸</th><th></th></tr></thead><tbody id="PayrollPeriods"></tbody></table></div>
+<div id="PayrollDetail" hidden><h4 id="PayrollTitle"></h4><p>Расчёт основан на закрытых визитах. После утверждения суммы ведомости сохраняются как исторический снимок. Отметка выплаты фиксирует статус; расход в кассе оформляется отдельно.</p><div id="PayrollActions" class="d-flex gap-2 mb-3"></div><div class="table-responsive"><table class="table"><thead><tr><th>Сотрудник</th><th>Выручка, ₸</th><th>Материалы, ₸</th><th>Начисление, ₸</th><th>Бонус, ₸</th><th>Штраф, ₸</th><th>Итого, ₸</th><th></th></tr></thead><tbody id="PayrollEntries"></tbody></table></div><div id="PayrollVisits"></div></div>
+<h4>Схемы зарплаты</h4><div class="table-responsive"><table class="table"><thead><tr><th>Сотрудник</th><th>С даты</th><th>Схема</th><th>%</th><th>Оклад, ₸</th><th>За рабочий день, ₸</th></tr></thead><tbody id="PayrollSchemes"></tbody></table></div>
+</abp-card-body></abp-card>
+<div class="modal fade" id="PayrollModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><form id="PayrollForm"><div class="modal-header"><h5 id="PayrollModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button></div><div class="modal-body" id="PayrollFields"></div><div class="modal-footer"><button type="submit" class="btn btn-primary">Сохранить</button></div></form></div></div></div>

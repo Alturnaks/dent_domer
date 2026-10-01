@@ -5,4 +5,8 @@
     PageLayout.Content.Title = L["Menu:AuditLog"].Value;
     PageLayout.Content.MenuItemName = DentalMenus.AuditLog;
 }
-<partial name="_UnderDevelopment" model="@("Menu:AuditLog")" />
+@section scripts { <abp-script src="/Pages/Schedule/calendar-date.js" /> <abp-script src="/Pages/AuditLog/Index.js" /> }
+<abp-card><abp-card-body>
+<form id="AuditFilter" class="row g-3 mb-4"><div class="col-md-4"><label for="AuditBranch">Филиал</label><select id="AuditBranch" class="form-select"><option value="">Доступные филиалы</option></select></div><div class="col-md-3"><label for="AuditFrom">С</label><input id="AuditFrom" type="date" class="form-control" required /></div><div class="col-md-3"><label for="AuditTo">По</label><input id="AuditTo" type="date" class="form-control" required /></div><div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary" type="submit">Показать</button></div></form>
+<h4>Подозрительные операции</h4><div id="AuditSuspicious"></div><h4>История изменений</h4><div id="AuditTable" class="table-responsive"></div><div class="d-flex gap-3 align-items-center"><button id="AuditPrev" class="btn btn-outline-primary">Назад</button><span id="AuditCount" role="status"></span><button id="AuditNext" class="btn btn-outline-primary">Вперёд</button></div>
+</abp-card-body></abp-card>

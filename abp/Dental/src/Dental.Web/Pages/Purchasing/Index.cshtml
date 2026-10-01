@@ -5,4 +5,12 @@
     PageLayout.Content.Title = L["Menu:Purchasing"].Value;
     PageLayout.Content.MenuItemName = DentalMenus.Purchasing;
 }
-<partial name="_UnderDevelopment" model="@("Menu:Purchasing")" />
+@section scripts { <abp-script src="/Pages/Schedule/calendar-date.js" /> <abp-script src="/Pages/Purchasing/Index.js" /> }
+<abp-card><abp-card-body>
+<div class="d-flex flex-wrap gap-2 mb-3"><button id="PurchaseRequest" class="btn btn-primary">Новая заявка</button><button id="PurchaseGenerate" class="btn btn-outline-primary">Рассчитать пополнение</button><button id="PurchaseOrder" class="btn btn-outline-primary">Новый заказ</button><button id="PurchaseReload" class="btn btn-outline-secondary">Обновить</button></div>
+<h4>Заявки и сводная потребность</h4><div id="PurchaseDemand" class="table-responsive"></div><div id="PurchaseRequests" class="table-responsive"></div>
+<h4>Заказы поставщикам</h4><div id="PurchaseOrders" class="table-responsive"></div>
+<h4>Счета поставщиков</h4><p id="PurchaseInvoiceNote">Оплата фиксируется по подтверждению банковской операции. Расход наличных оформляется отдельно в кассе.</p><div id="PurchaseInvoices" class="table-responsive"></div>
+<h4>Сравнение последних цен</h4><div id="PurchasePrices" class="table-responsive"></div>
+</abp-card-body></abp-card>
+<div class="modal fade" id="PurchaseModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><form id="PurchaseForm"><div class="modal-header"><h5 id="PurchaseTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button></div><div id="PurchaseFields" class="modal-body"></div><div class="modal-footer"><button type="submit" class="btn btn-primary">Сохранить</button></div></form></div></div></div>

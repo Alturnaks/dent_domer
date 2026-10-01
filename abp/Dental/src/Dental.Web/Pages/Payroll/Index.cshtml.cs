@@ -3,7 +3,7 @@ using Dental.Web.Authorization;
 
 namespace Dental.Web.Pages.Payroll;
 
-/// <summary>Заглушка раздела — будет заменена модулем.</summary>
+/// <summary>Раздел приложения с проверкой прав текущего пользователя.</summary>
 [AnyPermission(DentalPermissions.Payroll.ViewOwn, DentalPermissions.Payroll.ViewAll, DentalPermissions.Payroll.Manage)]
 public class IndexModel : DentalPageModel
 {

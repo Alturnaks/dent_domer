@@ -477,6 +477,7 @@ public class StockManager : DomainService, IVisitStockConsumer
         if (negative.Count > 0)
         {
             Logger.LogWarning("Negative stock on warehouse {Warehouse}: {Items}", warehouse.Name, string.Join(", ", negative));
+            await LazyServiceProvider.LazyGetRequiredService<Dental.Notifications.NotificationManager>().NotifyByPermissionAsync(Dental.Permissions.DentalPermissions.Inventory.View,"stock_low","Отрицательный остаток: " + warehouse.Name,string.Join(", ",negative),nameof(StockDocument),doc.Id,branchId,null);
         }
         doc.RaiseChanged("posted");
         await SaveAsync();
