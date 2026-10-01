@@ -1,0 +1,61 @@
+@page
+@model Dental.Web.Pages.Inventory.Documents.IndexModel
+@using Dental.Inventory
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Inv:Documents"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.Inventory;
+}
+@section scripts {
+    <abp-script src="/Pages/Inventory/inventory-common.js" />
+    <abp-script src="/Pages/Inventory/Documents/Index.js" />
+}
+<partial name="_InventoryNav" model="@("documents")" />
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6"><abp-card-title>@L["Inv:Documents"]</abp-card-title></abp-column>
+            <abp-column size-md="_6" class="text-end">
+                @if (Model.CreatableTypes.Count > 0)
+                {
+                    <div class="dropdown d-inline-block">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="fa fa-plus me-1"></i>@L["Inv:New"]</button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            @foreach (var t in Model.CreatableTypes)
+                            {
+                                <li><a class="dropdown-item" href="@Url.Content("~/Inventory/Documents/Edit?type=" + (int)t)">@L["Enum:StockDocumentType." + (int)t]</a></li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <div class="row g-2 mb-3">
+            <div class="col-md-2">
+                <select id="FType" class="form-select">
+                    <option value="">@L["Inv:AllTypes"]</option>
+                    @foreach (var t in Enum.GetValues<StockDocumentType>())
+                    {
+                        <option value="@((int)t)">@L["Enum:StockDocumentType." + (int)t]</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select id="FStatus" class="form-select">
+                    <option value="">@L["Inv:AllStatuses"]</option>
+                    @foreach (var s in Enum.GetValues<StockDocumentStatus>())
+                    {
+                        <option value="@((int)s)">@L["Enum:StockDocumentStatus." + (int)s]</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3"><select id="FWarehouse" class="form-select"></select></div>
+            <div class="col-md-2"><input type="date" id="FFrom" class="form-control" /></div>
+            <div class="col-md-2"><input type="date" id="FTo" class="form-control" /></div>
+            <div class="col-md-1"><input id="FFilter" class="form-control" placeholder="@L["Search"]" /></div>
+        </div>
+        <abp-table striped-rows="true" id="DocumentsTable"></abp-table>
+    </abp-card-body>
+</abp-card>

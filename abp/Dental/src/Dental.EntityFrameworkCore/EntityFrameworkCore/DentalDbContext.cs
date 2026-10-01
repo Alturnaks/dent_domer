@@ -32,6 +32,22 @@ public class DentalDbContext :
     public DbSet<Dental.Staff.Employee> Employees { get; set; }
     public DbSet<Dental.Roles.RoleLimit> RoleLimits { get; set; }
 
+    // Склад
+    public DbSet<Dental.Inventory.Warehouse> Warehouses { get; set; }
+    public DbSet<Dental.Inventory.ItemCategory> ItemCategories { get; set; }
+    public DbSet<Dental.Inventory.Item> Items { get; set; }
+    public DbSet<Dental.Inventory.ItemUnit> ItemUnits { get; set; }
+    public DbSet<Dental.Inventory.ItemStockLevel> ItemStockLevels { get; set; }
+    public DbSet<Dental.Inventory.Batch> Batches { get; set; }
+    public DbSet<Dental.Inventory.Supplier> Suppliers { get; set; }
+    public DbSet<Dental.Inventory.SupplierItem> SupplierItems { get; set; }
+    public DbSet<Dental.Inventory.WriteoffReason> WriteoffReasons { get; set; }
+    public DbSet<Dental.Inventory.StockDocument> StockDocuments { get; set; }
+    public DbSet<Dental.Inventory.StockDocumentLine> StockDocumentLines { get; set; }
+    public DbSet<Dental.Inventory.StockMovement> StockMovements { get; set; }
+    public DbSet<Dental.Inventory.StockBalance> StockBalances { get; set; }
+    public DbSet<Dental.Inventory.DocumentCounter> DocumentCounters { get; set; }
+
 
 
     #region Entities from the modules
@@ -87,6 +103,7 @@ public class DentalDbContext :
 
         /* Configure your own tables/entities inside here */
         builder.ConfigureDentalFoundation();
+        builder.ConfigureInventory();
 
         //builder.Entity<YourEntity>(b =>
         //{

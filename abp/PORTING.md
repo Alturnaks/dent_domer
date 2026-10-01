@@ -62,3 +62,15 @@ cd ../.. && dotnet build src/Dental.DbMigrator && dotnet run --project src/Denta
 - Вход: на странице входа «Арендатор → Сменить» → `dental-plus`; `owner@demo.kz` … `doctor6@demo.kz` / `demo12345`. API: `POST /connect/token` (client_id `Dental_App`, grant_type=password, заголовок `__tenant: dental-plus`).
 - Хост: `admin` / `1q2w3E*` (без арендатора). В каждом арендаторе есть и встроенный `admin` / `1q2w3E*`.
 - Тесты: `dotnet test test/Dental.EntityFrameworkCore.Tests` (SQLite in-memory; абстрактные тесты — в Application.Tests/Domain.Tests, запускаются через EFCore.Tests).
+
+## Статус модулей
+- **Склад (Inventory)** — перенесён: склады (центральный/филиалы, блокировка инвентаризацией), дерево категорий, номенклатура с альт. единицами и учётом партий/сроков/серий, поставщики + цены, нормы мин/опт, документы (приход, перемещение отправка/приёмка с недостачей, списание, возврат поставщику, инвентаризация), проведение/сторно, журнал `AppStockMovements` + кэш `AppStockBalances` (UNIQUE NULLS NOT DISTINCT, `FOR UPDATE`), FEFO, средневзвешенная, пересборка остатков, нумерация `AppDocumentCounters`. UI `/Inventory` (остатки, документы, номенклатура + карточка, поставщики, справочники). Миграция `Port_Inventory`.
+
+## Общие сервисы (модули)
+- **Склад** (`Dental.Inventory`): `IItemLookup` (имена/единицы товаров для техкарт, закупок), `IVisitStockConsumer` (расход материалов закрытого визита по FEFO + сторно — реализует `StockManager`),
+  `IDocumentNumberGenerator.NextAsync(key)` (сквозная нумерация в транзакции; ключ модуля, напр. `"po"`), `IStockLockProvider`.
+  Подтверждения: `IApprovalGateway` (по умолчанию `RoleLimitApprovalGateway` — бросает `Dental:RoleLimitExceeded`; регистрация `TryRegister`, модуль Approvals заменяет),
+  обработчики решений `WriteoffApprovalHandler` / `TransferShortageApprovalHandler` (`IInventoryApprovalHandler`, типы `InventoryApprovalTypes`).
+  События: `StockDocumentChangedEto` (ILocalEventBus; action posted/sent/received/cancelled/storno) — закупки подписываются (счёт поставщика по накладной, received_qty заказа, сторно счёта).
+- **Демо-seed модулей**: `Dental.Data.Seed.IDentalDemoModuleSeeder` (`Order`, `SeedDemoAsync(tenantId)`) — вызывается `DentalDemoDataSeedContributor` после филиалов и сотрудников.
+- **Web**: XSRF-cookie `SameSite=Lax` (`DentalWebModule`) — иначе POST из UI по http получали 400.

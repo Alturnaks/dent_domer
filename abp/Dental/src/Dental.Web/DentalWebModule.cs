@@ -119,6 +119,13 @@ public class DentalWebModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 
+        // XSRF-TOKEN по умолчанию SameSite=None без Secure — браузер отбрасывает его на http (localhost:3100),
+        // и все POST/PUT из UI получают 400 (нет RequestVerificationToken). Lax работает для same-site запросов.
+        Configure<Volo.Abp.AspNetCore.Mvc.AntiForgery.AbpAntiForgeryOptions>(options =>
+        {
+            options.TokenCookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+        });
+
         if (!configuration.GetValue<bool>("App:DisablePII"))
         {
             Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;

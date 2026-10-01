@@ -1,0 +1,25 @@
+@model string
+@using Dental.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using Dental.Localization
+@using Microsoft.Extensions.Localization
+@inject IAuthorizationService Auth
+@inject IStringLocalizer<DentalResource> L
+@{
+    var tabs = new (string Key, string Url, string Text, string Icon, bool Visible)[]
+    {
+        ("balances", "~/Inventory", L["Inv:Balances"], "fa-cubes", true),
+        ("documents", "~/Inventory/Documents", L["Inv:Documents"], "fa-file-lines", true),
+        ("items", "~/Inventory/Items", L["Inv:Items"], "fa-box", true),
+        ("suppliers", "~/Inventory/Suppliers", L["Inv:Suppliers"], "fa-truck-field", true),
+        ("settings", "~/Inventory/Settings", L["Inv:Warehouses"] + " · " + L["Inv:Categories"] + " · " + L["Inv:Reasons"], "fa-sitemap", true),
+    };
+}
+<ul class="nav nav-pills mb-3 flex-wrap">
+    @foreach (var t in tabs.Where(t => t.Visible))
+    {
+        <li class="nav-item">
+            <a class="nav-link @(t.Key == Model ? "active" : "")" href="@Url.Content(t.Url)"><i class="fa @t.Icon me-1"></i>@t.Text</a>
+        </li>
+    }
+</ul>

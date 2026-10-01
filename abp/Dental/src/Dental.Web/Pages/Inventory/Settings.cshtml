@@ -1,0 +1,71 @@
+@page
+@model Dental.Web.Pages.Inventory.SettingsModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Menu:Inventory"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.Inventory;
+}
+@section scripts {
+    <abp-script src="/Pages/Inventory/inventory-common.js" />
+    <abp-script src="/Pages/Inventory/Settings.js" />
+}
+<partial name="_InventoryNav" model="@("settings")" />
+<div id="InvSettings" data-can-manage="@Model.CanManage.ToString().ToLower()">
+    <div class="row">
+        <div class="col-lg-7">
+            <abp-card>
+                <abp-card-header>
+                    <div class="d-flex align-items-center">
+                        <abp-card-title>@L["Inv:Warehouses"]</abp-card-title>
+                        @if (Model.CanManage)
+                        {
+                            <button class="btn btn-sm btn-primary ms-auto" id="AddWarehouse"><i class="fa fa-plus me-1"></i>@L["Add"]</button>
+                        }
+                    </div>
+                </abp-card-header>
+                <abp-card-body>
+                    <table class="table table-sm" id="WarehousesTable">
+                        <thead><tr><th>@L["Inv:Name"]</th><th>@L["Inv:WarehouseType"]</th><th>@L["Inv:Branch"]</th><th></th><th></th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </abp-card-body>
+            </abp-card>
+            <abp-card>
+                <abp-card-header>
+                    <div class="d-flex align-items-center">
+                        <abp-card-title>@L["Inv:Reasons"]</abp-card-title>
+                        @if (Model.CanManage)
+                        {
+                            <button class="btn btn-sm btn-primary ms-auto" id="AddReason"><i class="fa fa-plus me-1"></i>@L["Add"]</button>
+                        }
+                    </div>
+                </abp-card-header>
+                <abp-card-body>
+                    <table class="table table-sm" id="ReasonsTable">
+                        <thead><tr><th>@L["Inv:Name"]</th><th>@L["Inv:Type"]</th><th></th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </abp-card-body>
+            </abp-card>
+        </div>
+        <div class="col-lg-5">
+            <abp-card>
+                <abp-card-header>
+                    <div class="d-flex align-items-center">
+                        <abp-card-title>@L["Inv:Categories"]</abp-card-title>
+                        @if (Model.CanManage)
+                        {
+                            <button class="btn btn-sm btn-primary ms-auto" id="AddCategory"><i class="fa fa-plus me-1"></i>@L["Add"]</button>
+                        }
+                    </div>
+                </abp-card-header>
+                <abp-card-body>
+                    <table class="table table-sm" id="CategoriesTable">
+                        <thead><tr><th>@L["Inv:Name"]</th><th class="text-end">@L["Inv:ItemsCount"]</th><th></th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </abp-card-body>
+            </abp-card>
+        </div>
+    </div>
+</div>

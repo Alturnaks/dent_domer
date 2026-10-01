@@ -1,0 +1,60 @@
+@page
+@model Dental.Web.Pages.Inventory.Items.CardModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Inv:Card"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.Inventory;
+}
+@section scripts {
+    <abp-script src="/Pages/Inventory/inventory-common.js" />
+    <abp-script src="/Pages/Inventory/Items/item-form.js" />
+    <abp-script src="/Pages/Inventory/Items/Card.js" />
+}
+<partial name="_InventoryNav" model="@("items")" />
+<div id="ItemCard" data-id="@Model.Id" data-can-manage="@Model.CanManage.ToString().ToLower()">
+    <abp-card>
+        <abp-card-header>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <a href="@Url.Content("~/Inventory/Items")" class="btn btn-sm btn-outline-secondary"><i class="fa fa-arrow-left me-1"></i>@L["Inv:Back"]</a>
+                <h5 class="mb-0 ms-2" id="ItemTitle"></h5>
+                <div class="ms-auto">
+                    @if (Model.CanManage)
+                    {
+                        <button class="btn btn-sm btn-outline-primary" id="EditItem"><i class="fa fa-pen me-1"></i>@L["Edit"]</button>
+                    }
+                </div>
+            </div>
+        </abp-card-header>
+        <abp-card-body>
+            <div class="row mb-3" id="ItemInfo"></div>
+            <div class="row">
+                <div class="col-lg-7">
+                    <h6>@L["Inv:Balances"]</h6>
+                    <table class="table table-sm" id="CardBalances">
+                        <thead><tr><th>@L["Inv:Warehouse"]</th><th>@L["Inv:Batch"]</th><th>@L["Inv:ExpiresAt"]</th><th class="text-end">@L["Inv:Qty"]</th><th class="text-end">@L["Inv:Cost"]</th></tr></thead>
+                        <tbody></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                </div>
+                <div class="col-lg-5">
+                    <h6>@L["Inv:Levels"]</h6>
+                    <table class="table table-sm" id="CardLevels">
+                        <thead><tr><th>@L["Inv:Warehouse"]</th><th style="width:110px">@L["Inv:MinQty"]</th><th style="width:110px">@L["Inv:OptimalQty"]</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    @if (Model.CanManage)
+                    {
+                        <button class="btn btn-sm btn-primary" id="SaveLevels"><i class="fa fa-save me-1"></i>@L["Save"]</button>
+                    }
+                </div>
+            </div>
+            <h6 class="mt-4">@L["Inv:Movements"]</h6>
+            <div class="table-responsive">
+                <table class="table table-sm table-striped" id="CardMovements">
+                    <thead><tr><th>@L["Inv:Date"]</th><th>@L["Inv:Document"]</th><th>@L["Inv:Warehouse"]</th><th>@L["Inv:Batch"]</th><th class="text-end">@L["Inv:Qty"]</th><th class="text-end">@L["Inv:Cost"]</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </abp-card-body>
+    </abp-card>
+</div>

@@ -1,0 +1,45 @@
+@page
+@model Dental.Web.Pages.Inventory.Documents.EditModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Inv:Document"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.Inventory;
+}
+@section scripts {
+    <abp-script src="/Pages/Inventory/inventory-common.js" />
+    <abp-script src="/Pages/Inventory/Documents/Edit.js" />
+}
+<partial name="_InventoryNav" model="@("documents")" />
+<div id="DocEditor"
+     data-id="@Model.Id"
+     data-type="@Model.Type"
+     data-perm-receive="@Model.Perms.Receive.ToString().ToLower()"
+     data-perm-transfer-create="@Model.Perms.TransferCreate.ToString().ToLower()"
+     data-perm-transfer-receive="@Model.Perms.TransferReceive.ToString().ToLower()"
+     data-perm-writeoff="@Model.Perms.Writeoff.ToString().ToLower()"
+     data-perm-count="@Model.Perms.Count.ToString().ToLower()"
+     data-perm-count-approve="@Model.Perms.CountApprove.ToString().ToLower()">
+    <abp-card>
+        <abp-card-header>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <a href="@Url.Content("~/Inventory/Documents")" class="btn btn-sm btn-outline-secondary"><i class="fa fa-arrow-left me-1"></i>@L["Inv:Back"]</a>
+                <h5 class="mb-0 ms-2" id="DocTitle"></h5>
+                <span id="DocStatus"></span>
+                <div class="ms-auto d-flex flex-wrap gap-2" id="DocActions"></div>
+            </div>
+        </abp-card-header>
+        <abp-card-body>
+            <div id="DocHint"></div>
+            <div class="row g-3 mb-3" id="DocHeader"></div>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle" id="LinesTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                    <tfoot></tfoot>
+                </table>
+            </div>
+            <div id="LinesActions"></div>
+            <div class="small text-muted mt-3" id="DocMeta"></div>
+        </abp-card-body>
+    </abp-card>
+</div>
