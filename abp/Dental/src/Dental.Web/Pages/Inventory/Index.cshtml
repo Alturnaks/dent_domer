@@ -5,4 +5,60 @@
     PageLayout.Content.Title = L["Menu:Inventory"].Value;
     PageLayout.Content.MenuItemName = DentalMenus.Inventory;
 }
-<partial name="_UnderDevelopment" model="@("Menu:Inventory")" />
+@section scripts {
+    <abp-script src="/Pages/Inventory/inventory-common.js" />
+    <abp-script src="/Pages/Inventory/Index.js" />
+}
+<partial name="_InventoryNav" model="@("balances")" />
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_8"><abp-card-title>@L["Inv:Balances"]</abp-card-title></abp-column>
+            <abp-column size-md="_4" class="text-end">
+                @if (Model.CanRebuild)
+                {
+                    <button id="RebuildButton" class="btn btn-outline-secondary btn-sm"><i class="fa fa-rotate me-1"></i>@L["Inv:Rebuild"]</button>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <div class="row g-2 mb-3 align-items-end">
+            <div class="col-md-3"><label class="form-label">@L["Inv:Warehouse"]</label><select id="FWarehouse" class="form-select"></select></div>
+            <div class="col-md-3"><label class="form-label">@L["Inv:Category"]</label><select id="FCategory" class="form-select"></select></div>
+            <div class="col-md-2"><label class="form-label">@L["Search"]</label><input id="FFilter" class="form-control" /></div>
+            <div class="col-md-2">
+                <label class="form-label">@L["Inv:ExpiringDays"]</label>
+                <select id="FExpiring" class="form-select">
+                    <option value="">—</option>
+                    <option value="30">30</option>
+                    <option value="60">60</option>
+                    <option value="90">90</option>
+                    <option value="180">180</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <div class="form-check"><input type="checkbox" class="form-check-input" id="FBelowMin" /><label class="form-check-label" for="FBelowMin">@L["Inv:BelowMin"]</label></div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover align-middle" id="BalancesTable">
+                <thead>
+                    <tr>
+                        <th>@L["Inv:Warehouse"]</th>
+                        <th>@L["Inv:Sku"]</th>
+                        <th>@L["Inv:Item"]</th>
+                        <th>@L["Inv:Category"]</th>
+                        <th class="text-end">@L["Inv:Qty"]</th>
+                        <th class="text-end">@L["Inv:MinQty"] / @L["Inv:OptimalQty"]</th>
+                        <th>@L["Inv:NearestExpiry"]</th>
+                        <th class="text-end">@L["Inv:Cost"]</th>
+                        <th class="text-end">@L["Inv:Amount"]</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot><tr><th colspan="8" class="text-end">@L["Inv:Total"]</th><th class="text-end" id="BalancesTotal"></th></tr></tfoot>
+            </table>
+        </div>
+    </abp-card-body>
+</abp-card>

@@ -1,0 +1,31 @@
+@page
+@model Dental.Web.Pages.Inventory.Suppliers.IndexModel
+@using Dental.Web.Menus
+@{
+    PageLayout.Content.Title = L["Inv:Suppliers"].Value;
+    PageLayout.Content.MenuItemName = DentalMenus.Inventory;
+}
+@section scripts {
+    <abp-script src="/Pages/Inventory/inventory-common.js" />
+    <abp-script src="/Pages/Inventory/Suppliers/Index.js" />
+}
+<partial name="_InventoryNav" model="@("suppliers")" />
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6"><abp-card-title>@L["Inv:Suppliers"]</abp-card-title></abp-column>
+            <abp-column size-md="_6" class="text-end">
+                @if (Model.CanManage)
+                {
+                    <abp-button id="NewSupplierButton" text="@L["Add"].Value" icon="plus" button-type="Primary" />
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <div class="row g-2 mb-3" id="SupplierFilters" data-can-manage="@Model.CanManage.ToString().ToLower()">
+            <div class="col-md-4"><input id="FFilter" class="form-control" placeholder="@L["Search"]" /></div>
+        </div>
+        <abp-table striped-rows="true" id="SuppliersTable"></abp-table>
+    </abp-card-body>
+</abp-card>

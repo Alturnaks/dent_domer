@@ -97,6 +97,24 @@ public class ApprovalManager : DomainService
         return request;
     }
 
+    /// <summary>
+    /// Отклонить ожидающие запросы по сущности, которую её модуль отменил (документ отменён): без вызова IApprovalHandler.
+    /// Возвращает число закрытых запросов.
+    /// </summary>
+    public async Task<int> CancelPendingAsync(string entityType, Guid entityId, string reason)
+    {
+        var pending = await _requests.GetListAsync(a => a.EntityId == entityId && a.EntityType == entityType && a.Status == ApprovalStatus.Pending);
+        foreach (var a in pending)
+        {
+            a.Decide(false, _currentUser.Id ?? a.RequestedBy, Clock.Now, reason);
+        }
+        if (pending.Count > 0)
+        {
+            await _requests.UpdateManyAsync(pending, autoSave: true);
+        }
+        return pending.Count;
+    }
+
     public static bool AllowsByLimits(string type, decimal amount, RoleLimitsData l) => type switch
     {
         ApprovalTypes.Discount => l.AllowsDiscount(amount),

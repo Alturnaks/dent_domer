@@ -44,6 +44,16 @@ public class DentalHttpApiModule : AbpModule
             options.Map(DentalDomainErrorCodes.PriceInvalid, System.Net.HttpStatusCode.BadRequest);
             options.Map(DentalDomainErrorCodes.TechCardItemInvalid, System.Net.HttpStatusCode.BadRequest);
             options.Map(DentalDomainErrorCodes.ApprovalNotPending, System.Net.HttpStatusCode.Conflict);
+            // Склад: справочники (документы бросают StockException с собственным кодом HTTP).
+            options.Map(DentalDomainErrorCodes.WarehouseNotEmpty, System.Net.HttpStatusCode.Conflict);
+            options.Map(DentalDomainErrorCodes.ItemSkuAlreadyExists, System.Net.HttpStatusCode.Conflict);
+            options.Map(DentalDomainErrorCodes.ItemBaseUnitLocked, System.Net.HttpStatusCode.Conflict);
+            options.Map(DentalDomainErrorCodes.WarehouseBranchRequired, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.CategoryCycle, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.ItemSerialRequiresPcs, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.ItemUnitNotFound, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.StockLevelInvalid, System.Net.HttpStatusCode.BadRequest);
+            options.Map(DentalDomainErrorCodes.SupplierBinInvalid, System.Net.HttpStatusCode.BadRequest);
         });
     }
 

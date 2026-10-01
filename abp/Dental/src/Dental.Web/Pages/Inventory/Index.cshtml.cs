@@ -1,13 +1,17 @@
+using System.Threading.Tasks;
 using Dental.Permissions;
-using Dental.Web.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Dental.Web.Pages.Inventory;
 
-/// <summary>Заглушка раздела — будет заменена модулем.</summary>
-[AnyPermission(DentalPermissions.Inventory.View)]
+/// <summary>Остатки по складам: фильтры (склад, категория, ниже минимума, истекающие), пересборка кэша.</summary>
+[Authorize(DentalPermissions.Inventory.View)]
 public class IndexModel : DentalPageModel
 {
-    public void OnGet()
+    public bool CanRebuild { get; private set; }
+
+    public async Task OnGetAsync()
     {
+        CanRebuild = await AuthorizationService.IsGrantedAsync(DentalPermissions.Inventory.CountApprove);
     }
 }

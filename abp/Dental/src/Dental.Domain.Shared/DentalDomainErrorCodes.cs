@@ -29,4 +29,32 @@ public static class DentalDomainErrorCodes
     public const string ApprovalNotPending = "Dental:ApprovalNotPending";
     public const string ApprovalOwnRequest = "Dental:ApprovalOwnRequest";
     public const string ApprovalLimitExceeded = "Dental:ApprovalLimitExceeded";
+
+    // Склад
+    public const string StockInsufficient = "Dental:StockInsufficient";
+    public const string StockDocumentNotEditable = "Dental:StockDocumentNotEditable";
+    public const string StockDocumentInvalidState = "Dental:StockDocumentInvalidState";
+    public const string StockLinesRequired = "Dental:StockLinesRequired";
+    public const string StockSupplierRequired = "Dental:StockSupplierRequired";
+    public const string StockReasonRequired = "Dental:StockReasonRequired";
+    public const string StockSerialRequired = "Dental:StockSerialRequired";
+    public const string StockBatchRequired = "Dental:StockBatchRequired";
+    public const string StockExpiryRequired = "Dental:StockExpiryRequired";
+    public const string StockWarehouseRequired = "Dental:StockWarehouseRequired";
+    public const string StockSameWarehouse = "Dental:StockSameWarehouse";
+    public const string StockWarehouseLocked = "Dental:StockWarehouseLocked";
+    public const string StockCommentRequired = "Dental:StockCommentRequired";
+    public const string StockQtyMustBePositive = "Dental:StockQtyMustBePositive";
+    public const string StockInvalidActualQty = "Dental:StockInvalidActualQty";
+    public const string StockVisitConsumptionManual = "Dental:StockVisitConsumptionManual";
+    public const string StockNoBranchWarehouse = "Dental:StockNoBranchWarehouse";
+    public const string ItemUnitNotFound = "Dental:ItemUnitNotFound";
+    public const string ItemSerialRequiresPcs = "Dental:ItemSerialRequiresPcs";
+    public const string ItemBaseUnitLocked = "Dental:ItemBaseUnitLocked";
+    public const string ItemSkuAlreadyExists = "Dental:ItemSkuAlreadyExists";
+    public const string StockLevelInvalid = "Dental:StockLevelInvalid";
+    public const string WarehouseBranchRequired = "Dental:WarehouseBranchRequired";
+    public const string WarehouseNotEmpty = "Dental:WarehouseNotEmpty";
+    public const string CategoryCycle = "Dental:CategoryCycle";
+    public const string SupplierBinInvalid = "Dental:SupplierBinInvalid";
 }

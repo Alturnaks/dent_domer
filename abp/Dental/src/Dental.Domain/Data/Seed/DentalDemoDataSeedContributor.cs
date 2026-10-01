@@ -42,6 +42,7 @@ public class DentalDemoDataSeedContributor : IDataSeedContributor, ITransientDep
     private readonly IGuidGenerator _guidGenerator;
     private readonly IUnitOfWorkManager _unitOfWorkManager;
     private readonly IConfiguration _configuration;
+    private readonly IEnumerable<IDentalDemoModuleSeeder> _moduleSeeders;
 
     public ILogger<DentalDemoDataSeedContributor> Logger { get; set; } = NullLogger<DentalDemoDataSeedContributor>.Instance;
 
@@ -58,8 +59,10 @@ public class DentalDemoDataSeedContributor : IDataSeedContributor, ITransientDep
         EmployeeManager employeeManager,
         IGuidGenerator guidGenerator,
         IUnitOfWorkManager unitOfWorkManager,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IEnumerable<IDentalDemoModuleSeeder> moduleSeeders)
     {
+        _moduleSeeders = moduleSeeders;
         _tenantRepository = tenantRepository;
         _tenantManager = tenantManager;
         _dataSeeder = dataSeeder;
@@ -109,6 +112,12 @@ public class DentalDemoDataSeedContributor : IDataSeedContributor, ITransientDep
             var branches = await SeedBranchesAsync(tenantId);
             await SeedStaffAsync(branches);
             await uow.CompleteAsync();
+        }
+
+        // Демо-данные модулей (склад и т.д.) — после того, как филиалы и сотрудники созданы.
+        foreach (var seeder in _moduleSeeders.OrderBy(s => s.Order))
+        {
+            await seeder.SeedDemoAsync(tenantId);
         }
     }
 

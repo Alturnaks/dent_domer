@@ -48,6 +48,7 @@ public class NotificationAppService : DentalAppService, INotificationAppService
     {
         nameof(ApprovalRequest) => "/Approvals",
         "Patient" when entityId is { } id => "/Patients/Detail?id=" + id,
+        "StockDocument" when entityId is { } id => "/Inventory/Documents/Edit?id=" + id,
         _ => null,
     };
 
