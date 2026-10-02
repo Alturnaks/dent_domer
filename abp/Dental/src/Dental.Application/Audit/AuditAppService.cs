@@ -17,8 +17,9 @@ public class AuditAppService(IAuditStore store,AppointmentManager calendar,IRepo
     private async Task<AuditQuery> Query(AuditInput input)
     {
         if (CurrentTenant.Id == null) throw new AbpAuthorizationException(); if (input.To < input.From || input.To.DayNumber-input.From.DayNumber > 366) throw new UserFriendlyException("Укажите период до одного года.");
+        if(input.UserName?.Length>256||input.EntityType?.Length>200||input.ChangeType is <0 or >2)throw new UserFriendlyException("Недопустимые фильтры аудита.");
         var rows=await AsyncExecuter.ToListAsync(await BranchScope.ApplyAsync(await branches.GetQueryableAsync(),b => b.Id));if(input.BranchId != null){await BranchScope.EnsureCanAccessAsync(input.BranchId.Value);rows=rows.Where(b => b.Id==input.BranchId).ToList();}
-        var tz=await calendar.GetTimezoneAsync();return new(CurrentTenant.Id.Value,rows.Select(b=>b.Id).ToArray(),input.BranchId==null&&(await BranchScope.GetAsync()).AllBranches&&await AuthorizationService.IsGrantedAsync(DentalPermissions.Org.SettingsManage),SlotCalculator.ToUtc(input.From.ToDateTime(TimeOnly.MinValue),tz),SlotCalculator.ToUtc(input.To.AddDays(1).ToDateTime(TimeOnly.MinValue),tz),Math.Max(0,input.SkipCount),Math.Clamp(input.MaxResultCount,1,200));
+        var tz=await calendar.GetTimezoneAsync();return new(CurrentTenant.Id.Value,rows.Select(b=>b.Id).ToArray(),input.BranchId==null&&(await BranchScope.GetAsync()).AllBranches&&await AuthorizationService.IsGrantedAsync(DentalPermissions.Org.SettingsManage),SlotCalculator.ToUtc(input.From.ToDateTime(TimeOnly.MinValue),tz),SlotCalculator.ToUtc(input.To.AddDays(1).ToDateTime(TimeOnly.MinValue),tz),Math.Max(0,input.SkipCount),Math.Clamp(input.MaxResultCount,1,200),string.IsNullOrWhiteSpace(input.UserName)?null:input.UserName.Trim(),string.IsNullOrWhiteSpace(input.EntityType)?null:input.EntityType.Trim(),input.EntityId,input.ChangeType);
     }
     public async Task<AuditPage> GetAsync(AuditInput input) => await store.GetAsync(await Query(input));
     public async Task<List<SuspiciousDto>> GetSuspiciousAsync(AuditInput input)
@@ -33,8 +34,9 @@ public class AuditAppService(IAuditStore store,AppointmentManager calendar,IRepo
             var shifts = await LazyServiceProvider.LazyGetRequiredService<IRepository<Dental.Finance.CashShift,Guid>>().GetListAsync(v=>q.BranchIds.Contains(v.BranchId));foreach(var v in shifts)ids.Add(v.Id);
             var payments = await LazyServiceProvider.LazyGetRequiredService<IRepository<Dental.Finance.Payment,Guid>>().GetListAsync(v=>q.BranchIds.Contains(v.BranchId));foreach(var v in payments)ids.Add(v.Id);
             var docs = await LazyServiceProvider.LazyGetRequiredService<IRepository<Dental.Inventory.StockDocument,Guid>>().GetListAsync(v=>v.BranchId!=null&&q.BranchIds.Contains(v.BranchId.Value));foreach(var v in docs)ids.Add(v.Id);
+            var employees=await LazyServiceProvider.LazyGetRequiredService<IRepository<Dental.Staff.Employee,Guid>>().GetListAsync(e=>e.AllBranches||e.BranchIds.Any(id=>q.BranchIds.Contains(id)));foreach(var e in employees)ids.Add(e.Id);
             rows=rows.Where(n=>n.EntityId!=null&&ids.Contains(n.EntityId.Value)).ToList();
         }
-        return rows.GroupBy(n=>new {n.EntityType,n.EntityId,n.Title,n.Body}).Select(g=>g.OrderBy(n=>n.CreationTime).First()).OrderByDescending(n=>n.CreationTime).Take(q.Limit).Select(n=>new SuspiciousDto(n.Id,n.CreationTime,n.Title,n.Body,n.EntityType,n.EntityId)).ToList();
+        return rows.Where(n=>(input.EntityId==null||n.EntityId==input.EntityId)&&(input.EntityType==null||n.EntityType==input.EntityType)).GroupBy(n=>new {n.EntityType,n.EntityId,n.Title,n.Body}).Select(g=>g.OrderBy(n=>n.CreationTime).First()).OrderByDescending(n=>n.CreationTime).Take(q.Limit).Select(n=>new SuspiciousDto(n.Id,n.CreationTime,n.Title,n.Body,n.EntityType,n.EntityId)).ToList();
     }
 }

@@ -50,7 +50,8 @@ public class DentalDomainModule : AbpModule
 
 
 #if DEBUG
-        context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
+        if(!string.Equals(context.Services.GetConfiguration()["Reports:EnableEmail"],"true",StringComparison.OrdinalIgnoreCase))
+            context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 #endif
     }
 }

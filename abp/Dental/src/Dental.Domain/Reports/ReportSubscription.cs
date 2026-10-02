@@ -16,7 +16,16 @@ public class ReportSubscription : FinanceEntity
     public int Failures { get; private set; }
     public string? LastError { get; private set; }
     public DateTime? LastSentAt { get; private set; }
-    public void SetEnabled(bool value) => Enabled=value;
+    public string Frequency { get; private set; } = "daily";
+    public int Weekday { get; private set; } = 1;
+    public string GroupBy { get; private set; } = "default";
+    public void SetSchedule(string frequency, int weekday, string groupBy)
+    {
+        if(frequency is not ("daily" or "weekly") || weekday is < 0 or > 6) throw new Volo.Abp.UserFriendlyException("Укажите ежедневное или еженедельное расписание.");
+        Frequency=frequency;Weekday=weekday;GroupBy=groupBy;
+    }
+    public bool IsDue(DateOnly date, TimeOnly time) => Enabled && LastDate != date && LocalTime <= time && (Frequency == "daily" || (int)date.DayOfWeek == Weekday);
+    public void SetEnabled(bool value) { Enabled=value; if(value) { Failures=0;LastError=null; } }
     public void Sent(DateOnly date,DateTime now) { LastDate=date;LastSentAt=now;Failures=0;LastError=null; }
     public void Failed(string error) { Failures++;LastError=error.Length>2000?error[..2000]:error;if(Failures>=3)Enabled=false; }
 }

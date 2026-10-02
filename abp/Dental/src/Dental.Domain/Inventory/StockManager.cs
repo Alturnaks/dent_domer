@@ -241,6 +241,7 @@ public class StockManager : DomainService, IVisitStockConsumer
                 await ReverseMovementsAsync(doc);
                 doc.Status = StockDocumentStatus.Cancelled;
                 Logger.LogWarning("Suspicious: storno of stock document {Number} for {Total} tiyn: {Comment}", doc.Number, doc.TotalCost, comment);
+                await NotifySuspiciousStockAsync(doc,"Сторно складского документа "+doc.Number,comment);
                 doc.RaiseChanged("storno");
                 break;
             default:
@@ -266,6 +267,7 @@ public class StockManager : DomainService, IVisitStockConsumer
         if (doc.TotalCost > await GetLongSettingAsync(DentalSettings.SuspiciousWriteoffAmount))
         {
             Logger.LogWarning("Suspicious: large writeoff {Number} for {Total} tiyn", doc.Number, doc.TotalCost);
+            await NotifySuspiciousStockAsync(doc,"Крупное списание "+doc.Number,$"Сумма: {doc.TotalCost/100m:N2} ₸");
         }
         doc.RaiseChanged("posted");
     }
@@ -426,6 +428,7 @@ public class StockManager : DomainService, IVisitStockConsumer
         if (diffValue > await GetLongSettingAsync(DentalSettings.SuspiciousInventoryDiffAmount))
         {
             Logger.LogWarning("Suspicious: inventory {Number} discrepancy {Diff} tiyn (net {Net})", doc.Number, diffValue, doc.TotalCost);
+            await NotifySuspiciousStockAsync(doc,"Расхождение инвентаризации "+doc.Number,$"Абсолютное расхождение: {diffValue/100m:N2} ₸");
         }
         doc.RaiseChanged("posted");
     }
@@ -436,6 +439,8 @@ public class StockManager : DomainService, IVisitStockConsumer
         var w = await _warehouses.FindAsync(wid);
         w?.Unlock(doc.Id);
     }
+
+    private Task NotifySuspiciousStockAsync(StockDocument doc,string title,string? body) => LazyServiceProvider.LazyGetRequiredService<Dental.Notifications.NotificationManager>().NotifyByPermissionAsync(Dental.Permissions.DentalPermissions.Audit.View,"Suspicious",title,body,nameof(StockDocument),doc.Id,doc.BranchId);
 
     // ================= Расход по визиту =================
 

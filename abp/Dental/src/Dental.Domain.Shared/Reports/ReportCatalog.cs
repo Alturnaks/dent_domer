@@ -2,9 +2,24 @@ using System;
 using System.Collections.Generic;
 using Dental.Permissions;
 namespace Dental.Reports;
-public record ReportDefinition(string Code, string Name, string Permission);
+public record ReportDefinition(string Code, string Name, string Permission)
+{
+    public string[] Groupings => ReportCatalog.Groupings(Code);
+}
 public static class ReportCatalog
 {
+    public static string[] Groupings(string code) => code switch
+    {
+        "revenue" => ["default", "day", "doctor", "service", "category", "branch", "detail"],
+        "appointments_summary" => ["default", "day", "doctor", "branch", "detail"],
+        "utilization" => ["default", "doctor", "chair", "heatmap", "detail"],
+        "consumption" => ["default", "doctor", "service", "detail"],
+        "purchases" => ["default", "supplier", "month", "detail"],
+        "pnl" => ["default", "branch", "category", "detail"],
+        "stock_on_date" or "stock_movement" or "abc_analysis" or "expiring" => ["default", "detail"],
+        "doctor_performance" or "discounts" or "patients_flow" or "patient_debts" or "advances" or "service_margin" or "cash_shifts" or "writeoffs" or "inventory_discrepancies" or "in_transit" or "payroll" or "cancellations" or "lost_patients" or "branches_comparison" => ["default", "detail"],
+        _ => ["default"]
+    };
     public static readonly ReportDefinition DailySummary = new("daily_summary","Ежедневная сводка владельца",DentalPermissions.Reports.Network);
     public static ReportDefinition? Find(string code) => code == DailySummary.Code ? DailySummary : System.Linq.Enumerable.SingleOrDefault(All,r=>r.Code==code);
     public static readonly ReportDefinition[] All = [
@@ -20,5 +35,8 @@ public class ReportTable
     public List<ReportColumn> Columns { get; set; } = [];
     public List<List<object?>> Rows { get; set; } = [];
     public bool Truncated { get; set; }
+    public List<string?> DrillKeys { get; set; } = [];
+    public List<string?> Links { get; set; } = [];
+    public string Timezone { get; set; } = "UTC";
 }
-public record ReportQuery(string Code, Guid TenantId, Guid[] BranchIds, Guid? DoctorId, bool IncludeCentral, DateTime FromUtc, DateTime ToUtc, string Timezone, int InactiveMonths);
+public record ReportQuery(string Code, Guid TenantId, Guid[] BranchIds, Guid? DoctorId, bool IncludeCentral, DateTime FromUtc, DateTime ToUtc, string Timezone, int InactiveMonths, string GroupBy = "default", string? DetailKey = null, string? DetailGroup = null);

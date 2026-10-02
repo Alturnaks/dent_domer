@@ -116,6 +116,18 @@ public class DentalWebModule : AbpModule
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+        Configure<Microsoft.AspNetCore.Identity.IdentityOptions>(options => {
+            options.Lockout.MaxFailedAccessAttempts=10;
+            options.Lockout.DefaultLockoutTimeSpan=TimeSpan.FromMinutes(15);
+            options.Lockout.AllowedForNewUsers=true;
+        });
+        context.Services.AddRateLimiter(options => {
+            options.RejectionStatusCode=429;
+            options.GlobalLimiter=System.Threading.RateLimiting.PartitionedRateLimiter.Create<Microsoft.AspNetCore.Http.HttpContext,string>(http => {
+                var auth=Microsoft.AspNetCore.Http.HttpMethods.IsPost(http.Request.Method) && (http.Request.Path.StartsWithSegments("/connect/token")||http.Request.Path.StartsWithSegments("/Account/Login")||http.Request.Path.StartsWithSegments("/Account/ForgotPassword"));
+                return auth ? System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(http.Connection.RemoteIpAddress?.ToString()??"unknown",_=>new System.Threading.RateLimiting.FixedWindowRateLimiterOptions{PermitLimit=60,Window=TimeSpan.FromMinutes(1),QueueLimit=0,AutoReplenishment=true}) : System.Threading.RateLimiting.RateLimitPartition.GetNoLimiter("other");
+            });
+        });
         context.Services.AddHostedService<Dental.Web.Schedule.AppointmentWorker>();
         context.Services.AddSingleton<Dental.Web.Reports.OperationsWorker>();
         context.Services.AddSingleton<Dental.Reports.IOperationsRunner>(sp=>sp.GetRequiredService<Dental.Web.Reports.OperationsWorker>());
@@ -123,10 +135,15 @@ public class DentalWebModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 
-        if (!configuration.GetValue<bool>("App:DisablePII"))
+        if (hostingEnvironment.IsDevelopment() && !configuration.GetValue<bool>("App:DisablePII",true))
         {
             Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
             Microsoft.IdentityModel.Logging.IdentityModelEventSource.LogCompleteSecurityArtifact = true;
+        }
+        else
+        {
+            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = false;
+            Microsoft.IdentityModel.Logging.IdentityModelEventSource.LogCompleteSecurityArtifact = false;
         }
 
         if (!configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata"))
@@ -329,6 +346,7 @@ public class DentalWebModule : AbpModule
 
         app.UseCorrelationId();
         app.UseRouting();
+        app.UseRateLimiter();
         app.MapAbpStaticAssets();
         app.UseAbpStudioLink();
         app.UseAbpSecurityHeaders();

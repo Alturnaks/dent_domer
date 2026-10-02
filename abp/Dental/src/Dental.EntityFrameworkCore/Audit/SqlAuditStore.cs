@@ -29,9 +29,14 @@ public class SqlAuditStore(IDbContextProvider<DentalDbContext> provider) : IAudi
               coalesce((SELECT jsonb_agg(jsonb_build_object('name',p."PropertyName",'before',p."OriginalValue",'after',p."NewValue")) FROM "AbpEntityPropertyChanges" p WHERE p."EntityChangeId"=c."Id" AND p."PropertyName" NOT IN('Iin','Phone','PhoneExtra','Email','Address','Notes','ExtraProperties','ConcurrencyStamp','LastName','FirstName','MiddleName','PasswordHash','SecurityStamp','Details')), '[]'::jsonb)::text
             FROM "AbpEntityChanges" c JOIN "AbpAuditLogs" l ON l."Id"=c."AuditLogId"
             WHERE l."TenantId"=@tenant AND c."ChangeTime">=@from AND c."ChangeTime"<@to AND (@network OR c."EntityId" IN(SELECT id FROM scoped))
+              AND (@username IS NULL OR lower(l."UserName")=lower(@username))
+              AND (@entity IS NULL OR c."EntityTypeFullName"=@entity OR right(c."EntityTypeFullName",length(@entity)+1)='.'||@entity)
+              AND (@entityid IS NULL OR c."EntityId"=@entityid) AND (@change IS NULL OR c."ChangeType"=@change)
             ORDER BY c."ChangeTime" DESC,c."Id" OFFSET @offset LIMIT @limit
             """;
         void P(string name,object value){var p=cmd.CreateParameter();p.ParameterName=name;p.Value=value;cmd.Parameters.Add(p);}P("tenant",q.TenantId);P("branches",q.BranchIds);P("network",q.Network);P("from",q.From);P("to",q.To);P("offset",q.Offset);P("limit",q.Limit);
-        var rows=new List<AuditRow>();long total=0;await using var reader=await cmd.ExecuteReaderAsync();while(await reader.ReadAsync()){total=reader.GetInt64(6);rows.Add(new(reader.GetGuid(0),reader.GetDateTime(1),reader.IsDBNull(2)?null:reader.GetString(2),reader.GetString(3),reader.GetString(4),reader.GetInt16(5) switch{0=>"Создано",1=>"Изменено",2=>"Удалено",_=>"Операция"},JsonSerializer.Deserialize<List<AuditProperty>>(reader.GetString(7),new JsonSerializerOptions(JsonSerializerDefaults.Web))??[]));}return new(rows,total);
+        void Text(string name,string? value){P(name,value??(object)DBNull.Value);((Npgsql.NpgsqlParameter)cmd.Parameters[name]).NpgsqlDbType=NpgsqlTypes.NpgsqlDbType.Text;}
+        Text("username",q.UserName);Text("entity",q.EntityType);Text("entityid",q.EntityId?.ToString());P("change",q.ChangeType??(object)DBNull.Value);((Npgsql.NpgsqlParameter)cmd.Parameters["change"]).NpgsqlDbType=NpgsqlTypes.NpgsqlDbType.Integer;
+        var rows=new List<AuditRow>();long total=0;await using var reader=await cmd.ExecuteReaderAsync();while(await reader.ReadAsync()){total=reader.GetInt64(6);rows.Add(new(reader.GetGuid(0),DateTime.SpecifyKind(reader.GetDateTime(1),DateTimeKind.Utc),reader.IsDBNull(2)?null:reader.GetString(2),reader.GetString(3),reader.GetString(4),reader.GetInt16(5) switch{0=>"Создано",1=>"Изменено",2=>"Удалено",_=>"Операция"},JsonSerializer.Deserialize<List<AuditProperty>>(reader.GetString(7),new JsonSerializerOptions(JsonSerializerDefaults.Web))??[]));}return new(rows,total);
     }
 }

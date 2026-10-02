@@ -605,6 +605,7 @@
     "Calendar:CancelReason": "Причина отмены",
     "Calendar:Save": "Создать запись",
     "Calendar:Move": "Сохранить перенос",
+    "Calendar:Resize": "Изменить длительность: потяните нижний край",
     "Calendar:ReminderHint": "Напоминания в демо записываются в журнал приложения. SMS и WhatsApp ещё не подключены.",
     "Calendar:Remind": "Напоминание (демо)",
     "Calendar:ReminderLogged": "Демо-напоминание записано в журнал приложения.",

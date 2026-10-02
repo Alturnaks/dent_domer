@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Dental.Web.Pages.Reports;
 
 /// <summary>Раздел приложения с проверкой прав текущего пользователя.</summary>
-[AnyPermission(DentalPermissions.Reports.Branch, DentalPermissions.Reports.Network, DentalPermissions.Reports.Finance, DentalPermissions.Reports.Payroll, DentalPermissions.Inventory.View)]
+[AnyPermission(DentalPermissions.Reports.Branch, DentalPermissions.Reports.Network, DentalPermissions.Reports.Finance, DentalPermissions.Reports.Payroll, DentalPermissions.Inventory.View, DentalPermissions.Schedule.ViewOwn)]
 public class IndexModel(IReportsAppService reports) : DentalPageModel
 {
     public void OnGet()

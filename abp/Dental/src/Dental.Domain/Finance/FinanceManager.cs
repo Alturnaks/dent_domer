@@ -128,14 +128,16 @@ public class FinanceManager : DomainService
     }
     private async Task ReplaceMaterialsAsync(Visit visit, List<MaterialData>? materials)
     {
-        var oldMaterials = visit.ActiveMaterials.ToList(); var norms = oldMaterials.GroupBy(m => m.ItemId).ToDictionary(g => g.Key, g => g.Sum(m => m.NormQuantity));
+        var oldMaterials = visit.ActiveMaterials.ToList();
+        var norms=materials==null?[]:MaterialNormAllocator.Allocate(oldMaterials.Select(m=>(m.ItemId,m.VisitItemId,m.NormQuantity)),materials.Select(m=>(m.ItemId,m.VisitItemId,m.Quantity)).ToList());
         foreach (var material in oldMaterials) material.IsDeleted = true; await R<VisitMaterial>().UpdateManyAsync(oldMaterials);
         if (materials == null) { await FillMaterialsAsync(visit); return; }
-        foreach (var m in materials)
+        for(var index=0;index<materials.Count;index++)
         {
+            var m=materials[index];
             var item = await R<Item>().GetAsync(m.ItemId);
             if (!item.IsActive || m.VisitItemId != null && !visit.ActiveItems.Any(i => i.Id == m.VisitItemId)) throw new BusinessException("Dental:FinanceInvalidInput");
-            visit.Materials.Add(new VisitMaterial(GuidGenerator.Create(), CurrentTenant.Id, visit.Id, m.VisitItemId, m.ItemId, m.Quantity, norms.GetValueOrDefault(m.ItemId, m.Quantity)));
+            visit.Materials.Add(new VisitMaterial(GuidGenerator.Create(), CurrentTenant.Id, visit.Id, m.VisitItemId, m.ItemId, m.Quantity, norms[index]));
         }
     }
     public async Task<Visit> SetMaterialsAsync(Guid id, string stamp, List<MaterialData> materials)

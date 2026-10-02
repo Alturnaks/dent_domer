@@ -88,6 +88,17 @@ $(function () {
                 if(r.height>=60)button.append($('<span class="calendar-event-details">').text(serviceText||statusName(a.status)));
                 if(doc&&/^#[0-9a-f]{6}$/i.test(doc.color||''))button[0].style.setProperty('--doctor-color',doc.color);
                 if(manage&&(a.status===0||a.status===1))button.attr('draggable','true').on('dragstart',function(e){e.originalEvent.dataTransfer.setData('text/plain',a.id);});
+                if(manage&&(a.status===0||a.status===1)&&parts(a.startsAt).date===c.date&&parts(a.endsAt).date===c.date){
+                    var handle=$('<span class="calendar-resize-handle">').attr({'aria-label':l('Calendar:Resize'),'title':l('Calendar:Resize')});
+                    handle.on('click',function(e){e.stopPropagation();}).on('pointerdown',function(e){
+                        e.preventDefault();e.stopPropagation();var element=this,pointer=e.originalEvent.pointerId,originalHeight=r.height,newEnd=parts(a.endsAt).minute,changed=false;
+                        button.attr('draggable','false');element.setPointerCapture(pointer);
+                        function move(event){var y=event.originalEvent.clientY-track[0].getBoundingClientRect().top;newEnd=dentalCalendarLayout.resizeEnd(y,start,end,parts(a.startsAt).minute,data.slotMinutes);changed= newEnd!==parts(a.endsAt).minute;button.css('height',Math.max(18,(newEnd-parts(a.startsAt).minute)*scale));}
+                        function done(event){handle.off('pointermove',move).off('pointerup',done).off('pointercancel',cancel);button.attr('draggable','true').css('height',originalHeight);if(changed){open(a);$('#AppointmentEnd').val(wall(c.date,newEnd));}}
+                        function cancel(){changed=false;done();}
+                        handle.on('pointermove',move).on('pointerup',done).on('pointercancel',cancel);
+                    });button.append(handle);
+                }
                 track.append(button);
             });
             function minuteAt(event){return dentalCalendarLayout.minuteAt(event.clientY-track[0].getBoundingClientRect().top,start,end,data.slotMinutes);}
@@ -168,13 +179,14 @@ $(function () {
     $('#CalendarView').on('change',function(){doctorFilterOptions();load();});
     $('#CalendarPrev,#CalendarNext').on('click',function(){var step=$('#CalendarView').val()==='week'?7:1;$('#CalendarDate').val(addDays(calendarDate(),this.id==='CalendarPrev'?-step:step));load();});
     $('#CalendarToday').on('click',function(){$('#CalendarDate').val(parts(new Date()).date);load();});
+    $(document).on('keydown',function(e){if(e.ctrlKey||e.metaKey||e.altKey||$(e.target).is('input,select,textarea,[contenteditable]')||$('.modal.show').length)return;var key=e.key.toLowerCase();if(key==='t'){e.preventDefault();$('#CalendarToday').trigger('click');}if(key==='n'&&manage){e.preventDefault();$('#NewAppointment').trigger('click');}if(key==='arrowleft'||key==='arrowright'){e.preventDefault();$(key==='arrowleft'?'#CalendarPrev':'#CalendarNext').trigger('click');}});
     $('#ShowCancelled').on('change',function(){if(data)render();});
     $('#CalendarBranch').on('change',function(){var n=++generation;$.when(dental.staff.employee.getLookup({branchId:branch(),position:3}),dental.branches.branch.getChairs(branch()),dental.staff.employee.getCurrent()).then(function(d,c,me){
         if(n!==generation)return;doctors=d.items;if(!manage&&!abp.auth.isGranted('Dental.Schedule.ViewAll'))doctors=doctors.filter(function(x){return x.id===me.employeeId;});
         chairs=c.items.filter(function(x){return x.isActive;});doctorFilterOptions();load();});});
     dental.branches.branch.getLookup().then(function(r){fill('#CalendarBranch',r.items);var appointmentId=new URLSearchParams(window.location.search).get('appointmentId');
         if(appointmentId){api.get(appointmentId).then(function(a){linkedAppointment=a;$('#CalendarBranch').val(a.branchId);$('#CalendarDate').val(parts(a.startsAt).date);$('#CalendarBranch').trigger('change');});}
-        else $('#CalendarBranch').trigger('change');});
+        else {var query=new URLSearchParams(window.location.search),requestedBranch=query.get('branchId'),requestedDate=query.get('date');if(requestedBranch&&r.items.some(function(b){return b.id===requestedBranch;}))$('#CalendarBranch').val(requestedBranch);if(requestedDate){try{$('#CalendarDate').val(dentalCalendarDates.normalize(requestedDate));}catch{}}$('#CalendarBranch').trigger('change');}});
     if(manage){dental.catalog.catalog.getServices({}).then(function(r){serviceRows=r.items.filter(function(s){return s.isActive;});fill('#AppointmentServices',serviceRows);});
         dental.references.cancelReason.getList(0).then(function(r){fill('#CancelReason',r.items,l('Calendar:SelectReason'));});
         dental.references.cancelReason.getList(1).then(function(r){fill('#MoveReason',r.items,l('Calendar:OptionalReason'));});}

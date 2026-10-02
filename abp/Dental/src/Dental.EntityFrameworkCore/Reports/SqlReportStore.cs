@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
 namespace Dental.Reports;
-public class SqlReportStore(IDbContextProvider<DentalDbContext> provider) : IReportStore, ITransientDependency
+public partial class SqlReportStore(IDbContextProvider<DentalDbContext> provider) : IReportStore, ITransientDependency
 {
     // Every CTE explicitly enforces tenant and branch scope, including all joined lookups.
     private const string Common = """
@@ -18,7 +18,7 @@ public class SqlReportStore(IDbContextProvider<DentalDbContext> provider) : IRep
         p AS (SELECT * FROM "AppPatients" WHERE "TenantId"=@tenant AND NOT "IsDeleted" AND "MergedIntoId" IS NULL),
         a_all AS (SELECT * FROM "AppAppointments" WHERE "TenantId"=@tenant AND NOT "IsDeleted" AND "BranchId"=ANY(@branches) AND (@doctor IS NULL OR "DoctorId"=@doctor)),
         a AS (SELECT * FROM a_all WHERE "StartsAt">=@from AND "StartsAt"<@to),
-        v_all AS (SELECT * FROM "AppVisits" WHERE "TenantId"=@tenant AND NOT "IsDeleted" AND "BranchId"=ANY(@branches) AND "Status"=1 AND (@doctor IS NULL OR "DoctorId"=@doctor)),
+        v_all AS (SELECT visit.* FROM "AppVisits" visit WHERE visit."TenantId"=@tenant AND NOT visit."IsDeleted" AND visit."BranchId"=ANY(@branches) AND visit."Status"=1 AND (@doctor IS NULL OR visit."DoctorId"=@doctor OR EXISTS (SELECT 1 FROM "AppVisitItems" item WHERE item."TenantId"=@tenant AND NOT item."IsDeleted" AND item."VisitId"=visit."Id" AND item."DoctorId"=@doctor))),
         v AS (SELECT * FROM v_all WHERE "ClosedAt">=@from AND "ClosedAt"<@to),
         vi AS (SELECT i.* FROM "AppVisitItems" i JOIN v ON v."Id"=i."VisitId" WHERE i."TenantId"=@tenant AND NOT i."IsDeleted" AND (@doctor IS NULL OR i."DoctorId"=@doctor)),
         vm AS (SELECT m.* FROM "AppVisitMaterials" m JOIN v ON v."Id"=m."VisitId" WHERE m."TenantId"=@tenant AND NOT m."IsDeleted"),
@@ -68,22 +68,29 @@ public class SqlReportStore(IDbContextProvider<DentalDbContext> provider) : IRep
         "purchases" => """SELECT s."Name" AS "Поставщик",i."Name" AS "Товар",sum(sl."Qty") AS "Количество",sum(sl."TotalCost")/100.0 AS "Стоимость, ₸",round(sum(sl."TotalCost")/100.0/nullif(sum(sl."Qty"),0),2) AS "Средняя цена, ₸" FROM sd JOIN sl ON sl."DocumentId"=sd."Id" JOIN i ON i."Id"=sl."ItemId" JOIN "AppSuppliers" s ON s."Id"=sd."SupplierId" AND s."TenantId"=@tenant WHERE sd."Type"=0 AND sd."Status"=2 AND sd."PostedAt">=@from AND sd."PostedAt"<@to GROUP BY 1,2""",
         "branches_comparison" => """SELECT b."Name" AS "Филиал",coalesce(x.revenue,0)/100.0 AS "Выручка, ₸",coalesce(x.visits,0) AS "Визиты",coalesce(x.patients,0) AS "Пациенты",round(coalesce(x.revenue,0)/100.0/greatest(coalesce(x.visits,0),1),2) AS "Средний чек, ₸",coalesce(ac.no_show,0) AS "Неявки",coalesce(mc.cost,0)/100.0 AS "Материалы, ₸",(coalesce(x.revenue,0)-coalesce(mc.cost,0))/100.0 AS "Маржа, ₸" FROM b LEFT JOIN (SELECT "BranchId",sum("Total") revenue,count(*) visits,count(DISTINCT "PatientId") patients FROM v GROUP BY 1) x ON x."BranchId"=b."Id" LEFT JOIN (SELECT "BranchId",count(*) FILTER(WHERE "Status"=6) no_show FROM a GROUP BY 1) ac ON ac."BranchId"=b."Id" LEFT JOIN (SELECT v."BranchId",sum(vm."Cost") cost FROM vm JOIN v ON v."Id"=vm."VisitId" GROUP BY 1) mc ON mc."BranchId"=b."Id" """,
         "payroll" => """SELECT d."FullName" AS "Сотрудник",pp."PeriodStart" AS "Начало",pp."PeriodEnd" AS "Конец",pe."BaseRevenue"/100.0 AS "Выручка, ₸",pe."MaterialsCost"/100.0 AS "Материалы, ₸",pe."Accrued"/100.0 AS "Начислено, ₸",pe."Bonus"/100.0 AS "Бонус, ₸",pe."Penalty"/100.0 AS "Штраф, ₸",pe."Total"/100.0 AS "Итого, ₸" FROM pe JOIN pp ON pp."Id"=pe."PeriodId" JOIN d ON d."Id"=pe."EmployeeId" ORDER BY 1,2""",
-        "daily_summary" => """SELECT b."Name" AS "Филиал",coalesce((SELECT sum("Total") FROM v WHERE "BranchId"=b."Id"),0)/100.0 AS "Выручка, ₸",coalesce((SELECT sum(CASE WHEN "Type"=1 THEN -"Amount" ELSE "Amount" END) FROM pay WHERE "BranchId"=b."Id"),0)/100.0 AS "Поступления, ₸",(SELECT count(*) FROM a_all WHERE "BranchId"=b."Id" AND "StartsAt">=@to AND "StartsAt"<@to+interval '1 day' AND "Status" NOT IN(5,6)) AS "Записи завтра",(SELECT count(*) FROM a WHERE "BranchId"=b."Id" AND "Status"=6) AS "Неявки",(SELECT count(*) FROM "AppItemStockLevels" l JOIN w ON w."Id"=l."WarehouseId" WHERE w."BranchId"=b."Id" AND coalesce((SELECT sum(sb."Qty") FROM "AppStockBalances" sb WHERE sb."TenantId"=@tenant AND sb."WarehouseId"=l."WarehouseId" AND sb."ItemId"=l."ItemId"),0)<l."MinQty") AS "Ниже минимума",(SELECT count(DISTINCT n."EntityId") FROM "AppNotifications" n WHERE n."TenantId"=@tenant AND n."Type"='Suspicious' AND n."CreationTime">=@from AND n."CreationTime"<@to AND (n."EntityId" IN(SELECT "Id" FROM "AppVisits" WHERE "TenantId"=@tenant AND "BranchId"=b."Id") OR n."EntityId" IN(SELECT "Id" FROM "AppCashShifts" WHERE "TenantId"=@tenant AND "BranchId"=b."Id"))) AS "Подозрительные операции" FROM b ORDER BY 1""",
+        "daily_summary" => """SELECT b."Name" AS "Филиал",coalesce((SELECT sum("Total") FROM v WHERE "BranchId"=b."Id"),0)/100.0 AS "Выручка, ₸",coalesce((SELECT sum(CASE WHEN "Type"=1 THEN -"Amount" ELSE "Amount" END) FROM pay WHERE "BranchId"=b."Id"),0)/100.0 AS "Поступления, ₸",(SELECT count(*) FROM a_all WHERE "BranchId"=b."Id" AND "StartsAt">=@to AND "StartsAt"<@to+interval '1 day' AND "Status" NOT IN(5,6)) AS "Записи завтра",(SELECT count(*) FROM a WHERE "BranchId"=b."Id" AND "Status"=6) AS "Неявки",(SELECT count(*) FROM "AppItemStockLevels" l JOIN w ON w."Id"=l."WarehouseId" WHERE w."BranchId"=b."Id" AND coalesce((SELECT sum(sb."Qty") FROM "AppStockBalances" sb WHERE sb."TenantId"=@tenant AND sb."WarehouseId"=l."WarehouseId" AND sb."ItemId"=l."ItemId"),0)<l."MinQty") AS "Ниже минимума",(SELECT count(DISTINCT n."EntityId") FROM "AppNotifications" n WHERE n."TenantId"=@tenant AND n."Type"='Suspicious' AND n."CreationTime">=@from AND n."CreationTime"<@to AND (n."EntityId" IN(SELECT "Id" FROM "AppVisits" WHERE "TenantId"=@tenant AND "BranchId"=b."Id") OR n."EntityId" IN(SELECT "Id" FROM "AppCashShifts" WHERE "TenantId"=@tenant AND "BranchId"=b."Id") OR n."EntityId" IN(SELECT "Id" FROM "AppPayments" WHERE "TenantId"=@tenant AND "BranchId"=b."Id") OR n."EntityId" IN(SELECT "Id" FROM "AppStockDocuments" WHERE "TenantId"=@tenant AND "BranchId"=b."Id") OR n."EntityId" IN(SELECT "Id" FROM "AppEmployees" WHERE "TenantId"=@tenant AND b."Id"=ANY("BranchIds")))) AS "Подозрительные операции" FROM b ORDER BY 1""",
         _ => throw new ArgumentException("Unknown report",nameof(code))
     };
     public async Task<ReportTable> ExecuteAsync(ReportQuery q)
     {
         var db=await provider.GetDbContextAsync(); var connection=db.Database.GetDbConnection(); if (connection.State != ConnectionState.Open) await db.Database.OpenConnectionAsync();
         await using var command=connection.CreateCommand(); command.Transaction=db.Database.CurrentTransaction?.GetDbTransaction(); command.CommandTimeout=60;
-        command.CommandText=Common+" SELECT * FROM ("+Query(q.Code)+") report LIMIT 5001";
+        command.CommandText=Common+ExtendedCommon+" SELECT * FROM ("+(ExtendedQuery(q) ?? Query(q.Code))+") report LIMIT 5001";
         void P(string name, object value) { var p=command.CreateParameter();p.ParameterName=name;p.Value=value;command.Parameters.Add(p); }
         P("tenant",q.TenantId);P("branches",q.BranchIds);P("doctor",q.DoctorId ?? (object)DBNull.Value); ((Npgsql.NpgsqlParameter)command.Parameters["doctor"]).NpgsqlDbType=NpgsqlTypes.NpgsqlDbType.Uuid;
         P("central",q.IncludeCentral);P("from",DateTime.SpecifyKind(q.FromUtc,DateTimeKind.Unspecified));P("to",DateTime.SpecifyKind(q.ToUtc,DateTimeKind.Unspecified));P("tz",q.Timezone);P("months",q.InactiveMonths);
-        var result=new ReportTable(); await using var reader=await command.ExecuteReaderAsync(); for(var n=0;n<reader.FieldCount;n++) result.Columns.Add(new(reader.GetName(n),reader.GetDataTypeName(n)=="date"?"DateOnly":reader.GetFieldType(n).Name));
+        P("key",q.DetailKey ?? (object)DBNull.Value); ((Npgsql.NpgsqlParameter)command.Parameters["key"]).NpgsqlDbType=NpgsqlTypes.NpgsqlDbType.Text;
+        var result=new ReportTable{Timezone=q.Timezone}; await using var reader=await command.ExecuteReaderAsync();
+        var visible=Enumerable.Range(0,reader.FieldCount).Where(n=>!reader.GetName(n).StartsWith('_')).ToArray();
+        foreach(var n in visible) result.Columns.Add(new(reader.GetName(n),reader.GetDataTypeName(n)=="date"?"DateOnly":reader.GetFieldType(n).Name));
+        var keyIndex=Enumerable.Range(0,reader.FieldCount).FirstOrDefault(n=>reader.GetName(n)=="_key",-1);
+        var linkIndex=Enumerable.Range(0,reader.FieldCount).FirstOrDefault(n=>reader.GetName(n)=="_link",-1);
         while(await reader.ReadAsync())
         {
             if(result.Rows.Count==5000){result.Truncated=true;break;}
-            result.Rows.Add(Enumerable.Range(0,reader.FieldCount).Select(n=>reader.IsDBNull(n)?null:reader.GetDataTypeName(n)=="date"?(object)reader.GetFieldValue<DateOnly>(n):reader.GetValue(n) is DateTime date?(object)DateTime.SpecifyKind(date,DateTimeKind.Utc):reader.GetValue(n)).ToList());
+            result.Rows.Add(visible.Select(n=>reader.IsDBNull(n)?null:reader.GetDataTypeName(n)=="date"?(object)reader.GetFieldValue<DateOnly>(n):reader.GetValue(n) is DateTime date?(object)DateTime.SpecifyKind(date,DateTimeKind.Utc):reader.GetValue(n)).ToList());
+            result.DrillKeys.Add(keyIndex<0||reader.IsDBNull(keyIndex)?null:reader.GetString(keyIndex));
+            result.Links.Add(linkIndex<0||reader.IsDBNull(linkIndex)?null:reader.GetString(linkIndex));
         }
         return result;
     }

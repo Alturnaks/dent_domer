@@ -23,3 +23,5 @@
 .calendar-appointment.status-4 {background:#e2e8f0; color:#334155;}
 .calendar-appointment.status-5,.calendar-appointment.status-6 {background:#fee2e2; color:#7f1d1d; opacity:.7;}
 .calendar-appointment:focus-visible {outline:3px solid var(--bs-primary); z-index:10;}
+.calendar-appointment .calendar-resize-handle {position:absolute;left:0;right:0;bottom:0;height:10px;cursor:ns-resize;touch-action:none;background:linear-gradient(transparent,rgba(21,57,97,.12));}
+.calendar-resize-handle::after {content:"";display:block;width:24px;height:2px;margin:5px auto;background:currentColor;opacity:.5;}

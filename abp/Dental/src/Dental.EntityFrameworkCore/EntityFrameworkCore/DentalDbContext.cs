@@ -154,6 +154,11 @@ public class DentalDbContext :
         builder.ConfigurePurchasing();
         builder.Entity<Dental.Reports.ReportSubscription>(e => { e.HasBaseType((System.Type?)null); e.ToTable("AppReportSubscriptions"); e.ConfigureByConvention(); e.Property(x => x.Code).HasMaxLength(100); e.Property(x => x.Channel).HasMaxLength(20); e.Property(x => x.LastError).HasMaxLength(2000); e.Property(x => x.Email).HasMaxLength(256); });
         builder.Entity<Dental.Reports.OperationsRun>(e => { e.HasBaseType((System.Type?)null); e.ToTable("AppOperationsRuns"); e.ConfigureByConvention(); e.Property(x => x.Key).HasMaxLength(100); e.HasIndex(x => new {x.TenantId,x.Key,x.Date}).IsUnique(); });
+        builder.Entity<Dental.Reports.ReportSubscription>(e => {
+            e.Property(x => x.Frequency).HasMaxLength(20).HasDefaultValue("daily");
+            e.Property(x => x.Weekday).HasDefaultValue(1);
+            e.Property(x => x.GroupBy).HasMaxLength(40).HasDefaultValue("default");
+        });
 
         //builder.Entity<YourEntity>(b =>
         //{

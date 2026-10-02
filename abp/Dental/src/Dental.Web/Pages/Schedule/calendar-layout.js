@@ -7,6 +7,9 @@ var dentalCalendarLayout = (function () {
     function minuteAt(offset, gridStart, gridEnd, step) {
         return Math.min(gridEnd - step, Math.max(gridStart, Math.floor((offset / pixelsPerMinute + gridStart) / step) * step));
     }
+    function resizeEnd(offset, gridStart, gridEnd, appointmentStart, step) {
+        return Math.min(gridEnd,Math.max(appointmentStart+step,Math.round((offset/pixelsPerMinute+gridStart)/step)*step));
+    }
     // Pack overlapping visible records (including cancelled records) into separate lanes.
     function lanes(entries) {
         var sorted = entries.slice().sort(function(a,b){return a.start-b.start || a.end-b.end || String(a.id).localeCompare(String(b.id));});
@@ -27,5 +30,5 @@ var dentalCalendarLayout = (function () {
         });
         flush(); return result;
     }
-    return {pixelsPerMinute:pixelsPerMinute,position:position,minuteAt:minuteAt,lanes:lanes};
+    return {pixelsPerMinute:pixelsPerMinute,position:position,minuteAt:minuteAt,resizeEnd:resizeEnd,lanes:lanes};
 })();

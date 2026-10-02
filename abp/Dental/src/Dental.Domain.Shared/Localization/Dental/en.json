@@ -589,6 +589,7 @@
     "Calendar:CancelReason": "Cancellation reason",
     "Calendar:Save": "Create appointment",
     "Calendar:Move": "Save reschedule",
+    "Calendar:Resize": "Change duration: drag the lower edge",
     "Calendar:ReminderHint": "Demo reminders are logged by the application. SMS and WhatsApp are not connected yet.",
     "Calendar:Remind": "Reminder (demo)",
     "Calendar:ReminderLogged": "Demo reminder logged.",

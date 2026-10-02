@@ -79,11 +79,13 @@ public class OperationsWorker(IServiceScopeFactory scopes,ILogger<OperationsWork
         var due=await subscriptions.GetListAsync(s=>s.Enabled&&s.LastDate!=today&&s.LocalTime<=time);
         foreach(var s in due)
         {
+            if(!s.IsDue(today,time))continue;
             var user=await users.FindAsync(s.UserId);if(user==null||!user.IsActive){s.SetEnabled(false);await subscriptions.UpdateAsync(s,true);continue;}
             using var auth=principal.Change(await claims.CreateAsync(user));
             try
             {
-                var table=await sp.GetRequiredService<IReportsAppService>().GetAsync(new ReportInput{Code=s.Code,BranchId=s.BranchId,From=today,To=today});var body=new StringBuilder();body.AppendLine(string.Join(" | ",table.Columns.Select(c=>c.Name)));foreach(var row in table.Rows.Take(20))body.AppendLine(string.Join(" | ",row));
+                var table=await sp.GetRequiredService<IReportsAppService>().GetAsync(new ReportInput{Code=s.Code,BranchId=s.BranchId,From=s.Frequency=="weekly"?today.AddDays(-6):today,To=today,GroupBy=s.GroupBy});var body=new StringBuilder();body.AppendLine(string.Join(" | ",table.Columns.Select(c=>c.Name)));foreach(var row in table.Rows.Take(20))body.AppendLine(string.Join(" | ",row));
+                if(table.Rows.Count>20)body.AppendLine("Показаны первые 20 строк. Полный отчёт доступен в разделе «Отчёты».");
                 var title=ReportCatalog.Find(s.Code)!.Name+" · "+today;
                 if(s.Channel=="email")
                 {
