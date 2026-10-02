@@ -32,6 +32,7 @@ public static class ReportCatalog
 public record ReportColumn(string Name, string Type);
 public class ReportTable
 {
+    public string? Description { get; set; }
     public List<ReportColumn> Columns { get; set; } = [];
     public List<List<object?>> Rows { get; set; } = [];
     public bool Truncated { get; set; }

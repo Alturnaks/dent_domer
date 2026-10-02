@@ -39,6 +39,23 @@
                 </table>
             </div>
             <div id="LinesActions"></div>
+            @if(Model.Perms.Receive)
+            {
+                <section id="ReceiptImport" class="border rounded p-3 mt-3" hidden>
+                    <h6>@L["Inv:ImportExcel"]</h6>
+                    <p class="mb-2">@L["Inv:ImportHint"]</p>
+                    <form id="ReceiptImportForm" class="d-flex flex-wrap gap-2 align-items-center" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <a href="?handler=Template" class="btn btn-outline-secondary">@L["Inv:ImportTemplate"]</a>
+                        <input id="ReceiptImportFile" name="file" type="file" accept=".xlsx" class="form-control w-auto" aria-label="@L["Inv:ImportExcel"]" required />
+                        <button type="submit" class="btn btn-outline-primary">@L["Inv:ImportCheck"]</button>
+                    </form>
+                    <div id="ReceiptImportState" role="status" class="mt-2"></div>
+                    <div id="ReceiptImportErrors" class="text-danger mt-2"></div>
+                    <div id="ReceiptImportPreview" class="table-responsive mt-2"></div>
+                    <button id="ReceiptImportApply" type="button" class="btn btn-primary mt-2" hidden>@L["Inv:ImportApply"]</button>
+                </section>
+            }
             <div class="small text-muted mt-3" id="DocMeta"></div>
         </abp-card-body>
     </abp-card>

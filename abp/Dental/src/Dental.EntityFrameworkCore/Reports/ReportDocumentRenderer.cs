@@ -24,9 +24,12 @@ public class ReportDocumentRenderer : IReportDocumentRenderer, ITransientDepende
         }
         return Document.Create(document => document.Page(page => {
             page.Size(PageSizes.A4.Landscape());page.Margin(20);page.DefaultTextStyle(t=>t.FontSize(8));page.Header().PaddingBottom(10).Text(title).FontSize(13).Bold();
-            page.Content().Table(t => {t.ColumnsDefinition(cols => {foreach(var c in table.Columns) cols.RelativeColumn();});t.Header(h => {foreach(var c in table.Columns)h.Cell().Background("#EEF2F7").Padding(3).Text(c.Name).Bold();});foreach(var row in table.Rows)foreach(var value in row)t.Cell().BorderBottom(0.5f).BorderColor("#E2E8F0").Padding(3).Text(Format(value is DateTime d?Local(d):value));});
+            page.Content().Column(column => {
+                if(!string.IsNullOrWhiteSpace(table.Description))column.Item().PaddingBottom(12).Text(table.Description).FontSize(9);
+                column.Item().Table(t => {t.ColumnsDefinition(cols => {foreach(var c in table.Columns) cols.RelativeColumn();});t.Header(h => {foreach(var c in table.Columns)h.Cell().Background("#EEF2F7").Padding(3).Text(c.Name).Bold();});foreach(var row in table.Rows)for(var c=0;c<row.Count;c++){var value=row[c];t.Cell().BorderBottom(0.5f).BorderColor("#E2E8F0").Padding(3).Text(Format(value is DateTime d?Local(d):value,table.Columns[c].Type));}});
+            });
             page.Footer().AlignRight().Text(t=>{t.CurrentPageNumber();t.Span(" / ");t.TotalPages();});
         })).GeneratePdf();
     }
-    private static string Format(object? value) => value switch {null=>"",DateTime d=>d.ToString("dd.MM.yyyy HH:mm",CultureInfo.InvariantCulture),DateOnly d=>d.ToString("dd.MM.yyyy",CultureInfo.InvariantCulture),decimal d=>d.ToString("N2",CultureInfo.GetCultureInfo("ru-RU")),_=>Convert.ToString(value,CultureInfo.GetCultureInfo("ru-RU"))??""};
+    private static string Format(object? value,string? type=null) => value switch {null=>"",DateTime d=>d.ToString("dd.MM.yyyy HH:mm",CultureInfo.InvariantCulture),DateOnly d=>d.ToString("dd.MM.yyyy",CultureInfo.InvariantCulture),decimal d=>d.ToString(type=="UnitCost"?"0.######":type=="Quantity"?"0.####":"N2",CultureInfo.GetCultureInfo("ru-RU")),_=>Convert.ToString(value,CultureInfo.GetCultureInfo("ru-RU"))??""};
 }

@@ -12,6 +12,7 @@ $(function () {
     var refs = { items: [], itemsById: {}, warehouses: [], suppliers: [], reasons: [] };
     var doc = null;      // StockDocumentDto или черновик нового документа
     var lines = [];      // строки редактора
+    var importPreview = null;
 
     function canEditType(type) {
         return type === T.Receipt ? perms.receive : type === T.Transfer ? perms.transferCreate
@@ -243,6 +244,8 @@ $(function () {
 
     function renderActions() {
         var $a = $('#DocActions').empty(), t = doc.type, st = doc.status;
+        $('#ReceiptImport').prop('hidden',!(editable() && t === T.Receipt));
+        if(!isNew())$a.append($('<a class="btn btn-outline-secondary">').attr('href','?handler=Pdf&id='+doc.id).text(l('Inv:PrintPdf')));
         if (editable()) {
             $a.append('<button class="btn btn-outline-primary" id="SaveDoc"><i class="fa fa-save me-1"></i>' + esc(l('Save')) + '</button>');
         }
@@ -366,6 +369,36 @@ $(function () {
     });
 
     $(document).on('click', '#AddLine', function () { readLines(); lines.push(newLine()); renderLines(); });
+    $('#ReceiptImportForm').on('submit', async function(e) {
+        e.preventDefault();
+        if(!editable() || doc.type!==T.Receipt)return;
+        var file=$('#ReceiptImportFile')[0].files[0];
+        if(!file)return;
+        if(!/\.xlsx$/i.test(file.name) || file.size>20*1024*1024)return abp.message.warn(l('Inv:ImportFileLimit'));
+        importPreview=null;$('#ReceiptImportApply').prop('hidden',true);$('#ReceiptImportErrors,#ReceiptImportPreview').empty();$('#ReceiptImportState').text(l('Inv:ImportChecking'));
+        var button=$('#ReceiptImportForm button').prop('disabled',true);
+        try {
+            var result=await $.ajax({url:'?handler=Import',method:'POST',data:new FormData(this),processData:false,contentType:false});
+            $('#ReceiptImportState').text(l('Inv:ImportResult',result.lines.length,result.errors.length));
+            result.errors.forEach(function(error){$('#ReceiptImportErrors').append($('<div>').text((error.row?l('Inv:ImportRow',error.row)+': ':'')+error.message));});
+            if(result.lines.length){
+                var table=$('<table class="table table-sm">'),head=$('<tr>'),body=$('<tbody>');
+                ['Inv:Item','Inv:Qty','Inv:Unit','Inv:UnitCost','Inv:BatchNumber','Inv:Serial','Inv:ExpiresAt'].forEach(function(key){head.append($('<th>').text(l(key)));});
+                result.lines.forEach(function(row){var tr=$('<tr>');[row.itemSku+' · '+row.itemName,inv.qty(row.qty),row.unitName,inv.money(row.unitCost),row.batchNumber||'—',row.serialNumber||'—',inv.dateOnly(row.expiresAt)].forEach(function(value){tr.append($('<td>').text(value));});body.append(tr);});
+                $('#ReceiptImportPreview').append(table.append($('<thead>').append(head),body));
+            }
+            if(!result.errors.length && result.lines.length){importPreview=result.lines;$('#ReceiptImportApply').prop('hidden',false);}
+        }catch(error){$('#ReceiptImportState').text(l('Inv:ImportFailed'));abp.message.error(error.responseJSON?.error?.message||l('Inv:ImportFailed'));}
+        finally{button.prop('disabled',false);}
+    });
+    $('#ReceiptImportFile').on('change',function(){importPreview=null;$('#ReceiptImportApply').prop('hidden',true);$('#ReceiptImportState,#ReceiptImportErrors,#ReceiptImportPreview').empty();});
+    $('#ReceiptImportApply').on('click',async function(){
+        if(!importPreview || !editable() || doc.type!==T.Receipt)return;
+        if(!await abp.message.confirm(l('Inv:ImportConfirm',importPreview.length)))return;
+        readLines();lines=lines.filter(function(line){return line.itemId;});
+        importPreview.forEach(function(row){lines.push({itemId:row.itemId,qty:row.qty,unitId:row.unitId,price:row.unitCost/100,batchId:null,batchNumber:row.batchNumber,serialNumber:row.serialNumber,expiresAt:row.expiresAt});});
+        importPreview=null;$('#ReceiptImportApply').prop('hidden',true);$('#ReceiptImportPreview').empty();$('#ReceiptImportState').text(l('Inv:ImportApplied'));renderLines();
+    });
     $(document).on('click', '[data-remove]', function () { readLines(); lines.splice(Number($(this).data('remove')), 1); renderLines(); });
 
     $(document).on('change', '#LinesTable [data-l="itemId"]', function () {
