@@ -1,0 +1,16 @@
+#DashboardCards .dashboard-card-label {
+    color: #526176;
+    font-size: .95rem;
+}
+#DashboardCards .dashboard-card-value {
+    color: var(--bs-body-color, #253247);
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+#DashboardCards a:focus-visible {
+    outline: 2px solid var(--bs-primary, #5145ff);
+    outline-offset: 3px;
+}
+[data-bs-theme="dark"] #DashboardCards .dashboard-card-label {
+    color: #c4cbd6;
+}
