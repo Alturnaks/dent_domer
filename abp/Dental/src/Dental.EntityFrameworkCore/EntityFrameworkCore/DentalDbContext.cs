@@ -34,6 +34,7 @@ public class DentalDbContext :
 
     // Пациенты, каталог, подтверждения, уведомления, справочники
     public DbSet<Dental.Patients.Patient> Patients { get; set; }
+    public DbSet<Dental.Patients.PatientFile> PatientFiles { get; set; }
     public DbSet<Dental.Patients.PatientConsent> PatientConsents { get; set; }
     public DbSet<Dental.Patients.PatientBalance> PatientBalances { get; set; }
     public DbSet<Dental.Patients.LeadSource> LeadSources { get; set; }

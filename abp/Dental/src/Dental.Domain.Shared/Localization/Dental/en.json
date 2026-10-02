@@ -750,6 +750,12 @@
     "Dashboard:LowStock": "Items below minimum",
     "Dashboard:Expiring": "Batches expiring within 30 days",
     "Dashboard:OverdueShifts": "Previous shifts still open",
-    "Dashboard:NoAttention": "No tasks require attention"
+    "Dashboard:NoAttention": "No tasks require attention",
+    "Patient:UploadFailed": "Upload failed. Please try again.",
+    "Patient:Files": "Files",
+    "Patient:FilesHint": "PDF, PNG and JPEG up to 20 MB. Files are available only to clinic staff.",
+    "Patient:NoFiles": "No files yet",
+    "Patient:UploadFile": "Upload file",
+    "Patient:DeleteFile": "Remove this file from the patient record?"
   }
 }

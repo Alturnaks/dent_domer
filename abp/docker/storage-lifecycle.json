@@ -1,0 +1,1 @@
+{"Rules":[{"ID":"pending-cleanup","Status":"Enabled","Filter":{"Prefix":"pending/"},"Expiration":{"Days":1}}]}

@@ -766,6 +766,12 @@
     "Dashboard:LowStock": "Позиций ниже минимума",
     "Dashboard:Expiring": "Партии со сроком до 30 дней",
     "Dashboard:OverdueShifts": "Незакрытые прошлые смены",
-    "Dashboard:NoAttention": "Нет задач, требующих внимания"
+    "Dashboard:NoAttention": "Нет задач, требующих внимания",
+    "Patient:UploadFailed": "Не удалось загрузить файл. Попробуйте ещё раз.",
+    "Patient:Files": "Файлы",
+    "Patient:FilesHint": "PDF, PNG и JPEG до 20 МБ. Файлы доступны только сотрудникам клиники.",
+    "Patient:NoFiles": "Файлы ещё не добавлены",
+    "Patient:UploadFile": "Загрузить файл",
+    "Patient:DeleteFile": "Удалить файл из карточки пациента?"
   }
 }

@@ -54,6 +54,17 @@ public static class DentalPatientsCatalogModelCreatingExtensions
             b.HasIndex(x => x.PatientId);
         });
 
+        builder.Entity<PatientFile>(b =>
+        {
+            b.ToTable(p + "PatientFiles", schema);
+            b.ConfigureByConvention();
+            b.Property(x => x.FileName).IsRequired().HasMaxLength(200);
+            b.Property(x => x.ContentType).IsRequired().HasMaxLength(100);
+            b.Property(x => x.ObjectKey).IsRequired().HasMaxLength(200);
+            b.HasIndex(x => new { x.TenantId, x.PatientId });
+            b.HasOne<Patient>().WithMany().HasForeignKey(x => x.PatientId).OnDelete(DeleteBehavior.Restrict);
+        });
+
         builder.Entity<PatientBalance>(b =>
         {
             b.ToTable(p + "PatientBalances", schema);

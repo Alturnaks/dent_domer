@@ -13,6 +13,7 @@
 @section scripts {
     <abp-script src="/Pages/Patients/patient-form.js" />
     <abp-script src="/Pages/Patients/Detail.js" />
+    <abp-script src="/Pages/Patients/files.js" />
 }
 <div id="PatientDetail" data-id="@p.Id" data-can-edit="@(canEdit ? "true" : "false")">
     <div class="mb-2"><a href="~/Patients"><i class="fa fa-arrow-left me-1"></i>@L["Menu:Patients"]</a></div>
@@ -75,8 +76,21 @@
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#TabVisits" type="button">@L["Patient:Visits"]</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#TabPayments" type="button">@L["Patient:Payments"]</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#TabConsents" type="button">@L["Patient:Consents"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#TabFiles" type="button">@L["Patient:Files"]</button></li>
             </ul>
             <div class="tab-content">
+                <div class="tab-pane fade" id="TabFiles">
+                    <p class="text-muted">@L["Patient:FilesHint"]</p>
+                    @if (canEdit && p.MergedIntoId == null)
+                    {
+                        <form id="PatientFileForm" class="d-flex flex-wrap gap-2 mb-3">
+                            <input id="PatientFileInput" type="file" class="form-control w-auto" accept=".pdf,.png,.jpg,.jpeg" required aria-label="@L["Patient:Files"]" />
+                            <button type="submit" class="btn btn-primary">@L["Patient:UploadFile"]</button>
+                        </form>
+                    }
+                    <div id="PatientFileError" class="alert alert-danger d-none" role="alert"></div>
+                    <table class="table"><tbody id="PatientFileRows"></tbody></table>
+                </div>
                 <div class="tab-pane fade show active" id="TabInfo">
                     <dl class="row mb-0">
                         <dt class="col-sm-3">@L["Patient:Gender"]</dt><dd class="col-sm-9">@L["Enum:Gender." + p.Gender]</dd>

@@ -13,8 +13,51 @@ x-app-env: &app-env
   OpenIddict__Applications__Dental_Swagger__RootUrl: http://localhost:${ABP_WEB_PORT:-3100}/
   StringEncryption__DefaultPassPhrase: ${ABP_STRING_ENCRYPTION:-J5vQv2e7mCQYnFbq}
   TZ: UTC
+  Storage__ServiceUrl: http://minio:9000
+  Storage__PublicUrl: http://localhost:59002
+  Storage__AccessKey: ${ABP_MINIO_USER:-dental-local}
+  Storage__SecretKey: ${ABP_MINIO_PASSWORD:-dental-local-development}
+  Storage__Region: us-east-1
+  Storage__Bucket: dental-files
 
 services:
+  minio:
+    image: dental-minio:local
+    build:
+      context: .
+      dockerfile: docker/Storage.Dockerfile
+      target: minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${ABP_MINIO_USER:-dental-local}
+      MINIO_ROOT_PASSWORD: ${ABP_MINIO_PASSWORD:-dental-local-development}
+      MINIO_API_CORS_ALLOW_ORIGIN: http://localhost:${ABP_WEB_PORT:-3100}
+    ports: ["127.0.0.1:59002:9000", "127.0.0.1:59003:9001"]
+    volumes: [abp_minio:/data]
+
+  storage-init:
+    image: dental-mc:local
+    build:
+      context: .
+      dockerfile: docker/Storage.Dockerfile
+      target: mc
+    environment:
+      MINIO_USER: ${ABP_MINIO_USER:-dental-local}
+      MINIO_PASSWORD: ${ABP_MINIO_PASSWORD:-dental-local-development}
+    volumes: ["./docker/storage-lifecycle.json:/config/lifecycle.json:ro"]
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        attempt=0;
+        until mc alias set local http://minio:9000 "$$MINIO_USER" "$$MINIO_PASSWORD"; do
+        attempt=$$((attempt+1)); if [ "$$attempt" -ge 30 ]; then exit 1; fi; sleep 2; done;
+        mc mb --ignore-existing local/dental-files &&
+        mc mb --ignore-existing local/dental-backups &&
+        mc anonymous set none local/dental-files &&
+        mc anonymous set none local/dental-backups &&
+        mc ilm rule import local/dental-files < /config/lifecycle.json
+    depends_on: [minio]
+    restart: "no"
   postgres:
     image: postgres:16
     environment:
@@ -70,7 +113,10 @@ services:
         condition: service_healthy
       migrator:
         condition: service_completed_successfully
+      storage-init:
+        condition: service_completed_successfully
     restart: unless-stopped
 
 volumes:
   abp_pgdata:
+  abp_minio:
